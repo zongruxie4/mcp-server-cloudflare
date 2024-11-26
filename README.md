@@ -1,59 +1,83 @@
-# Cloudflare KV MCP Server
+# Cloudflare MCP Server
 
-A Model Context Protocol server implementation for Cloudflare KV stores. This server enables LLMs to interact with Cloudflare KV through a secure API.
+This is a Model Context Protocol (MCP) server for interacting with Cloudflare services. It provides a unified interface for managing Cloudflare KV Store, Workers, and Analytics.
 
 ## Features
 
-### Tools
+### KV Store Operations
+- `kv_get`: Retrieve a value from KV store
+- `kv_put`: Store a value in KV store
+- `kv_delete`: Delete a key from KV store
+- `kv_list`: List keys in KV store
 
-- **kv_get**
-  - Get a value from KV store
-  - Input: 
-    - `key` (string): The key to retrieve
+### Workers Management
+- `worker_list`: List all Workers in your account
+- `worker_get`: Get a Worker's script content
+- `worker_put`: Create or update a Worker script
+- `worker_delete`: Delete a Worker script
 
-- **kv_put**
-  - Put a value into KV store
-  - Input:
-    - `key` (string): The key to store
-    - `value` (string): The value to store
-    - `expirationTtl` (number, optional): Expiration time in seconds
-
-- **kv_delete**
-  - Delete a key from KV store
-  - Input:
-    - `key` (string): The key to delete
-
-- **kv_list**
-  - List keys in KV store
-  - Input:
-    - `prefix` (string, optional): Filter keys by prefix
-    - `limit` (number, optional): Maximum number of keys to return
+### Analytics
+- `analytics_get`: Retrieve analytics data for your domain
+  - Includes metrics like requests, bandwidth, threats, and page views
+  - Supports date range filtering
 
 ## Setup
 
-1. Create a Cloudflare API token with KV permissions
-2. Get your Account ID and KV Namespace ID from Cloudflare dashboard
+1. Clone this repository
+2. Copy `.env.example` to `.env` and fill in your Cloudflare credentials:
+   ```
+   CLOUDFLARE_ACCOUNT_ID=your_account_id_here
+   CLOUDFLARE_API_TOKEN=your_api_token_here
+   CLOUDFLARE_KV_NAMESPACE_ID=your_namespace_id_here
+   ```
+3. Install dependencies: `npm install`
+4. Run the server: `./start-cloudflare.sh`
 
-## Usage with Claude Desktop
+## Usage Examples
 
-Add the following to your `claude_desktop_config.json`:
+### KV Store
+```javascript
+// Get value
+kv_get({ key: "myKey" })
 
-```json
-{  
-  "mcpServers": {
-    "cloudflare-kv": {
-        "command": "npx",
-        "args": ["-y", "@modelcontextprotocol/server-cloudflare-kv"],
-        "env": {
-        "CLOUDFLARE_ACCOUNT_ID": "<YOUR_ACCOUNT_ID>",
-        "CLOUDFLARE_API_TOKEN": "<YOUR_API_TOKEN>",
-        "CLOUDFLARE_KV_NAMESPACE_ID": "<YOUR_NAMESPACE_ID>"
-        }
-    }
-  }
-}
+// Store value
+kv_put({ key: "myKey", value: "myValue" })
+
+// List keys
+kv_list({ prefix: "app_", limit: 10 })
 ```
 
-## License
+### Workers
+```javascript
+// List workers
+worker_list()
 
-This MCP server is licensed under the MIT License.
+// Get worker code
+worker_get({ name: "my-worker" })
+
+// Update worker
+worker_put({ 
+    name: "my-worker",
+    script: "addEventListener('fetch', event => { ... })"
+})
+```
+
+### Analytics
+```javascript
+// Get today's analytics
+analytics_get({ 
+    zoneId: "your_zone_id",
+    since: "2024-11-26T00:00:00Z",
+    until: "2024-11-26T23:59:59Z"
+})
+```
+
+## Security Notes
+
+- Never commit your `.env` file
+- Ensure your Cloudflare API token has appropriate permissions
+- Monitor analytics for suspicious activity
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
