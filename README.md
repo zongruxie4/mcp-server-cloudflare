@@ -1,6 +1,6 @@
 # Cloudflare MCP Server (WIP)
 
-This is a Model Context Protocol (MCP) server for interacting with Cloudflare services. It provides a unified interface for managing Cloudflare KV Store, Workers, and Analytics.
+This is a Model Context Protocol (MCP) server for interacting with Cloudflare services. It provides a unified interface for managing Cloudflare KV Store, R2 Storage, Workers, and Analytics.
 
 ## Features
 
@@ -10,6 +10,15 @@ This is a Model Context Protocol (MCP) server for interacting with Cloudflare se
 - `kv_put`: Store a value in a KV namespace
 - `kv_list`: List keys in a KV namespace
 - `kv_delete`: Delete a key from a KV namespace
+
+### R2 Storage Management
+- `r2_list_buckets`: List all R2 buckets in your account
+- `r2_create_bucket`: Create a new R2 bucket
+- `r2_delete_bucket`: Delete an R2 bucket
+- `r2_list_objects`: List objects in an R2 bucket
+- `r2_get_object`: Get an object from an R2 bucket
+- `r2_put_object`: Put an object into an R2 bucket
+- `r2_delete_object`: Delete an object from an R2 bucket
 
 ### Workers Management
 - `worker_list`: List all Workers in your account
@@ -33,21 +42,21 @@ This is a Model Context Protocol (MCP) server for interacting with Cloudflare se
 get_kvs()
 
 // Get value
-kv_get({ 
+kv_get({
     namespaceId: "your_namespace_id",
-    key: "myKey" 
+    key: "myKey"
 })
 
 // Store value
-kv_put({ 
+kv_put({
     namespaceId: "your_namespace_id",
-    key: "myKey", 
+    key: "myKey",
     value: "myValue",
     expirationTtl: 3600 // optional, in seconds
 })
 
 // List keys
-kv_list({ 
+kv_list({
     namespaceId: "your_namespace_id",
     prefix: "app_", // optional
     limit: 10 // optional
@@ -60,6 +69,19 @@ kv_delete({
 })
 ```
 
+### R2 Storage
+
+```javascript
+// List buckets
+r2_list_buckets()
+
+// Create bucket
+r2_create_bucket({ name: "my-bucket" })
+
+// Delete bucket
+r2_delete_bucket({ name: "my-bucket" })
+
+
 ### Workers
 ```javascript
 // List workers
@@ -69,7 +91,7 @@ worker_list()
 worker_get({ name: "my-worker" })
 
 // Update worker
-worker_put({ 
+worker_put({
     name: "my-worker",
     script: "addEventListener('fetch', event => { ... })"
 })
@@ -81,7 +103,7 @@ worker_delete({ name: "my-worker" })
 ### Analytics
 ```javascript
 // Get today's analytics
-analytics_get({ 
+analytics_get({
     zoneId: "your_zone_id",
     since: "2024-11-26T00:00:00Z",
     until: "2024-11-26T23:59:59Z"
