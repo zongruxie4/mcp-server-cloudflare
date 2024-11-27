@@ -1,5 +1,5 @@
 {
-  "name": "@cfpreview/mcp-server-cloudflare",
+  "name": "@cloudflare/mcp-server-cloudflare",
   "version": "0.0.1",
   "description": "MCP server for interacting with Cloudflare API",
   "license": "MIT",
@@ -33,6 +33,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241112.0",
     "@types/node": "^22.10.0",
+    "prettier": "^3.4.1",
     "shx": "^0.3.4",
     "tsup": "^8.3.5",
     "typescript": "^5.6.2"

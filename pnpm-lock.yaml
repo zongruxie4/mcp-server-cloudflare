@@ -33,6 +33,9 @@ importers:
       '@types/node':
         specifier: ^22.10.0
         version: 22.10.0
+      prettier:
+        specifier: ^3.4.1
+        version: 3.4.1
       shx:
         specifier: ^0.3.4
         version: 0.3.4
@@ -613,6 +616,11 @@ packages:
         optional: true
       yaml:
         optional: true
+
+  prettier@3.4.1:
+    resolution: {integrity: sha512-G+YdqtITVZmOJje6QkXQWzl3fSfMxFwm1tjTyo9exhkmWSqC4Yhd1+lug++IlR2mvRVAxEDDWYkQdeSztajqgg==}
+    engines: {node: '>=14'}
+    hasBin: true
 
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
@@ -1228,6 +1236,8 @@ snapshots:
   postcss-load-config@6.0.1:
     dependencies:
       lilconfig: 3.1.2
+
+  prettier@3.4.1: {}
 
   punycode@2.3.1: {}
 
