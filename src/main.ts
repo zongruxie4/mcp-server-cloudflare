@@ -1,10 +1,6 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-  Tool,
-} from '@modelcontextprotocol/sdk/types.js'
+import { CallToolRequestSchema, ListToolsRequestSchema, Tool } from '@modelcontextprotocol/sdk/types.js'
 import fetch from 'node-fetch'
 import { config, log } from './utils/helpers'
 
@@ -104,12 +100,7 @@ const WORKER_DELETE_TOOL: Tool = {
   },
 }
 
-const WORKER_TOOLS = [
-  WORKER_LIST_TOOL,
-  WORKER_GET_TOOL,
-  WORKER_PUT_TOOL,
-  WORKER_DELETE_TOOL,
-]
+const WORKER_TOOLS = [WORKER_LIST_TOOL, WORKER_GET_TOOL, WORKER_PUT_TOOL, WORKER_DELETE_TOOL]
 
 // Combine all tools
 
@@ -328,98 +319,98 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   log('Received list tools request')
   return { tools: ALL_TOOLS }
 })
-//
-// // Handlers for KV operations
-// async function handleGet(key: string) {
-//     log('Executing kv_get for key:', key);
-//     const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/storage/kv/namespaces/${config.namespaceId}/values/${key}`;
-//
-//     const response = await fetch(url, {
-//         headers: { 'Authorization': `Bearer ${config.apiToken}` }
-//     });
-//
-//     log('KV get response status:', response.status);
-//
-//     if (!response.ok) {
-//         const error = await response.text();
-//         log('KV get error:', error);
-//         throw new Error(`Failed to get value: ${error}`);
-//     }
-//
-//     const value = await response.text();
-//     log('KV get success:', value);
-//     return value;
-// }
-//
-// async function handlePut(key: string, value: string, expirationTtl?: number) {
-//     log('Executing kv_put for key:', key);
-//     const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/storage/kv/namespaces/${config.namespaceId}/values/${key}`;
-//
-//     const response = await fetch(url, {
-//         method: 'PUT',
-//         headers: {
-//             'Authorization': `Bearer ${config.apiToken}`,
-//             'Content-Type': 'text/plain',
-//         },
-//         body: value,
-//         ...(expirationTtl ? { query: { expiration_ttl: expirationTtl } } : {})
-//     });
-//
-//     log('KV put response status:', response.status);
-//
-//     if (!response.ok) {
-//         const error = await response.text();
-//         log('KV put error:', error);
-//         throw new Error(`Failed to put value: ${error}`);
-//     }
-//
-//     return 'Success';
-// }
-//
-// async function handleDelete(key: string) {
-//     log('Executing kv_delete for key:', key);
-//     const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/storage/kv/namespaces/${config.namespaceId}/values/${key}`;
-//
-//     const response = await fetch(url, {
-//         method: 'DELETE',
-//         headers: { 'Authorization': `Bearer ${config.apiToken}` }
-//     });
-//
-//     log('KV delete response status:', response.status);
-//
-//     if (!response.ok) {
-//         const error = await response.text();
-//         log('KV delete error:', error);
-//         throw new Error(`Failed to delete key: ${error}`);
-//     }
-//
-//     return 'Success';
-// }
-//
-// async function handleList(prefix?: string, limit?: number) {
-//     log('Executing kv_list');
-//     const params = new URLSearchParams();
-//     if (prefix) params.append('prefix', prefix);
-//     if (limit) params.append('limit', limit.toString());
-//
-//     const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/storage/kv/namespaces/${config.namespaceId}/keys?${params}`;
-//
-//     const response = await fetch(url, {
-//         headers: { 'Authorization': `Bearer ${config.apiToken}` }
-//     });
-//
-//     log('KV list response status:', response.status);
-//
-//     if (!response.ok) {
-//         const error = await response.text();
-//         log('KV list error:', error);
-//         throw new Error(`Failed to list keys: ${error}`);
-//     }
-//
-//     const data = await response.json() as CloudflareListResponse;
-//     log('KV list success:', data);
-//     return data.result;
-// }
+
+// Handlers for KV operations
+async function handleGet(key: string) {
+  log('Executing kv_get for key:', key)
+  const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/storage/kv/namespaces/${config.namespaceId}/values/${key}`
+
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${config.apiToken}` },
+  })
+
+  log('KV get response status:', response.status)
+
+  if (!response.ok) {
+    const error = await response.text()
+    log('KV get error:', error)
+    throw new Error(`Failed to get value: ${error}`)
+  }
+
+  const value = await response.text()
+  log('KV get success:', value)
+  return value
+}
+
+async function handlePut(key: string, value: string, expirationTtl?: number) {
+  log('Executing kv_put for key:', key)
+  const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/storage/kv/namespaces/${config.namespaceId}/values/${key}`
+
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${config.apiToken}`,
+      'Content-Type': 'text/plain',
+    },
+    body: value,
+    ...(expirationTtl ? { query: { expiration_ttl: expirationTtl } } : {}),
+  })
+
+  log('KV put response status:', response.status)
+
+  if (!response.ok) {
+    const error = await response.text()
+    log('KV put error:', error)
+    throw new Error(`Failed to put value: ${error}`)
+  }
+
+  return 'Success'
+}
+
+async function handleDelete(key: string) {
+  log('Executing kv_delete for key:', key)
+  const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/storage/kv/namespaces/${config.namespaceId}/values/${key}`
+
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${config.apiToken}` },
+  })
+
+  log('KV delete response status:', response.status)
+
+  if (!response.ok) {
+    const error = await response.text()
+    log('KV delete error:', error)
+    throw new Error(`Failed to delete key: ${error}`)
+  }
+
+  return 'Success'
+}
+
+async function handleList(prefix?: string, limit?: number) {
+  log('Executing kv_list')
+  const params = new URLSearchParams()
+  if (prefix) params.append('prefix', prefix)
+  if (limit) params.append('limit', limit.toString())
+
+  const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/storage/kv/namespaces/${config.namespaceId}/keys?${params}`
+
+  const response = await fetch(url, {
+    headers: { Authorization: `Bearer ${config.apiToken}` },
+  })
+
+  log('KV list response status:', response.status)
+
+  if (!response.ok) {
+    const error = await response.text()
+    log('KV list error:', error)
+    throw new Error(`Failed to list keys: ${error}`)
+  }
+
+  const data = (await response.json()) as CloudflareListResponse
+  log('KV list success:', data)
+  return data.result
+}
 
 // Handle tool calls
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
@@ -448,9 +439,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           since?: string
           until?: string
         }
-        const date = since
-          ? new Date(since).toISOString().split('T')[0]
-          : new Date().toISOString().split('T')[0]
+        const date = since ? new Date(since).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
 
         const graphqlQuery = {
           query: `query {
@@ -479,22 +468,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               }`,
         }
 
-        const analyticsResponse = await fetch(
-          'https://api.cloudflare.com/client/v4/graphql',
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${config.apiToken}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(graphqlQuery),
+        const analyticsResponse = await fetch('https://api.cloudflare.com/client/v4/graphql', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${config.apiToken}`,
+            'Content-Type': 'application/json',
           },
-        )
+          body: JSON.stringify(graphqlQuery),
+        })
 
         if (!analyticsResponse.ok) {
-          throw new Error(
-            `Analytics API error: ${await analyticsResponse.text()}`,
-          )
+          throw new Error(`Analytics API error: ${await analyticsResponse.text()}`)
         }
 
         const analyticsData = await analyticsResponse.json()

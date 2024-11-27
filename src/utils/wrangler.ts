@@ -113,7 +113,7 @@ interface State extends AuthTokens {
   scopes?: Scope[]
 }
 
-let LocalState: State = {}
+export let LocalState: State = {}
 
 function getAuthConfigFilePath() {
   const configDir = getGlobalWranglerConfigPath()

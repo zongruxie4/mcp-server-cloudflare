@@ -2,7 +2,7 @@
 import { init } from './init'
 import { config, log } from './utils/helpers'
 import { main } from './main'
-import { getAuthTokens, isAccessTokenExpired, refreshToken } from './utils/wrangler'
+import { getAuthTokens, isAccessTokenExpired, LocalState, refreshToken } from './utils/wrangler'
 
 // Handle process events
 process.on('uncaughtException', (error) => {
@@ -34,12 +34,14 @@ if (cmd === 'init') {
   if (!config.accountId || !config.apiToken) {
     getAuthTokens()
 
-    if (isAccessTokenExpired())
+    if (isAccessTokenExpired()) {
       if (await refreshToken()) {
         console.log('Successfully refreshed access token')
       } else {
         console.log('Failed to refresh access token')
       }
+    }
+    config.apiToken = LocalState.accessToken?.value
   }
 
   log(
