@@ -4,6 +4,13 @@ This is a Model Context Protocol (MCP) server for interacting with Cloudflare se
 
 ## Features
 
+### KV Store Management
+- `get_kvs`: List all KV namespaces in your account
+- `kv_get`: Get a value from a KV namespace
+- `kv_put`: Store a value in a KV namespace
+- `kv_list`: List keys in a KV namespace
+- `kv_delete`: Delete a key from a KV namespace
+
 ### Workers Management
 - `worker_list`: List all Workers in your account
 - `worker_get`: Get a Worker's script content
@@ -22,14 +29,35 @@ This is a Model Context Protocol (MCP) server for interacting with Cloudflare se
 
 ### KV Store
 ```javascript
+// List KV namespaces
+get_kvs()
+
 // Get value
-kv_get({ key: "myKey" })
+kv_get({ 
+    namespaceId: "your_namespace_id",
+    key: "myKey" 
+})
 
 // Store value
-kv_put({ key: "myKey", value: "myValue" })
+kv_put({ 
+    namespaceId: "your_namespace_id",
+    key: "myKey", 
+    value: "myValue",
+    expirationTtl: 3600 // optional, in seconds
+})
 
 // List keys
-kv_list({ prefix: "app_", limit: 10 })
+kv_list({ 
+    namespaceId: "your_namespace_id",
+    prefix: "app_", // optional
+    limit: 10 // optional
+})
+
+// Delete key
+kv_delete({
+    namespaceId: "your_namespace_id",
+    key: "myKey"
+})
 ```
 
 ### Workers
@@ -45,6 +73,9 @@ worker_put({
     name: "my-worker",
     script: "addEventListener('fetch', event => { ... })"
 })
+
+// Delete worker
+worker_delete({ name: "my-worker" })
 ```
 
 ### Analytics
@@ -69,7 +100,9 @@ pnpm build:watch
 Then, in a second terminal:
 
 ```
-node dist/index.js
+node dist/index.js init
 ```
+
+This will link Claude Desktop against your locally-installed version for you to test.
 
 Contributions are welcome! Please feel free to submit a Pull Request.
