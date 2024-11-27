@@ -1,6 +1,6 @@
 # Cloudflare MCP Server (WIP)
 
-This is a Model Context Protocol (MCP) server for interacting with Cloudflare services. It provides a unified interface for managing Cloudflare KV Store, R2 Storage, Workers, and Analytics.
+This is a Model Context Protocol (MCP) server for interacting with Cloudflare services. It provides a unified interface for managing Cloudflare KV Store, R2 Storage, D1 Database, Workers, and Analytics.
 
 ## Features
 
@@ -19,6 +19,12 @@ This is a Model Context Protocol (MCP) server for interacting with Cloudflare se
 - `r2_get_object`: Get an object from an R2 bucket
 - `r2_put_object`: Put an object into an R2 bucket
 - `r2_delete_object`: Delete an object from an R2 bucket
+
+### D1 Database Management
+- `d1_list_databases`: List all D1 databases in your account
+- `d1_create_database`: Create a new D1 database
+- `d1_delete_database`: Delete a D1 database
+- `d1_query`: Execute a SQL query against a D1 database
 
 ### Workers Management
 - `worker_list`: List all Workers in your account
@@ -71,33 +77,36 @@ kv_delete({
 
 ### R2 Storage
 
+### D1 Database
 ```javascript
-// List buckets
-r2_list_buckets()
+// List databases
+d1_list_databases()
 
-// Create bucket
-r2_create_bucket({ name: "my-bucket" })
+// Create database
+d1_create_database({ name: "my-database" })
 
-// Delete bucket
-r2_delete_bucket({ name: "my-bucket" })
+// Delete database
+d1_delete_database({ databaseId: "your_database_id" })
 
-
-### Workers
-```javascript
-// List workers
-worker_list()
-
-// Get worker code
-worker_get({ name: "my-worker" })
-
-// Update worker
-worker_put({
-    name: "my-worker",
-    script: "addEventListener('fetch', event => { ... })"
+// Execute a single query
+d1_query({
+    databaseId: "your_database_id",
+    query: "SELECT * FROM users WHERE age > ?",
+    params: ["25"] // optional
 })
 
-// Delete worker
-worker_delete({ name: "my-worker" })
+// Create a table
+d1_query({
+    databaseId: "your_database_id",
+    query: `
+        CREATE TABLE users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    `
+})
 ```
 
 ### Analytics
