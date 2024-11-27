@@ -1,14 +1,9 @@
 #!/usr/bin/env node
-import {config as _config } from 'dotenv';
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema, Tool } from "@modelcontextprotocol/sdk/types.js";
 import fetch from "node-fetch";
-
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-const __dirname = dirname(fileURLToPath(import.meta.url))
-_config({ path: __dirname + '/../.env' });
+import { init } from './init'
 
 // Types for Cloudflare responses
 // Types for Cloudflare responses
@@ -234,17 +229,6 @@ const config = {
     apiToken: process.env.CLOUDFLARE_API_TOKEN,
     namespaceId: process.env.CLOUDFLARE_KV_NAMESPACE_ID
 };
-
-if (!config.accountId || !config.apiToken || !config.namespaceId) {
-    log('Missing required environment variables');
-    process.exit(1);
-}
-
-log('Config loaded:', {
-    accountId: config.accountId ? '✓' : '✗',
-    apiToken: config.apiToken ? '✓' : '✗',
-    namespaceId: config.namespaceId ? '✓' : '✗'
-});
 
 // Create server
 // Create server
@@ -672,5 +656,22 @@ process.on('unhandledRejection', (error) => {
     log('Unhandled rejection:', error);
 });
 
-// Start the server
-main();
+const [cmd, ...args] = process.argv.slice(2);
+if (cmd === 'init') {
+  init(args).then(() => console.log("done"))
+} else {
+
+  if (!config.accountId || !config.apiToken || !config.namespaceId) {
+      log('Missing required environment variables');
+      process.exit(1);
+  }
+
+  log('Config loaded:', {
+      accountId: config.accountId ? '✓' : '✗',
+      apiToken: config.apiToken ? '✓' : '✗',
+      namespaceId: config.namespaceId ? '✓' : '✗'
+  });
+
+  // Start the server
+  main();
+}
