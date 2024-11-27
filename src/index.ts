@@ -17,17 +17,17 @@ const [cmd, ...args] = process.argv.slice(2)
 if (cmd === 'init') {
   const [accountId, ...rest] = args
   if (rest.length > 0) {
-    throw new Error(`Usage: npx @cloudflare/mcp-server-cloudflare-preview init [account_id]`)
+    throw new Error(`Usage: npx @cloudflare/mcp-server-cloudflare init [account_id]`)
   }
 
   init(accountId)
 } else if (cmd === 'run') {
   const [accountId, ...rest] = args
   if (!accountId && !config.accountId) {
-    throw new Error(`Missing account ID. Usage: npx @cloudflare/mcp-server-cloudflare-preview run [account_id]`)
+    throw new Error(`Missing account ID. Usage: npx @cloudflare/mcp-server-cloudflare run [account_id]`)
   }
   if (rest.length > 0) {
-    throw new Error(`Too many arguments. Usage: npx @cloudflare/mcp-server-cloudflare-preview run [account_id]`)
+    throw new Error(`Too many arguments. Usage: npx @cloudflare/mcp-server-cloudflare run [account_id]`)
   }
   config.accountId = accountId
 

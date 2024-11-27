@@ -57,7 +57,7 @@ export async function init(accountTag: string | undefined) {
     default:
       if (!accountTag) {
         throw new Error(
-          `${chalk.red('Multiple accounts found.')}\nUse ${chalk.yellow('npx @cloudflare/mcp-server-cloudflare-preview init [account_id]')} to specify which account to use.`,
+          `${chalk.red('Multiple accounts found.')}\nUse ${chalk.yellow('npx @cloudflare/mcp-server-cloudflare init [account_id]')} to specify which account to use.`,
         )
       }
       account = accountTag
