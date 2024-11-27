@@ -14,6 +14,9 @@ import chalk from 'chalk'
 import os from 'node:os'
 import path from 'node:path'
 import fs from 'node:fs'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
 
 const execAsync = promisify(exec)
 
@@ -65,8 +68,8 @@ export async function init(accountTag: string | undefined) {
 
   const claudeConfig = path.join(os.homedir(), 'Library', 'Application Support', 'Claude', 'claude_desktop_config.json')
   const cloudflareConfig = {
-    command: (await execAsync('which npx')).stdout.trim(),
-    args: ['@cloudflare/mcp-server-cloudflare-preview', 'run', account],
+    command: (await execAsync('which node')).stdout.trim(),
+    args: [__filename, 'run', account],
   }
   const fullConfig = { mcpServers: { cloudflare: cloudflareConfig } }
   if (fs.existsSync(claudeConfig)) {
