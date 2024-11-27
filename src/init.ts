@@ -66,14 +66,23 @@ export async function init(accountTag: string | undefined) {
 
   console.log(`✅ Using account: ${chalk.yellow(account)}`)
 
-  const claudeConfig = path.join(os.homedir(), 'Library', 'Application Support', 'Claude', 'claude_desktop_config.json')
+  const claudeConfigPath = path.join(
+    os.homedir(),
+    'Library',
+    'Application Support',
+    'Claude',
+    'claude_desktop_config.json',
+  )
   const cloudflareConfig = {
     command: (await execAsync('which node')).stdout.trim(),
     args: [__filename, 'run', account],
   }
-  const fullConfig = { mcpServers: { cloudflare: cloudflareConfig } }
-  if (fs.existsSync(claudeConfig)) {
-    const existingConfig = JSON.parse(fs.readFileSync(claudeConfig, 'utf8'))
+
+  const configDirExists = isDirectory(path.dirname(claudeConfigPath))
+  if (configDirExists) {
+    const existingConfig = fs.existsSync(claudeConfigPath)
+      ? JSON.parse(fs.readFileSync(claudeConfigPath, 'utf8'))
+      : { mcpServers: {} }
     if ('cloudflare' in existingConfig.mcpServers || {}) {
       console.log(
         `Replacing existing Claude Cloudflare MCP config: ${JSON.stringify(existingConfig.mcpServers.cloudflare)}`,
@@ -86,17 +95,15 @@ export async function init(accountTag: string | undefined) {
         cloudflare: cloudflareConfig,
       },
     }
-    fs.writeFileSync(claudeConfig, JSON.stringify(newConfig, null, 2))
+    fs.writeFileSync(claudeConfigPath, JSON.stringify(newConfig, null, 2))
 
     console.log(`✅ mcp-server-cloudflare configured & added to Claude Desktop!`)
-    console.log(`Try asking Claude to "deploy a hello world cloudflare worker" to get started!`)
-  } else if (isDirectory(path.dirname(claudeConfig))) {
-    fs.writeFileSync(claudeConfig, JSON.stringify(fullConfig, null, 2))
-    console.log(`✅ mcp-server-cloudflare configured & added to Claude Desktop!`)
-    console.log(`Try asking Claude to "deploy a hello world cloudflare worker" to get started!`)
+    console.log(`Wrote the following config:\n${JSON.stringify(newConfig, null, 2)}`)
+    console.log(`Try asking Claude to "tell me which Workers I have on my account" to get started!`)
   } else {
+    const fullConfig = { mcpServers: { cloudflare: cloudflareConfig } }
     console.log(
-      `Couldn't detect Claude Desktop config at ${claudeConfig}.\nTo add the Cloudflare MCP server manually, add the following config to your ${chalk.yellow('claude_desktop_configs.json')} file:\n\n${JSON.stringify(fullConfig, null, 2)}`,
+      `Couldn't detect Claude Desktop config at ${claudeConfigPath}.\nTo add the Cloudflare MCP server manually, add the following config to your ${chalk.yellow('claude_desktop_configs.json')} file:\n\n${JSON.stringify(fullConfig, null, 2)}`,
     )
   }
 }

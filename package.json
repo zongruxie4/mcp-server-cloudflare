@@ -14,6 +14,7 @@
     "dist",
     "README.md"
   ],
+  "access": "public",
   "bin": {
     "mcp-server-cloudflare": "dist/index.js"
   },

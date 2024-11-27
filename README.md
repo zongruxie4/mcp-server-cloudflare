@@ -1,14 +1,8 @@
-# Cloudflare MCP Server
+# Cloudflare MCP Server (WIP)
 
 This is a Model Context Protocol (MCP) server for interacting with Cloudflare services. It provides a unified interface for managing Cloudflare KV Store, Workers, and Analytics.
 
 ## Features
-
-### KV Store Operations
-- `kv_get`: Retrieve a value from KV store
-- `kv_put`: Store a value in KV store
-- `kv_delete`: Delete a key from KV store
-- `kv_list`: List keys in KV store
 
 ### Workers Management
 - `worker_list`: List all Workers in your account
@@ -23,17 +17,8 @@ This is a Model Context Protocol (MCP) server for interacting with Cloudflare se
 
 ## Setup
 
-1. Clone this repository
-2. Copy `.env.example` to `.env` and fill in your Cloudflare credentials:
-   ```
-   CLOUDFLARE_ACCOUNT_ID=your_account_id_here
-   CLOUDFLARE_API_TOKEN=your_api_token_here
-   CLOUDFLARE_KV_NAMESPACE_ID=your_namespace_id_here
-   ```
-3. Install dependencies: `npm install`
-4. Run the server: `./start-cloudflare.sh`
-
-## Usage Examples
+1. Run `npx @cloudflare/mcp-server-cloudflare init`
+2. Restart Claude Desktop, you should see a small 🔨 icon that shows the following tools available for use:
 
 ### KV Store
 ```javascript
@@ -72,12 +57,19 @@ analytics_get({
 })
 ```
 
-## Security Notes
-
-- Never commit your `.env` file
-- Ensure your Cloudflare API token has appropriate permissions
-- Monitor analytics for suspicious activity
-
 ## Contributing
+
+In the current project folder, run:
+
+```
+pnpm install
+pnpm build:watch
+```
+
+Then, in a second terminal:
+
+```
+node dist/index.js
+```
 
 Contributions are welcome! Please feel free to submit a Pull Request.
