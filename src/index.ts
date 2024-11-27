@@ -1,9 +1,14 @@
 #!/usr/bin/env node
-import 'dotenv/config';
+import {config as _config } from 'dotenv';
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema, Tool } from "@modelcontextprotocol/sdk/types.js";
 import fetch from "node-fetch";
+
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const __dirname = dirname(fileURLToPath(import.meta.url))
+_config({ path: __dirname + '/../.env' });
 
 // Types for Cloudflare responses
 // Types for Cloudflare responses
@@ -105,8 +110,6 @@ const WORKER_DELETE_TOOL: Tool = {
 const WORKER_TOOLS = [WORKER_LIST_TOOL, WORKER_GET_TOOL, WORKER_PUT_TOOL, WORKER_DELETE_TOOL];
 
 // Combine all tools
-
-
 
 
 interface CloudflareListResponse {
@@ -237,7 +240,7 @@ if (!config.accountId || !config.apiToken || !config.namespaceId) {
     process.exit(1);
 }
 
-log('Config loaded:', { 
+log('Config loaded:', {
     accountId: config.accountId ? '✓' : '✗',
     apiToken: config.apiToken ? '✓' : '✗',
     namespaceId: config.namespaceId ? '✓' : '✗'
@@ -254,40 +257,40 @@ const server = new Server(
 async function handleWorkerList() {
   log('Executing worker_list');
   const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/workers/scripts`;
-  
+
   const response = await fetch(url, {
       headers: { 'Authorization': `Bearer ${config.apiToken}` }
   });
-  
+
   log('Worker list response status:', response.status);
-  
+
   if (!response.ok) {
       const error = await response.text();
       log('Worker list error:', error);
       throw new Error(`Failed to list workers: ${error}`);
   }
-  
+
   const data = await response.json() as CloudflareWorkerListResponse;  // Add type assertion here
   log('Worker list success:', data);
   return data.result;
 }
-  
+
 async function handleWorkerGet(name: string) {
   log('Executing worker_get for script:', name);
   const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/workers/scripts/${name}`;
-  
+
   const response = await fetch(url, {
       headers: { 'Authorization': `Bearer ${config.apiToken}` }
   });
-  
+
   log('Worker get response status:', response.status);
-  
+
   if (!response.ok) {
       const error = await response.text();
       log('Worker get error:', error);
       throw new Error(`Failed to get worker: ${error}`);
   }
-  
+
   const data = await response.text();
   return data;
 }
@@ -295,7 +298,7 @@ async function handleWorkerGet(name: string) {
 async function handleWorkerPut(name: string, script: string) {
   log('Executing worker_put for script:', name);
   const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/workers/scripts/${name}`;
-  
+
   const metadata = {
       body_part: "script",
       'content-type': "application/javascript",
@@ -313,35 +316,35 @@ async function handleWorkerPut(name: string, script: string) {
       },
       body: formData
   });
-  
+
   log('Worker put response status:', response.status);
-  
+
   if (!response.ok) {
       const error = await response.text();
       log('Worker put error:', error);
       throw new Error(`Failed to put worker: ${error}`);
   }
-  
+
   return 'Success';
 }
 
 async function handleWorkerDelete(name: string) {
   log('Executing worker_delete for script:', name);
   const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/workers/scripts/${name}`;
-  
+
   const response = await fetch(url, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${config.apiToken}` }
   });
-  
+
   log('Worker delete response status:', response.status);
-  
+
   if (!response.ok) {
       const error = await response.text();
       log('Worker delete error:', error);
       throw new Error(`Failed to delete worker: ${error}`);
   }
-  
+
   return 'Success';
 }
 
@@ -355,19 +358,19 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 async function handleGet(key: string) {
     log('Executing kv_get for key:', key);
     const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/storage/kv/namespaces/${config.namespaceId}/values/${key}`;
-    
+
     const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${config.apiToken}` }
     });
-    
+
     log('KV get response status:', response.status);
-    
+
     if (!response.ok) {
         const error = await response.text();
         log('KV get error:', error);
         throw new Error(`Failed to get value: ${error}`);
     }
-    
+
     const value = await response.text();
     log('KV get success:', value);
     return value;
@@ -376,7 +379,7 @@ async function handleGet(key: string) {
 async function handlePut(key: string, value: string, expirationTtl?: number) {
     log('Executing kv_put for key:', key);
     const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/storage/kv/namespaces/${config.namespaceId}/values/${key}`;
-    
+
     const response = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -386,35 +389,35 @@ async function handlePut(key: string, value: string, expirationTtl?: number) {
         body: value,
         ...(expirationTtl ? { query: { expiration_ttl: expirationTtl } } : {})
     });
-    
+
     log('KV put response status:', response.status);
-    
+
     if (!response.ok) {
         const error = await response.text();
         log('KV put error:', error);
         throw new Error(`Failed to put value: ${error}`);
     }
-    
+
     return 'Success';
 }
 
 async function handleDelete(key: string) {
     log('Executing kv_delete for key:', key);
     const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/storage/kv/namespaces/${config.namespaceId}/values/${key}`;
-    
+
     const response = await fetch(url, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${config.apiToken}` }
     });
-    
+
     log('KV delete response status:', response.status);
-    
+
     if (!response.ok) {
         const error = await response.text();
         log('KV delete error:', error);
         throw new Error(`Failed to delete key: ${error}`);
     }
-    
+
     return 'Success';
 }
 
@@ -423,21 +426,21 @@ async function handleList(prefix?: string, limit?: number) {
     const params = new URLSearchParams();
     if (prefix) params.append('prefix', prefix);
     if (limit) params.append('limit', limit.toString());
-    
+
     const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/storage/kv/namespaces/${config.namespaceId}/keys?${params}`;
-    
+
     const response = await fetch(url, {
         headers: { 'Authorization': `Bearer ${config.apiToken}` }
     });
-    
+
     log('KV list response status:', response.status);
-    
+
     if (!response.ok) {
         const error = await response.text();
         log('KV list error:', error);
         throw new Error(`Failed to list keys: ${error}`);
     }
-    
+
     const data = await response.json() as CloudflareListResponse;
     log('KV list success:', data);
     return data.result;
@@ -448,7 +451,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     log('Received tool call:', request.params.name);
 
 
-    
+
     try {
         switch (request.params.name) {
             case "kv_get": {
@@ -470,10 +473,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                   since?: string;
                   until?: string;
               };
-              const date = since ? 
-              new Date(since).toISOString().split('T')[0] : 
+              const date = since ?
+              new Date(since).toISOString().split('T')[0] :
               new Date().toISOString().split('T')[0];
-      
+
           const graphqlQuery = {
               query: `query {
                   viewer {
@@ -501,7 +504,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               }`
           };
 
-              
+
           const analyticsResponse = await fetch(
             'https://api.cloudflare.com/client/v4/graphql',
             {
@@ -513,11 +516,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 body: JSON.stringify(graphqlQuery)
             }
         );
-    
+
         if (!analyticsResponse.ok) {
             throw new Error(`Analytics API error: ${await analyticsResponse.text()}`);
         }
-          
+
         const analyticsData = await analyticsResponse.json();
         return {
             toolResult: {
@@ -528,7 +531,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             }
         };
     }
-            
+
             case "kv_put": {
                 const { key, value, expirationTtl } = request.params.arguments as {
                     key: string;
@@ -545,7 +548,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     }
                 };
             }
-            
+
             case "kv_delete": {
                 const { key } = request.params.arguments as { key: string };
                 await handleDelete(key);
@@ -558,7 +561,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     }
                 };
             }
-            
+
             case "kv_list": {
                 const { prefix, limit } = request.params.arguments as {
                     prefix?: string;
@@ -585,7 +588,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                   }
               };
           }
-          
+
           case "worker_get": {
               const { name } = request.params.arguments as { name: string };
               const script = await handleWorkerGet(name);
@@ -598,7 +601,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                   }
               };
           }
-          
+
           case "worker_put": {
               const { name, script } = request.params.arguments as {
                   name: string;
@@ -614,7 +617,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                   }
               };
           }
-          
+
           case "worker_delete": {
               const { name } = request.params.arguments as { name: string };
               await handleWorkerDelete(name);
@@ -628,7 +631,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               };
           }
 
-            
+
             default:
                 throw new Error(`Unknown tool: ${request.params.name}`);
         }

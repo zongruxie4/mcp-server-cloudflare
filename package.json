@@ -1,31 +1,37 @@
 {
-    "name": "@modelcontextprotocol/server-cloudflare-kv",
-    "version": "0.5.0",
-    "description": "MCP server for interacting with Cloudflare KV stores",
-    "license": "MIT",
-    "author": "Cloudflare, Inc. (https://cloudflare.com)",
-    "homepage": "https://modelcontextprotocol.io",
-    "bugs": "https://github.com/modelcontextprotocol/servers/issues",
-    "type": "module",
-    "bin": {
-        "mcp-server-cloudflare-kv": "dist/index.js"
-    },
-    "files": [
-        "dist"
-    ],
-    "scripts": {
-        "build": "tsc && shx chmod +x dist/*.js",
-        "prepare": "npm run build",
-        "watch": "tsc --watch"
-    },
-    "dependencies": {
-        "@cloudflare/workers-types": "^4.20240208.0",
-        "@modelcontextprotocol/sdk": "^0.6.0",
-        "dotenv": "^16.4.5",
-        "node-fetch": "^3.3.2"
-    },
-    "devDependencies": {
-        "shx": "^0.3.4",
-        "typescript": "^5.6.2"
-    }
+  "name": "@cfpreview/mcp-server-cloudflare",
+  "version": "0.0.1",
+  "description": "MCP server for interacting with Cloudflare API",
+  "license": "MIT",
+  "author": "Cloudflare, Inc. (https://cloudflare.com)",
+  "homepage": "https://github.com/geelen/mcp-cloudflare",
+  "bugs": "https://github.com/geelen/mcp-cloudflare/issues",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "bin": {
+    "mcp-server-cloudflare": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --dts --format esm",
+    "postbuild": "shx chmod +x dist/*.js",
+    "build:watch": "pnpm build --watch"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0",
+    "dotenv": "^16.4.5",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241112.0",
+    "@types/node": "^22.10.0",
+    "shx": "^0.3.4",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.2"
+  }
 }
