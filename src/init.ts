@@ -98,7 +98,7 @@ export async function init(accountTag: string | undefined) {
     'claude_desktop_config.json',
   )
   const cloudflareConfig = {
-    command: (await which('node')).stdout.trim(),
+    command: (await which('node')).trim(),
     args: [__filename, 'run', account],
   }
 
