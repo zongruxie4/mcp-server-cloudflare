@@ -42,7 +42,40 @@ This is a Model Context Protocol (MCP) server for interacting with Cloudflare se
 1. Run `npx @cloudflare/mcp-server-cloudflare init`
 2. Restart Claude Desktop, you should see a small 🔨 icon that shows the following tools available for use:
 
+### Workers
+```javascript
+// List workers
+worker_list()
+
+// Get worker code
+worker_get({ name: "my-worker" })
+
+// Update worker
+worker_put({
+  name: "my-worker",
+  script: "export default { async fetch(request, env, ctx) { ... }}",
+  bindings: [
+    {
+      type: "kv_namespace",
+      name: "MY_KV",
+      namespace_id: "abcd1234"
+    },
+    {
+      type: "r2_bucket",
+      name: "MY_BUCKET",
+      bucket_name: "my-files"
+    }
+  ],
+  compatibility_date: "2024-01-01",
+  compatibility_flags: ["nodejs_compat"]
+})
+
+// Delete worker
+worker_delete({ name: "my-worker" })
+```
+
 ### KV Store
+
 ```javascript
 // List KV namespaces
 get_kvs()
@@ -76,6 +109,44 @@ kv_delete({
 ```
 
 ### R2 Storage
+```javascript
+// List buckets
+r2_list_buckets()
+
+// Create bucket
+r2_create_bucket({ name: "my-bucket" })
+
+// Delete bucket
+r2_delete_bucket({ name: "my-bucket" })
+
+// List objects in bucket
+r2_list_objects({ 
+    bucket: "my-bucket",
+    prefix: "folder/", // optional
+    delimiter: "/", // optional
+    limit: 1000 // optional
+})
+
+// Get object
+r2_get_object({
+    bucket: "my-bucket",
+    key: "folder/file.txt"
+})
+
+// Put object
+r2_put_object({
+    bucket: "my-bucket",
+    key: "folder/file.txt",
+    content: "Hello, World!",
+    contentType: "text/plain" // optional
+})
+
+// Delete object
+r2_delete_object({
+    bucket: "my-bucket",
+    key: "folder/file.txt"
+})
+```
 
 ### D1 Database
 ```javascript
@@ -110,6 +181,7 @@ d1_query({
 ```
 
 ### Analytics
+
 ```javascript
 // Get today's analytics
 analytics_get({
