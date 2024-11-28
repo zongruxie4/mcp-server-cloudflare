@@ -36,18 +36,6 @@ interface CloudflareWorkerResponse {
   messages: any[]
 }
 
-// Interface for Worker bindings
-interface WorkerBinding {
-  type: 'kv_namespace' | 'r2_bucket' | 'd1_database' | 'service' | 'analytics_engine' | 'queue'
-  name: string
-  namespace_id?: string // For KV
-  bucket_name?: string // For R2
-  database_id?: string // For D1
-  service?: string // For service bindings
-  dataset?: string // For analytics
-  queue_name?: string // For queues
-}
-
 // New Worker Tool definitions
 const WORKER_LIST_TOOL: Tool = {
   name: 'worker_list',
@@ -75,7 +63,7 @@ const WORKER_GET_TOOL: Tool = {
 // Update the WORKER_PUT_TOOL definition
 const WORKER_PUT_TOOL: Tool = {
   name: 'worker_put',
-  description: 'Create or update a Worker script using Module Syntax with optional bindings and compatibility settings',
+  description: 'Create or update a Worker script with optional bindings and compatibility settings',
   inputSchema: {
     type: 'object',
     properties: {
@@ -95,8 +83,17 @@ const WORKER_PUT_TOOL: Tool = {
           properties: {
             type: {
               type: 'string',
-              description: 'Type of binding (kv_namespace, r2_bucket, d1_database, service, analytics_engine, queue)',
-              enum: ['kv_namespace', 'r2_bucket', 'd1_database', 'service', 'analytics_engine', 'queue'],
+              description:
+                'Type of binding (kv_namespace, r2_bucket, d1_database, service, analytics_engine, queue, durable_object)',
+              enum: [
+                'kv_namespace',
+                'r2_bucket',
+                'd1_database',
+                'service',
+                'analytics_engine',
+                'queue',
+                'durable_object_namespace',
+              ],
             },
             name: {
               type: 'string',
@@ -126,8 +123,57 @@ const WORKER_PUT_TOOL: Tool = {
               type: 'string',
               description: 'Name of the queue (required for queue type)',
             },
+            class_name: {
+              type: 'string',
+              description: 'Name of the Durable Object class (required for durable_object_namespace type)',
+            },
+            script_name: {
+              type: 'string',
+              description: 'Optional script name for external Durable Object bindings',
+            },
           },
           required: ['type', 'name'],
+        },
+      },
+      migrations: {
+        type: 'object',
+        description:
+          'Optional migrations object which describes the set of new/changed/deleted Durable Objects to apply when deploying this worker e.g. adding a new Durable Object for the first time requires an entry in the "new_sqlite_classes" or "new_classes" property.',
+        items: {
+          properties: {
+            new_tag: {
+              type: 'string',
+              description: 'The current version after applying this migration (e.g., "v1", "v2")',
+            },
+            new_classes: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'The new Durable Objects using legacy storage being added',
+            },
+            new_sqlite_classes: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'The new Durable Objects using the new, improved SQLite storage being added',
+            },
+            renamed_classes: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  from: { type: 'string' },
+                  to: { type: 'string' },
+                },
+                required: ['from', 'to'],
+              },
+              description: 'The Durable Objects being renamed',
+            },
+            deleted_classes: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'The Durable Objects being removed',
+            },
+          },
+          required: ['tag'],
         },
       },
       compatibility_date: {
@@ -140,6 +186,15 @@ const WORKER_PUT_TOOL: Tool = {
         items: {
           type: 'string',
         },
+      },
+      skip_workers_dev: {
+        type: 'boolean',
+        description: `Do not deploy the Worker on your workers.dev subdomain. Should be set to true if the user already has a domain name, or doesn't want this worker to be publicly accessible..`,
+      },
+      no_observability: {
+        type: 'boolean',
+        description:
+          'Disable Worker Logs for this worker, which automatically ingests logs emitted from Cloudflare Workers and lets you filter, and analyze them in the Cloudflare dashboard.',
       },
     },
     required: ['name', 'script'],
@@ -203,13 +258,105 @@ export async function handleWorkerGet(name: string) {
   return data
 }
 
+export interface Observability {
+  /** If observability is enabled for this Worker */
+  enabled: boolean
+  /** The sampling rate */
+  head_sampling_rate?: number
+}
+
+interface CfDurableObjectMigrations {
+  tag: string
+  new_classes?: string[]
+  new_sqlite_classes?: string[]
+  renamed_classes?: {
+    from: string
+    to: string
+  }[]
+  deleted_classes?: string[]
+}
+
+interface DurableObjectBinding {
+  type: 'durable_object_namespace'
+  name: string
+  class_name: string
+  script_name?: string // Optional, defaults to the current worker
+}
+
+// Update WorkerBinding to include Durable Objects
+type WorkerMetadataBinding =
+  | {
+      type: 'kv_namespace'
+      name: string
+      namespace_id: string
+    }
+  | {
+      type: 'r2_bucket'
+      name: string
+      bucket_name: string
+    }
+  | {
+      type: 'd1_database'
+      name: string
+      database_id: string
+    }
+  | {
+      type: 'service'
+      name: string
+      service: string
+    }
+  | {
+      type: 'analytics_engine'
+      name: string
+      dataset: string
+    }
+  | {
+      type: 'queue'
+      name: string
+      queue_name: string
+    }
+  | DurableObjectBinding
+
+type WorkerMetadataPut = {
+  /** The name of the entry point module. Only exists when the worker is in the ES module format */
+  main_module?: string
+  /** The name of the entry point module. Only exists when the worker is in the service-worker format */
+  // body_part?: string;
+  compatibility_date?: string
+  compatibility_flags?: string[]
+  // usage_model?: "bundled" | "unbound";
+  migrations?: CfDurableObjectMigrations
+  // capnp_schema?: string;
+  bindings: WorkerMetadataBinding[]
+  // keep_bindings?: (
+  // 	| WorkerMetadataBinding["type"]
+  // 	| "secret_text"
+  // 	| "secret_key"
+  // )[];
+  // logpush?: boolean;
+  // placement?: CfPlacement;
+  // tail_consumers?: CfTailConsumer[];
+  // limits?: CfUserLimits;
+
+  // assets?: {
+  // 	jwt: string;
+  // 	config?: AssetConfig;
+  // };
+  observability?: Observability | undefined
+  // Allow unsafe.metadata to add arbitrary properties at runtime
+  [key: string]: unknown
+}
+
 // Update the handleWorkerPut function
 export async function handleWorkerPut(
   name: string,
   script: string,
-  bindings?: WorkerBinding[],
+  bindings?: WorkerMetadataBinding[],
   compatibility_date?: string,
   compatibility_flags?: string[],
+  migrations?: CfDurableObjectMigrations,
+  workers_dev?: boolean,
+  observability?: boolean,
 ) {
   log('Executing worker_put for script:', name)
   const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/workers/scripts/${name}`
@@ -219,6 +366,8 @@ export async function handleWorkerPut(
     bindings: bindings || [],
     compatibility_date: compatibility_date || '2024-01-01',
     compatibility_flags: compatibility_flags || [],
+    ...(migrations ? { migrations } : {}),
+    observability: observability ? { enabled: true } : undefined,
   }
 
   // Create form data with metadata and script
@@ -245,6 +394,26 @@ export async function handleWorkerPut(
     const error = await response.text()
     log('Worker put error:', error)
     throw new Error(`Failed to put worker: ${error}`)
+  }
+
+  if (workers_dev) {
+    const response = await fetch(url + '/subdomain', {
+      method: 'POST',
+      body: JSON.stringify({
+        enabled: true,
+      }),
+      headers: {
+        Authorization: `Bearer ${config.apiToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+    log('Subdomain post response status:', response.status)
+
+    if (!response.ok) {
+      const error = await response.text()
+      log('Worker subdomain POST error:', error)
+      throw new Error(`Failed to update subdomain: ${error}`)
+    }
   }
 
   return 'Success'
@@ -301,14 +470,35 @@ export const WORKERS_HANDLERS: ToolHandlers = {
   },
 
   worker_put: async (request) => {
-    const { name, script, bindings, compatibility_date, compatibility_flags } = request.params.arguments as {
+    const {
+      name,
+      script,
+      bindings,
+      compatibility_date,
+      compatibility_flags,
+      migrations,
+      skip_workers_dev,
+      no_observability,
+    } = request.params.arguments as {
       name: string
       script: string
-      bindings?: WorkerBinding[]
+      bindings?: WorkerMetadataBinding[]
       compatibility_date?: string
       compatibility_flags?: string[]
+      migrations?: CfDurableObjectMigrations
+      skip_workers_dev: boolean
+      no_observability: boolean
     }
-    await handleWorkerPut(name, script, bindings, compatibility_date, compatibility_flags)
+    await handleWorkerPut(
+      name,
+      script,
+      bindings,
+      compatibility_date,
+      compatibility_flags,
+      migrations,
+      !skip_workers_dev,
+      !no_observability,
+    )
     return {
       toolResult: {
         content: [

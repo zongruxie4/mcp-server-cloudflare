@@ -39,6 +39,9 @@ importers:
       '@types/node':
         specifier: ^22.10.0
         version: 22.10.0
+      '@types/which':
+        specifier: ^3.0.4
+        version: 3.0.4
       prettier:
         specifier: ^3.4.1
         version: 3.4.1
@@ -332,6 +335,9 @@ packages:
 
   '@types/node@22.10.0':
     resolution: {integrity: sha512-XC70cRZVElFHfIUB40FgZOBbgJYFKKMa5nb9lxcwYstFG/Mi+/Y0bGS+rs6Dmhmkpq4pnNiLiuZAbc02YCOnmA==}
+
+  '@types/which@3.0.4':
+    resolution: {integrity: sha512-liyfuo/106JdlgSchJzXEQCVArk0CvevqPote8F8HgWgJ3dRCcTHgJIsLDuee0kxk/mhbInzIZk3QWSZJ8R+2w==}
 
   ansi-regex@5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
@@ -981,6 +987,8 @@ snapshots:
   '@types/node@22.10.0':
     dependencies:
       undici-types: 6.20.0
+
+  '@types/which@3.0.4': {}
 
   ansi-regex@5.0.1: {}
 
