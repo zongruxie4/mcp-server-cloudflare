@@ -1,6 +1,35 @@
-# Cloudflare MCP Server (WIP)
+# Cloudflare MCP Server
 
-This is a Model Context Protocol (MCP) server for interacting with Cloudflare services. It provides a unified interface for managing Cloudflare KV Store, R2 Storage, D1 Database, Workers, and Analytics.
+Model Context Protocol (MCP) is a [new, standardized protocol](https://modelcontextprotocol.io/introduction) for managing context between large language models (LLMs) and external systems. In this repository, we provide an installer as well as an MCP Server for [Cloudflare's API](https://api.cloudflare.com).
+
+This lets you use Claude Desktop, or any MCP Client, to use natural language to accomplish things on your Cloudflare account, e.g.:
+
+* `Please deploy me a new Worker with an example durable object.`
+* `Can you tell me about the data in my D1 database named '...'?`
+* `Can you copy all the entries from my KV namespace '...' into my R2 bucket '...'?`
+
+## Demo
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=vGajZpl_9yA">
+    <img src="https://img.youtube.com/vi/vGajZpl_9yA/maxresdefault.jpg" alt="Demonstrating the newly-released MCP server to explore Cloudflare properties, like Workers, KV, and D1." width="600"/>
+  </a>
+</div>
+
+## Setup
+
+1. Run `npx @cloudflare/mcp-server-cloudflare init`
+
+<div align="left">
+    <img src="https://github.com/user-attachments/assets/163bed75-ec0c-478a-94b2-179969a90923" alt="Example console output" width="300"/>
+</div>
+
+2. Restart Claude Desktop, you should see a small 🔨 icon that shows the following tools available for use:
+
+<div align="left">
+    <img src="https://github.com/user-attachments/assets/a24275b1-1c6f-4754-96ef-dd7b9f0f5903" alt="Example tool icon" height="160"/>
+    <img src="https://github.com/user-attachments/assets/4fb8badb-6800-4a3f-a530-a344b3584bec" alt="Example tool list" height="160"/>
+</div>
 
 ## Features
 
@@ -37,12 +66,31 @@ This is a Model Context Protocol (MCP) server for interacting with Cloudflare se
   - Includes metrics like requests, bandwidth, threats, and page views
   - Supports date range filtering
 
-## Setup
+## Developing
 
-1. Run `npx @cloudflare/mcp-server-cloudflare init`
-2. Restart Claude Desktop, you should see a small 🔨 icon that shows the following tools available for use:
+In the current project folder, run:
+
+```
+pnpm install
+pnpm build:watch
+```
+
+Then, in a second terminal:
+
+```
+node dist/index.js init
+```
+
+This will link Claude Desktop against your locally-installed version for you to test.
+
+## Usage outside of Claude
+
+To run the server locally, run `node dist/index run <account-id>`.
+
+If you're using an alternative MCP Client, or testing things locally, emit the `tools/list` command to get an up-to-date list of all available tools. Then you can call these directly using the `tools/call` command.
 
 ### Workers
+
 ```javascript
 // List workers
 worker_list()
@@ -109,6 +157,7 @@ kv_delete({
 ```
 
 ### R2 Storage
+
 ```javascript
 // List buckets
 r2_list_buckets()
@@ -149,6 +198,7 @@ r2_delete_object({
 ```
 
 ### D1 Database
+
 ```javascript
 // List databases
 d1_list_databases()
@@ -192,20 +242,5 @@ analytics_get({
 ```
 
 ## Contributing
-
-In the current project folder, run:
-
-```
-pnpm install
-pnpm build:watch
-```
-
-Then, in a second terminal:
-
-```
-node dist/index.js init
-```
-
-This will link Claude Desktop against your locally-installed version for you to test.
 
 Contributions are welcome! Please feel free to submit a Pull Request.
