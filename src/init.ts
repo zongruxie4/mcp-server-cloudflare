@@ -17,6 +17,7 @@ import fs from 'node:fs'
 import { fileURLToPath } from 'url'
 import { createDialog, endSection, logRaw, startSection, updateStatus } from './utils/c3'
 import { mcpCloudflareVersion } from './utils/helpers'
+import which from 'which'
 
 const __filename = fileURLToPath(import.meta.url)
 
@@ -27,8 +28,8 @@ export async function init(accountTag: string | undefined) {
     createDialog([
       `👋 Welcome to ${chalk.yellow('mcp-server-cloudflare')} v${mcpCloudflareVersion}!`,
       `💁‍♀️ This ${chalk.green("'init'")} process will ensure you're connected to the Cloudflare API`,
-      '   and install the Cloudflare MCP Server into Claude Desktop',
-      'ℹ️ For more information, visit https://github.com/cloudflare/mcp-server-cloudflare',
+      `   and install the Cloudflare MCP Server into Claude Desktop (${chalk.blue.underline('https://claude.ai/download')})`,
+      `ℹ️ For more information, visit ${chalk.blue.underline('https://github.com/cloudflare/mcp-server-cloudflare')}`,
       `🧡 Let's get started.`,
     ]),
   )
@@ -97,7 +98,7 @@ export async function init(accountTag: string | undefined) {
     'claude_desktop_config.json',
   )
   const cloudflareConfig = {
-    command: (await execAsync('which node')).stdout.trim(),
+    command: (await which('node')).stdout.trim(),
     args: [__filename, 'run', account],
   }
 

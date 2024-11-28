@@ -142,3 +142,9 @@ export const format = (
 export const endSection = (heading: string, subheading?: string) => {
   logRaw(`${gray(shapes.corners.bl)} ${brandColor(heading)} ${subheading ? dim(subheading) : ''}\n`)
 }
+
+// Create a hyperlink in terminal
+// It works in iTerm2 and VSCode's terminal, but not macOS built-in terminal app
+export const hyperlink = (url: string, label = url) => {
+  return `\u001B]8;;${url}\u001B\\${label}\u001B]8;;\u001B\\`
+}
