@@ -1,6 +1,6 @@
 // Add D1 tool definitions
 import { config, log } from '../utils/helpers'
-import fetch from 'node-fetch'
+import { fetch } from 'undici'
 import { Tool } from '@modelcontextprotocol/sdk/types.js'
 import { ToolHandlers } from '../utils/types'
 
@@ -133,7 +133,7 @@ export async function handleD1CreateDatabase(name: string) {
     throw new Error(`Failed to create D1 database: ${error}`)
   }
 
-  const data = await response.json()
+  const data = (await response.json()) as CloudflareD1DatabasesResponse
   return data.result
 }
 

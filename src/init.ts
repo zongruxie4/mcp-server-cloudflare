@@ -34,17 +34,17 @@ export async function init(accountTag: string | undefined) {
   )
 
   startSection(`Checking for existing Wrangler auth info`, `Step 1 of 3`)
+  updateStatus(chalk.gray(`If anything goes wrong, try running 'npx wrangler@latest login' manually and retrying.`))
 
   try {
     getAuthTokens()
   } catch (e: any) {
     updateStatus(`${chalk.underline.red('Warning:')} ${chalk.gray(e.message)}`, false)
-    updateStatus(`Running '${chalk.yellow('npx wrangler login')}' and retrying...`)
+    updateStatus(`Running '${chalk.yellow('npx wrangler login')}' and retrying...`, false)
 
     const { stderr, stdout } = await execAsync('npx wrangler@latest login')
-    if (stderr) {
-      throw new Error(stderr)
-    }
+    if (stderr) updateStatus(chalk.gray(stderr))
+
     getAuthTokens()
   }
 
@@ -55,7 +55,7 @@ export async function init(accountTag: string | undefined) {
     if (await refreshToken()) {
       updateStatus('Successfully refreshed access token')
     } else {
-      updateStatus('Failed to refresh access token')
+      throw new Error('Failed to refresh access token')
     }
   }
 

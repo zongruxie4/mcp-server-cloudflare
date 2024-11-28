@@ -1,5 +1,5 @@
 import { Tool } from '@modelcontextprotocol/sdk/types.js'
-import fetch from 'node-fetch'
+import { fetch } from 'undici'
 import { config } from '../utils/helpers'
 import { ToolHandlers } from '../utils/types'
 

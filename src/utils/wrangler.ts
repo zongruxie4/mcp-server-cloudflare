@@ -10,6 +10,7 @@ import xdgAppPaths from 'xdg-app-paths'
 import TOML from '@iarna/toml'
 import assert from 'node:assert'
 import { mcpCloudflareVersion } from './helpers'
+import { fetch, Headers, Response, RequestInit, HeadersInit } from 'undici'
 
 export function isDirectory(configPath: string) {
   try {
@@ -406,7 +407,7 @@ function cloneHeaders(headers: HeadersInit | undefined): Record<string, string> 
     ? Object.fromEntries(headers.entries())
     : Array.isArray(headers)
       ? Object.fromEntries(headers)
-      : { ...headers }
+      : ({ ...headers } as Record<string, string>)
 }
 
 function addAuthorizationHeaderIfUnspecified(headers: Record<string, string>, auth: ApiCredentials): void {

@@ -1,6 +1,6 @@
 // Add R2 tool definitions
 import { config, log } from '../utils/helpers'
-import fetch from 'node-fetch'
+import { fetch } from 'undici'
 import { ToolHandlers } from '../utils/types'
 import { Tool } from '@modelcontextprotocol/sdk/types.js'
 
