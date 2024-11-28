@@ -36,6 +36,18 @@ interface CloudflareWorkerResponse {
   messages: any[]
 }
 
+// Interface for Worker bindings
+interface WorkerBinding {
+  type: 'kv_namespace' | 'r2_bucket' | 'd1_database' | 'service' | 'analytics_engine' | 'queue'
+  name: string
+  namespace_id?: string // For KV
+  bucket_name?: string // For R2
+  database_id?: string // For D1
+  service?: string // For service bindings
+  dataset?: string // For analytics
+  queue_name?: string // For queues
+}
+
 // New Worker Tool definitions
 const WORKER_LIST_TOOL: Tool = {
   name: 'worker_list',
@@ -59,9 +71,11 @@ const WORKER_GET_TOOL: Tool = {
     required: ['name'],
   },
 }
+
+// Update the WORKER_PUT_TOOL definition
 const WORKER_PUT_TOOL: Tool = {
   name: 'worker_put',
-  description: 'Create or update a Worker script',
+  description: 'Create or update a Worker script using Module Syntax with optional bindings and compatibility settings',
   inputSchema: {
     type: 'object',
     properties: {
@@ -73,10 +87,65 @@ const WORKER_PUT_TOOL: Tool = {
         type: 'string',
         description: 'The Worker script content',
       },
+      bindings: {
+        type: 'array',
+        description: 'Optional array of resource bindings (KV, R2, D1, etc)',
+        items: {
+          type: 'object',
+          properties: {
+            type: {
+              type: 'string',
+              description: 'Type of binding (kv_namespace, r2_bucket, d1_database, service, analytics_engine, queue)',
+              enum: ['kv_namespace', 'r2_bucket', 'd1_database', 'service', 'analytics_engine', 'queue'],
+            },
+            name: {
+              type: 'string',
+              description: 'Name of the binding in the Worker code',
+            },
+            namespace_id: {
+              type: 'string',
+              description: 'ID of the KV namespace (required for kv_namespace type)',
+            },
+            bucket_name: {
+              type: 'string',
+              description: 'Name of the R2 bucket (required for r2_bucket type)',
+            },
+            database_id: {
+              type: 'string',
+              description: 'ID of the D1 database (required for d1_database type)',
+            },
+            service: {
+              type: 'string',
+              description: 'Name of the service (required for service type)',
+            },
+            dataset: {
+              type: 'string',
+              description: 'Name of the analytics dataset (required for analytics_engine type)',
+            },
+            queue_name: {
+              type: 'string',
+              description: 'Name of the queue (required for queue type)',
+            },
+          },
+          required: ['type', 'name'],
+        },
+      },
+      compatibility_date: {
+        type: 'string',
+        description: 'Optional compatibility date for the Worker (e.g., "2024-01-01")',
+      },
+      compatibility_flags: {
+        type: 'array',
+        description: 'Optional array of compatibility flags',
+        items: {
+          type: 'string',
+        },
+      },
     },
     required: ['name', 'script'],
   },
 }
+
 const WORKER_DELETE_TOOL: Tool = {
   name: 'worker_delete',
   description: 'Delete a Worker script',
@@ -134,19 +203,33 @@ export async function handleWorkerGet(name: string) {
   return data
 }
 
-export async function handleWorkerPut(name: string, script: string) {
+// Update the handleWorkerPut function
+export async function handleWorkerPut(
+  name: string,
+  script: string,
+  bindings?: WorkerBinding[],
+  compatibility_date?: string,
+  compatibility_flags?: string[],
+) {
   log('Executing worker_put for script:', name)
   const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/workers/scripts/${name}`
 
   const metadata = {
-    body_part: 'script',
-    'content-type': 'application/javascript',
+    main_module: 'worker.js',
+    bindings: bindings || [],
+    compatibility_date: compatibility_date || '2024-01-01',
+    compatibility_flags: compatibility_flags || [],
   }
 
   // Create form data with metadata and script
   const formData = new FormData()
-  formData.append('metadata', JSON.stringify(metadata))
-  formData.append('script', script)
+  formData.set('metadata', JSON.stringify(metadata))
+  formData.set(
+    'worker.js',
+    new File([script], 'worker.js', {
+      type: 'application/javascript+module',
+    }),
+  )
 
   const response = await fetch(url, {
     method: 'PUT',
@@ -218,11 +301,14 @@ export const WORKERS_HANDLERS: ToolHandlers = {
   },
 
   worker_put: async (request) => {
-    const { name, script } = request.params.arguments as {
+    const { name, script, bindings, compatibility_date, compatibility_flags } = request.params.arguments as {
       name: string
       script: string
+      bindings?: WorkerBinding[]
+      compatibility_date?: string
+      compatibility_flags?: string[]
     }
-    await handleWorkerPut(name, script)
+    await handleWorkerPut(name, script, bindings, compatibility_date, compatibility_flags)
     return {
       toolResult: {
         content: [
