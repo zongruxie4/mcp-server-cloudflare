@@ -108,7 +108,7 @@ export async function init(accountTag: string | undefined) {
     const existingConfig = fs.existsSync(claudeConfigPath)
       ? JSON.parse(fs.readFileSync(claudeConfigPath, 'utf8'))
       : { mcpServers: {} }
-    if ('cloudflare' in existingConfig.mcpServers || {}) {
+    if ('cloudflare' in (existingConfig?.mcpServers || {})) {
       updateStatus(
         `${chalk.green('Note:')} Replacing existing Cloudflare MCP config:\n${chalk.gray(JSON.stringify(existingConfig.mcpServers.cloudflare))}`,
       )
