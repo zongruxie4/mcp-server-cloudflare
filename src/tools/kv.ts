@@ -1,7 +1,7 @@
 import { config, log } from '../utils/helpers'
 import { fetch } from 'undici'
 import { ToolHandlers } from '../utils/types'
-import { Tool } from '@modelcontextprotocol/sdk/types.js'
+import { Tool } from '@modelcontextprotocol/sdk'
 
 interface CloudflareListResponse {
   result: Array<{
@@ -239,14 +239,13 @@ export const KV_HANDLERS: ToolHandlers = {
   get_kvs: async (request) => {
     const results = await handleGetKVs()
     return {
-      toolResult: {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(results, null, 2),
-          },
-        ],
-      },
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(results, null, 2),
+        },
+      ],
+      metadata: {}
     }
   },
 
@@ -254,14 +253,13 @@ export const KV_HANDLERS: ToolHandlers = {
     const { namespaceId, key } = request.params.arguments as { namespaceId: string; key: string }
     const value = await handleGet(namespaceId, key)
     return {
-      toolResult: {
-        content: [
-          {
-            type: 'text',
-            text: value,
-          },
-        ],
-      },
+      content: [
+        {
+          type: 'text',
+          text: value,
+        },
+      ],
+      metadata: {}
     }
   },
 
@@ -274,14 +272,13 @@ export const KV_HANDLERS: ToolHandlers = {
     }
     await handlePut(namespaceId, key, value, expirationTtl)
     return {
-      toolResult: {
-        content: [
-          {
-            type: 'text',
-            text: `Successfully stored value for key: ${key}`,
-          },
-        ],
-      },
+      content: [
+        {
+          type: 'text',
+          text: `Successfully stored value for key: ${key}`,
+        },
+      ],
+      metadata: {}
     }
   },
 
@@ -289,14 +286,13 @@ export const KV_HANDLERS: ToolHandlers = {
     const { namespaceId, key } = request.params.arguments as { namespaceId: string; key: string }
     await handleDelete(namespaceId, key)
     return {
-      toolResult: {
-        content: [
-          {
-            type: 'text',
-            text: `Successfully deleted key: ${key}`,
-          },
-        ],
-      },
+      content: [
+        {
+          type: 'text',
+          text: `Successfully deleted key: ${key}`,
+        },
+      ],
+      metadata: {}
     }
   },
 
@@ -308,14 +304,13 @@ export const KV_HANDLERS: ToolHandlers = {
     }
     const results = await handleList(namespaceId, prefix, limit)
     return {
-      toolResult: {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(results, null, 2),
-          },
-        ],
-      },
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(results, null, 2),
+        },
+      ],
+      metadata: {}
     }
   },
 }

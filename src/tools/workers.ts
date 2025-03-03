@@ -443,14 +443,13 @@ export const WORKERS_HANDLERS: ToolHandlers = {
   worker_list: async (request) => {
     const results = await handleWorkerList()
     return {
-      toolResult: {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(results, null, 2),
-          },
-        ],
-      },
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(results, null, 2),
+        },
+      ],
+      metadata: {}
     }
   },
 
@@ -458,14 +457,13 @@ export const WORKERS_HANDLERS: ToolHandlers = {
     const { name } = request.params.arguments as { name: string }
     const script = await handleWorkerGet(name)
     return {
-      toolResult: {
-        content: [
-          {
-            type: 'text',
-            text: script,
-          },
-        ],
-      },
+      content: [
+        {
+          type: 'text',
+          text: script,
+        },
+      ],
+      metadata: {}
     }
   },
 
@@ -500,14 +498,13 @@ export const WORKERS_HANDLERS: ToolHandlers = {
       !no_observability,
     )
     return {
-      toolResult: {
-        content: [
-          {
-            type: 'text',
-            text: `Successfully deployed worker: ${name}`,
-          },
-        ],
-      },
+      content: [
+        {
+          type: 'text',
+          text: `Successfully deployed worker: ${name}`,
+        },
+      ],
+      metadata: {}
     }
   },
 
@@ -515,14 +512,13 @@ export const WORKERS_HANDLERS: ToolHandlers = {
     const { name } = request.params.arguments as { name: string }
     await handleWorkerDelete(name)
     return {
-      toolResult: {
-        content: [
-          {
-            type: 'text',
-            text: `Successfully deleted worker: ${name}`,
-          },
-        ],
-      },
+      content: [
+        {
+          type: 'text',
+          text: `Successfully deleted worker: ${name}`,
+        },
+      ],
+      metadata: {}
     }
   },
 }
