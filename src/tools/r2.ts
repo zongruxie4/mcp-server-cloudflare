@@ -304,9 +304,8 @@ export const R2_HANDLERS: ToolHandlers = {
   r2_list_buckets: async (request) => {
     const results = await handleR2ListBuckets()
     return {
-      toolResult: {
-        content: [{ type: 'text', text: JSON.stringify(results, null, 2) }],
-      },
+      content: [{ type: 'text', text: JSON.stringify(results, null, 2) }],
+      metadata: {}
     }
   },
 
@@ -314,9 +313,8 @@ export const R2_HANDLERS: ToolHandlers = {
     const { name } = request.params.arguments as { name: string }
     await handleR2CreateBucket(name)
     return {
-      toolResult: {
-        content: [{ type: 'text', text: `Successfully created bucket: ${name}` }],
-      },
+      content: [{ type: 'text', text: `Successfully created bucket: ${name}` }],
+      metadata: {}
     }
   },
 
@@ -324,9 +322,8 @@ export const R2_HANDLERS: ToolHandlers = {
     const { name } = request.params.arguments as { name: string }
     await handleR2DeleteBucket(name)
     return {
-      toolResult: {
-        content: [{ type: 'text', text: `Successfully deleted bucket: ${name}` }],
-      },
+      content: [{ type: 'text', text: `Successfully deleted bucket: ${name}` }],
+      metadata: {}
     }
   },
 
@@ -339,9 +336,8 @@ export const R2_HANDLERS: ToolHandlers = {
     }
     const results = await handleR2ListObjects(bucket, prefix, delimiter, limit)
     return {
-      toolResult: {
-        content: [{ type: 'text', text: JSON.stringify(results, null, 2) }],
-      },
+      content: [{ type: 'text', text: JSON.stringify(results, null, 2) }],
+      metadata: {}
     }
   },
 
@@ -349,9 +345,8 @@ export const R2_HANDLERS: ToolHandlers = {
     const { bucket, key } = request.params.arguments as { bucket: string; key: string }
     const content = await handleR2GetObject(bucket, key)
     return {
-      toolResult: {
-        content: [{ type: 'text', text: content }],
-      },
+      content: [{ type: 'text', text: content }],
+      metadata: {}
     }
   },
 
@@ -364,9 +359,8 @@ export const R2_HANDLERS: ToolHandlers = {
     }
     await handleR2PutObject(bucket, key, content, contentType)
     return {
-      toolResult: {
-        content: [{ type: 'text', text: `Successfully stored object: ${key}` }],
-      },
+      content: [{ type: 'text', text: `Successfully stored object: ${key}` }],
+      metadata: {}
     }
   },
 
@@ -374,9 +368,8 @@ export const R2_HANDLERS: ToolHandlers = {
     const { bucket, key } = request.params.arguments as { bucket: string; key: string }
     await handleR2DeleteObject(bucket, key)
     return {
-      toolResult: {
-        content: [{ type: 'text', text: `Successfully deleted object: ${key}` }],
-      },
+      content: [{ type: 'text', text: `Successfully deleted object: ${key}` }],
+      metadata: {}
     }
   },
 }

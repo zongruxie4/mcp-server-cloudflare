@@ -189,9 +189,8 @@ export const D1_HANDLERS: ToolHandlers = {
   d1_list_databases: async (request) => {
     const results = await handleD1ListDatabases()
     return {
-      toolResult: {
-        content: [{ type: 'text', text: JSON.stringify(results, null, 2) }],
-      },
+      content: [{ type: 'text', text: JSON.stringify(results, null, 2) }],
+      metadata: {}
     }
   },
 
@@ -199,9 +198,8 @@ export const D1_HANDLERS: ToolHandlers = {
     const { name } = request.params.arguments as { name: string }
     const result = await handleD1CreateDatabase(name)
     return {
-      toolResult: {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      },
+      content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+      metadata: {}
     }
   },
 
@@ -209,9 +207,8 @@ export const D1_HANDLERS: ToolHandlers = {
     const { databaseId } = request.params.arguments as { databaseId: string }
     await handleD1DeleteDatabase(databaseId)
     return {
-      toolResult: {
-        content: [{ type: 'text', text: `Successfully deleted database: ${databaseId}` }],
-      },
+      content: [{ type: 'text', text: `Successfully deleted database: ${databaseId}` }],
+      metadata: {}
     }
   },
 
@@ -223,9 +220,8 @@ export const D1_HANDLERS: ToolHandlers = {
     }
     const result = await handleD1Query(databaseId, query, params)
     return {
-      toolResult: {
-        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      },
+      content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+      metadata: {}
     }
   },
 }
