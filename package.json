@@ -20,6 +20,7 @@
   },
   "scripts": {
     "build": "tsup src/index.ts --dts --format esm --external xdg-app-paths --external which",
+    "prepublish": "npm run build",
     "postbuild": "shx chmod +x dist/*.js",
     "check": "tsc --noEmit",
     "build:watch": "pnpm build --watch"
