@@ -215,7 +215,109 @@ const WORKER_DELETE_TOOL: Tool = {
     required: ['name'],
   },
 }
-export const WORKER_TOOLS = [WORKER_LIST_TOOL, WORKER_GET_TOOL, WORKER_PUT_TOOL, WORKER_DELETE_TOOL]
+
+const WORKER_DEPLOY_TOOL: Tool = {
+  name: 'worker_deploy',
+  description: 'Deploy or redeploy a Worker script from a local file or content string',
+  inputSchema: {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string',
+        description: 'Name of the Worker script to deploy',
+      },
+      filePath: {
+        type: 'string',
+        description: 'Path to the Worker script file (mutually exclusive with scriptContent)',
+      },
+      scriptContent: {
+        type: 'string',
+        description: 'Content of the Worker script (mutually exclusive with filePath)',
+      },
+      bindings: {
+        type: 'array',
+        description: 'Optional array of resource bindings (KV, R2, D1, etc)',
+        items: {
+          type: 'object',
+          properties: {
+            type: {
+              type: 'string',
+              description: 'Type of binding (kv_namespace, r2_bucket, d1_database, service, analytics_engine, queue, durable_object_namespace)',
+              enum: [
+                'kv_namespace',
+                'r2_bucket',
+                'd1_database',
+                'service',
+                'analytics_engine',
+                'queue',
+                'durable_object_namespace',
+              ],
+            },
+            name: {
+              type: 'string',
+              description: 'Name of the binding in the Worker code',
+            },
+            namespace_id: {
+              type: 'string',
+              description: 'ID of the KV namespace (required for kv_namespace type)',
+            },
+            bucket_name: {
+              type: 'string',
+              description: 'Name of the R2 bucket (required for r2_bucket type)',
+            },
+            database_id: {
+              type: 'string',
+              description: 'ID of the D1 database (required for d1_database type)',
+            },
+            service: {
+              type: 'string',
+              description: 'Name of the service (required for service type)',
+            },
+            dataset: {
+              type: 'string',
+              description: 'Name of the analytics dataset (required for analytics_engine type)',
+            },
+            queue_name: {
+              type: 'string',
+              description: 'Name of the queue (required for queue type)',
+            },
+            class_name: {
+              type: 'string',
+              description: 'Name of the Durable Object class (required for durable_object_namespace type)',
+            },
+            script_name: {
+              type: 'string',
+              description: 'Optional script name for external Durable Object bindings',
+            },
+          },
+          required: ['type', 'name'],
+        },
+      },
+      compatibility_date: {
+        type: 'string',
+        description: 'Optional compatibility date for the Worker (e.g., "2024-01-01")',
+      },
+      compatibility_flags: {
+        type: 'array',
+        description: 'Optional array of compatibility flags',
+        items: {
+          type: 'string',
+        },
+      },
+      skip_workers_dev: {
+        type: 'boolean',
+        description: 'Do not deploy the Worker on your workers.dev subdomain',
+      },
+      no_observability: {
+        type: 'boolean',
+        description: 'Disable Worker Logs for this worker',
+      },
+    },
+    required: ['name'],
+  },
+}
+
+export const WORKER_TOOLS = [WORKER_LIST_TOOL, WORKER_GET_TOOL, WORKER_PUT_TOOL, WORKER_DELETE_TOOL, WORKER_DEPLOY_TOOL]
 
 export async function handleWorkerList() {
   log('Executing worker_list')
@@ -439,6 +541,70 @@ export async function handleWorkerDelete(name: string) {
   return 'Success'
 }
 
+// Handler function for worker_deploy tool
+export async function handleWorkerDeploy(
+  name: string,
+  scriptContent?: string,
+  filePath?: string,
+  bindings?: WorkerMetadataBinding[],
+  compatibility_date?: string,
+  compatibility_flags?: string[],
+  skip_workers_dev?: boolean,
+  no_observability?: boolean
+) {
+  log('Executing worker_deploy for script:', name)
+  
+  // Validate that either scriptContent or filePath is provided
+  if (!scriptContent && !filePath) {
+    throw new Error('Either scriptContent or filePath must be provided')
+  }
+  
+  // If filePath is provided, read the file content
+  let finalScriptContent = scriptContent
+  if (filePath) {
+    try {
+      const fs = await import('fs')
+      finalScriptContent = fs.readFileSync(filePath, 'utf8')
+      log(`Read script content from file: ${filePath}`)
+    } catch (error) {
+      throw new Error(`Failed to read script file: ${error instanceof Error ? error.message : String(error)}`)
+    }
+  }
+  
+  if (!finalScriptContent) {
+    throw new Error('Failed to get script content')
+  }
+  
+  // Check if the worker already exists
+  let workerExists = false
+  try {
+    const workers = await handleWorkerList()
+    workerExists = workers.some(worker => worker.name === name)
+    log(`Worker ${name} ${workerExists ? 'exists' : 'does not exist'}`)
+  } catch (error) {
+    log(`Error checking if worker exists: ${error instanceof Error ? error.message : String(error)}`)
+    // Continue with deployment even if we couldn't check if the worker exists
+  }
+  
+  // Deploy the worker using handleWorkerPut
+  const result = await handleWorkerPut(
+    name,
+    finalScriptContent,
+    bindings,
+    compatibility_date,
+    compatibility_flags,
+    undefined, // migrations
+    !skip_workers_dev,
+    !no_observability
+  )
+  
+  return {
+    success: true,
+    action: workerExists ? 'redeployed' : 'deployed',
+    name
+  }
+}
+
 export const WORKERS_HANDLERS: ToolHandlers = {
   worker_list: async (request) => {
     const results = await handleWorkerList()
@@ -505,6 +671,50 @@ export const WORKERS_HANDLERS: ToolHandlers = {
           {
             type: 'text',
             text: `Successfully deployed worker: ${name}`,
+          },
+        ],
+      },
+    }
+  },
+
+  worker_deploy: async (request) => {
+    const {
+      name,
+      scriptContent,
+      filePath,
+      bindings,
+      compatibility_date,
+      compatibility_flags,
+      skip_workers_dev,
+      no_observability,
+    } = request.params.arguments as {
+      name: string
+      scriptContent?: string
+      filePath?: string
+      bindings?: WorkerMetadataBinding[]
+      compatibility_date?: string
+      compatibility_flags?: string[]
+      skip_workers_dev?: boolean
+      no_observability?: boolean
+    }
+    
+    const result = await handleWorkerDeploy(
+      name,
+      scriptContent,
+      filePath,
+      bindings,
+      compatibility_date,
+      compatibility_flags,
+      skip_workers_dev,
+      no_observability
+    )
+    
+    return {
+      toolResult: {
+        content: [
+          {
+            type: 'text',
+            text: `Successfully ${result.action} worker: ${name}`,
           },
         ],
       },

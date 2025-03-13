@@ -1,4 +1,5 @@
 node_modules/
+.windsurfrules
 .env
 *.env
 dist/
