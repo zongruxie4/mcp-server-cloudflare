@@ -5,14 +5,14 @@ import { createMockToolRequest, verifyToolResponse } from '../utils/test-helpers
 describe('Routing API Tools', () => {
   describe('route_list', () => {
     it('should list routes successfully', async () => {
-      const request = createMockToolRequest('route_list', { 
+      const request = createMockToolRequest('route_list', {
         zoneId: 'zone-abc123',
         emptyList: false,
-        errorTest: false
+        errorTest: false,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await ROUTING_HANDLERS.route_list(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('example.com/*')
@@ -21,28 +21,28 @@ describe('Routing API Tools', () => {
     })
 
     it('should handle empty routes list', async () => {
-      const request = createMockToolRequest('route_list', { 
+      const request = createMockToolRequest('route_list', {
         zoneId: 'zone-abc123',
         emptyList: true,
-        errorTest: false
+        errorTest: false,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await ROUTING_HANDLERS.route_list(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('No routes found')
     })
 
     it('should handle API errors when listing routes', async () => {
-      const request = createMockToolRequest('route_list', { 
+      const request = createMockToolRequest('route_list', {
         zoneId: 'zone-abc123',
         emptyList: false,
-        errorTest: true
+        errorTest: true,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await ROUTING_HANDLERS.route_list(request)
-      
+
       verifyToolResponse(response, true)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Error')
@@ -58,11 +58,11 @@ describe('Routing API Tools', () => {
         pattern: 'new.example.com/*',
         scriptName: 'new-script',
         errorTest: false,
-        invalidPattern: false
+        invalidPattern: false,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await ROUTING_HANDLERS.route_create(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('route-new123')
@@ -75,11 +75,11 @@ describe('Routing API Tools', () => {
         zoneId: 'zone-abc123',
         pattern: 'invalid-pattern',
         scriptName: 'test-script',
-        invalidPattern: true
+        invalidPattern: true,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await ROUTING_HANDLERS.route_create(request)
-      
+
       verifyToolResponse(response, true)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Error')
@@ -92,11 +92,11 @@ describe('Routing API Tools', () => {
         zoneId: 'zone-abc123',
         pattern: 'example.com/*',
         scriptName: 'test-script',
-        errorTest: true
+        errorTest: true,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await ROUTING_HANDLERS.route_create(request)
-      
+
       verifyToolResponse(response, true)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Error')
@@ -110,11 +110,11 @@ describe('Routing API Tools', () => {
       const request = createMockToolRequest('route_delete', {
         zoneId: 'zone-abc123',
         routeId: 'route-abc123',
-        errorTest: false
+        errorTest: false,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await ROUTING_HANDLERS.route_delete(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Route deleted successfully')
@@ -124,11 +124,11 @@ describe('Routing API Tools', () => {
       const request = createMockToolRequest('route_delete', {
         zoneId: 'zone-abc123',
         routeId: 'non-existent-route',
-        errorTest: true
+        errorTest: true,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await ROUTING_HANDLERS.route_delete(request)
-      
+
       verifyToolResponse(response, true)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Error')

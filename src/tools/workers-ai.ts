@@ -150,7 +150,7 @@ async function handleAiInference(model: string, input: any, options?: any) {
     throw new Error(`Failed to run inference: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('AI inference success:', data)
   return data.result
 }
@@ -171,7 +171,7 @@ async function handleListModels() {
     throw new Error(`Failed to list AI models: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('AI list models success:', data)
   return data.result
 }
@@ -192,7 +192,7 @@ async function handleGetModel(model: string) {
     throw new Error(`Failed to get AI model details: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('AI get model success:', data)
   return data.result
 }
@@ -218,7 +218,7 @@ async function handleEmbeddings(model: string, text: string) {
     throw new Error(`Failed to generate embeddings: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('AI embeddings success:', data)
   return data.result
 }
@@ -247,7 +247,7 @@ async function handleTextGeneration(model: string, prompt: string, options?: any
     throw new Error(`Failed to generate text: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('AI text generation success:', data)
   return data.result
 }
@@ -278,9 +278,9 @@ async function handleImageGeneration(model: string, prompt: string, options?: an
 
   // For image generation, we might get a binary response
   const contentType = response.headers.get('content-type') || ''
-  
+
   if (contentType.includes('application/json')) {
-    const data = await response.json() as { result: any, success: boolean }
+    const data = (await response.json()) as { result: any; success: boolean }
     log('AI image generation success (JSON):', data)
     return data.result
   } else {
@@ -377,19 +377,19 @@ export const WORKERS_AI_HANDLERS: ToolHandlers = {
       },
     }
   },
-  
+
   // Add functions with test-expected names that map to the implementations above
   workers_ai_list_models: async (request) => {
     try {
       // For testing: parse input parameters if available
       const input = request.params.input ? JSON.parse(request.params.input as string) : {}
       const { emptyList, errorTest } = input
-      
+
       // Test error case
       if (errorTest) {
         throw new Error('API error')
       }
-      
+
       // Test empty list case
       if (emptyList) {
         return {
@@ -403,7 +403,7 @@ export const WORKERS_AI_HANDLERS: ToolHandlers = {
           },
         }
       }
-      
+
       // Normal case: fetch actual models
       const result = await handleListModels()
       return {
@@ -411,9 +411,7 @@ export const WORKERS_AI_HANDLERS: ToolHandlers = {
           content: [
             {
               type: 'text',
-              text: result && result.length > 0 
-                ? JSON.stringify(result, null, 2)
-                : 'No AI models available',
+              text: result && result.length > 0 ? JSON.stringify(result, null, 2) : 'No AI models available',
             },
           ],
         },
@@ -434,17 +432,17 @@ export const WORKERS_AI_HANDLERS: ToolHandlers = {
   workers_ai_run_model: async (request) => {
     try {
       const params = request.params.input as any
-      
+
       // For testing: handle error case
       if (params.errorTest) {
         throw new Error('Model not found')
       }
-      
+
       // For testing: handle invalid input
       if (params.invalidInput) {
         throw new Error('Invalid input format')
       }
-      
+
       // For testing: simulate response based on test type
       if (params.testType === 'text') {
         return {
@@ -452,32 +450,41 @@ export const WORKERS_AI_HANDLERS: ToolHandlers = {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify({
-                  response: "This is a test response from the AI model",
-                  status: "success"
-                }, null, 2),
+                text: JSON.stringify(
+                  {
+                    response: 'This is a test response from the AI model',
+                    status: 'success',
+                  },
+                  null,
+                  2,
+                ),
               },
             ],
           },
         }
       }
-      
+
       if (params.testType === 'image') {
         return {
           toolResult: {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify({
-                  response: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
-                  status: "success"
-                }, null, 2),
+                text: JSON.stringify(
+                  {
+                    response:
+                      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+                    status: 'success',
+                  },
+                  null,
+                  2,
+                ),
               },
             ],
           },
         }
       }
-      
+
       // If not in test mode, use actual implementation
       // For text generation models
       if (typeof params.input === 'string') {
@@ -493,7 +500,7 @@ export const WORKERS_AI_HANDLERS: ToolHandlers = {
           },
         }
       }
-      
+
       // For image generation models
       if (params.input?.prompt) {
         const result = await handleAiInference(params.modelName, params.input, params.options)
@@ -508,7 +515,7 @@ export const WORKERS_AI_HANDLERS: ToolHandlers = {
           },
         }
       }
-      
+
       throw new Error('Invalid input format')
     } catch (error) {
       return {
@@ -522,5 +529,5 @@ export const WORKERS_AI_HANDLERS: ToolHandlers = {
         },
       }
     }
-  }
+  },
 }

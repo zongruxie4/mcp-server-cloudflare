@@ -29,7 +29,7 @@ export interface CloudflareToolResponse {
 export interface MockCallToolRequest {
   jsonrpc: string
   id: string
-  method: "tools/call"
+  method: 'tools/call'
   params: {
     name: string
     input: string
@@ -51,8 +51,8 @@ export function createMockToolRequest(toolName: string, input: Record<string, an
     method: 'tools/call',
     params: {
       name: toolName,
-      input: JSON.stringify(input)
-    }
+      input: JSON.stringify(input),
+    },
   }
 }
 
@@ -67,7 +67,7 @@ export function createErrorResponse(message: string, code = 400) {
     success: false,
     errors: [{ message, code }],
     messages: [],
-    result: null
+    result: null,
   }
 }
 
@@ -80,9 +80,9 @@ export function mockConsoleOutput() {
     log: vi.spyOn(console, 'log').mockImplementation(() => {}),
     error: vi.spyOn(console, 'error').mockImplementation(() => {}),
     warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
-    info: vi.spyOn(console, 'info').mockImplementation(() => {})
+    info: vi.spyOn(console, 'info').mockImplementation(() => {}),
   }
-  
+
   return consoleSpy
 }
 
@@ -94,13 +94,13 @@ export function mockConsoleOutput() {
  */
 export function verifyToolResponse(response: any, isError = false, skipIsErrorCheck = false): void {
   expect(response).toHaveProperty('toolResult')
-  
+
   // Type assertion - assume this structure for testing purposes
   const toolResult = response.toolResult as CloudflareToolResult
-  
+
   expect(toolResult).toHaveProperty('content')
   expect(Array.isArray(toolResult.content)).toBe(true)
-  
+
   // Only check isError if we're not skipping that check
   if (!skipIsErrorCheck) {
     if (isError) {

@@ -61,11 +61,7 @@ const SECRET_LIST_TOOL: Tool = {
   },
 }
 
-export const SECRETS_TOOLS = [
-  SECRET_PUT_TOOL,
-  SECRET_DELETE_TOOL,
-  SECRET_LIST_TOOL,
-]
+export const SECRETS_TOOLS = [SECRET_PUT_TOOL, SECRET_DELETE_TOOL, SECRET_LIST_TOOL]
 
 // Handler functions for Secrets operations
 async function handleSecretPut(scriptName: string, secretName: string, secretValue: string) {
@@ -91,7 +87,7 @@ async function handleSecretPut(scriptName: string, secretName: string, secretVal
     throw new Error(`Failed to add secret: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Secret put success:', data)
   return data.result
 }
@@ -113,7 +109,7 @@ async function handleSecretDelete(scriptName: string, secretName: string) {
     throw new Error(`Failed to delete secret: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Secret delete success:', data)
   return data.result
 }
@@ -134,7 +130,7 @@ async function handleSecretList(scriptName: string) {
     throw new Error(`Failed to list secrets: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Secret list success:', data)
   return data.result
 }
@@ -143,54 +139,58 @@ async function handleSecretList(scriptName: string) {
 // Mock data for testing
 const mockSecretsList = [
   { name: 'SECRET_KEY_1', type: 'secret_text' },
-  { name: 'SECRET_KEY_2', type: 'secret_text' }
-];
+  { name: 'SECRET_KEY_2', type: 'secret_text' },
+]
 
 export const SECRETS_HANDLERS: ToolHandlers = {
   secrets_create: async (request) => {
     // Parse the stringified input parameters
-    const params = typeof request.params.input === 'string' 
-      ? JSON.parse(request.params.input)
-      : request.params.input;
-    
-    const scriptName = params?.scriptName;
-    const envName = params?.envName || 'production';
-    const secretName = params?.secretName;
-    const secretValue = params?.secretValue;
-    const errorTest = params?.errorTest === true;
-    
-    log(`secrets_create params: scriptName=${scriptName}, envName=${envName}, secretName=${secretName}, errorTest=${errorTest}`);
-    
+    const params = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+
+    const scriptName = params?.scriptName
+    const envName = params?.envName || 'production'
+    const secretName = params?.secretName
+    const secretValue = params?.secretValue
+    const errorTest = params?.errorTest === true
+
+    log(
+      `secrets_create params: scriptName=${scriptName}, envName=${envName}, secretName=${secretName}, errorTest=${errorTest}`,
+    )
+
     try {
       // Parameter-based test handling
       if (process.env.NODE_ENV === 'test') {
         // Error test case
         if (errorTest) {
-          log('Returning error response for create secret test');
+          log('Returning error response for create secret test')
           return {
             toolResult: {
               isError: true,
-              content: [{ 
-                type: 'text',
-                text: 'Error: Invalid secret name' 
-              }]
-            }
-          };
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: Invalid secret name',
+                },
+              ],
+            },
+          }
         }
-        
+
         // Normal success test case
         return {
           toolResult: {
-            content: [{
-              type: 'text',
-              text: `Secret created successfully: ${secretName}`
-            }]
-          }
-        };
+            content: [
+              {
+                type: 'text',
+                text: `Secret created successfully: ${secretName}`,
+              },
+            ],
+          },
+        }
       }
-      
+
       // Normal API handling for non-test environment
-      const result = await handleSecretPut(scriptName, secretName, secretValue);
+      const result = await handleSecretPut(scriptName, secretName, secretValue)
       return {
         toolResult: {
           content: [
@@ -200,9 +200,9 @@ export const SECRETS_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     } catch (error: any) {
-      log(`Error in secrets_create: ${error.message || 'Unknown error'}`);
+      log(`Error in secrets_create: ${error.message || 'Unknown error'}`)
       return {
         toolResult: {
           isError: true,
@@ -213,58 +213,62 @@ export const SECRETS_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     }
   },
-  
+
   secret_put: async (request) => {
     // For backward compatibility with the old tool name
-    log('Using secret_put alias for secrets_create');
-    return SECRETS_HANDLERS.secrets_create(request);
+    log('Using secret_put alias for secrets_create')
+    return SECRETS_HANDLERS.secrets_create(request)
   },
   secrets_delete: async (request) => {
     // Parse the stringified input parameters
-    const params = typeof request.params.input === 'string' 
-      ? JSON.parse(request.params.input)
-      : request.params.input;
-    
-    const scriptName = params?.scriptName;
-    const envName = params?.envName || 'production';
-    const secretName = params?.secretName;
-    const errorTest = params?.errorTest === true;
-    
-    log(`secrets_delete params: scriptName=${scriptName}, envName=${envName}, secretName=${secretName}, errorTest=${errorTest}`);
-    
+    const params = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+
+    const scriptName = params?.scriptName
+    const envName = params?.envName || 'production'
+    const secretName = params?.secretName
+    const errorTest = params?.errorTest === true
+
+    log(
+      `secrets_delete params: scriptName=${scriptName}, envName=${envName}, secretName=${secretName}, errorTest=${errorTest}`,
+    )
+
     try {
       // Parameter-based test handling
       if (process.env.NODE_ENV === 'test') {
         // Error test case
         if (errorTest) {
-          log('Returning error response for delete secret test');
+          log('Returning error response for delete secret test')
           return {
             toolResult: {
               isError: true,
-              content: [{ 
-                type: 'text',
-                text: 'Error: Secret not found' 
-              }]
-            }
-          };
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: Secret not found',
+                },
+              ],
+            },
+          }
         }
-        
+
         // Normal success test case
         return {
           toolResult: {
-            content: [{
-              type: 'text',
-              text: `Secret deleted successfully: ${secretName}`
-            }]
-          }
-        };
+            content: [
+              {
+                type: 'text',
+                text: `Secret deleted successfully: ${secretName}`,
+              },
+            ],
+          },
+        }
       }
-      
+
       // Normal API handling for non-test environment
-      const result = await handleSecretDelete(scriptName, secretName);
+      const result = await handleSecretDelete(scriptName, secretName)
       return {
         toolResult: {
           content: [
@@ -274,9 +278,9 @@ export const SECRETS_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     } catch (error: any) {
-      log(`Error in secrets_delete: ${error.message || 'Unknown error'}`);
+      log(`Error in secrets_delete: ${error.message || 'Unknown error'}`)
       return {
         toolResult: {
           isError: true,
@@ -287,71 +291,77 @@ export const SECRETS_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     }
   },
-  
+
   secret_delete: async (request) => {
     // For backward compatibility with the old tool name
-    log('Using secret_delete alias for secrets_delete');
-    return SECRETS_HANDLERS.secrets_delete(request);
+    log('Using secret_delete alias for secrets_delete')
+    return SECRETS_HANDLERS.secrets_delete(request)
   },
   secrets_list: async (request) => {
     // Parse the stringified input parameters
-    const params = typeof request.params.input === 'string' 
-      ? JSON.parse(request.params.input)
-      : request.params.input;
-    
-    const scriptName = params?.scriptName;
-    const envName = params?.envName || 'production';
-    const emptyList = params?.emptyList === true;
-    const errorTest = params?.errorTest === true;
-    
-    log(`secrets_list params: scriptName=${scriptName}, envName=${envName}, emptyList=${emptyList}, errorTest=${errorTest}`);
-    
+    const params = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+
+    const scriptName = params?.scriptName
+    const envName = params?.envName || 'production'
+    const emptyList = params?.emptyList === true
+    const errorTest = params?.errorTest === true
+
+    log(
+      `secrets_list params: scriptName=${scriptName}, envName=${envName}, emptyList=${emptyList}, errorTest=${errorTest}`,
+    )
+
     try {
       // Parameter-based test handling
       if (process.env.NODE_ENV === 'test') {
         // Empty list test case
         if (emptyList) {
-          log('Returning empty secrets list for test');
+          log('Returning empty secrets list for test')
           return {
             toolResult: {
-              content: [{
-                type: 'text',
-                text: 'No secrets found'
-              }]
-            }
-          };
+              content: [
+                {
+                  type: 'text',
+                  text: 'No secrets found',
+                },
+              ],
+            },
+          }
         }
-        
+
         // Error test case
         if (errorTest) {
-          log('Returning error response for list secrets test');
+          log('Returning error response for list secrets test')
           return {
             toolResult: {
               isError: true,
-              content: [{ 
-                type: 'text',
-                text: 'Error: Script not found' 
-              }]
-            }
-          };
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: Script not found',
+                },
+              ],
+            },
+          }
         }
-        
+
         // Normal success test case
         return {
           toolResult: {
-            content: [{
-              type: 'text',
-              text: JSON.stringify(mockSecretsList, null, 2)
-            }]
-          }
-        };
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(mockSecretsList, null, 2),
+              },
+            ],
+          },
+        }
       }
-      
+
       // Normal API handling for non-test environment
-      const result = await handleSecretList(scriptName);
+      const result = await handleSecretList(scriptName)
       return {
         toolResult: {
           content: [
@@ -361,9 +371,9 @@ export const SECRETS_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     } catch (error: any) {
-      log(`Error in secrets_list: ${error.message || 'Unknown error'}`);
+      log(`Error in secrets_list: ${error.message || 'Unknown error'}`)
       return {
         toolResult: {
           isError: true,
@@ -374,13 +384,13 @@ export const SECRETS_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     }
   },
-  
+
   secret_list: async (request) => {
     // For backward compatibility with the old tool name
-    log('Using secret_list alias for secrets_list');
-    return SECRETS_HANDLERS.secrets_list(request);
+    log('Using secret_list alias for secrets_list')
+    return SECRETS_HANDLERS.secrets_list(request)
   },
 }

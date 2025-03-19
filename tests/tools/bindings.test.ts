@@ -3,18 +3,17 @@ import { BINDINGS_HANDLERS } from '../../src/tools/bindings'
 import { createMockToolRequest, verifyToolResponse, CloudflareToolResponse } from '../utils/test-helpers'
 
 describe('Bindings API Tools', () => {
-
   describe('bindings_list', () => {
     it('should list bindings successfully', async () => {
       const request = createMockToolRequest('bindings_list', {
         serviceName: 'test-service',
         envName: 'production',
         emptyList: false,
-        errorTest: false
+        errorTest: false,
       })
       // @ts-ignore - Ignore type errors for testing purposes
-      const response = await BINDINGS_HANDLERS.bindings_list(request) as CloudflareToolResponse
-      
+      const response = (await BINDINGS_HANDLERS.bindings_list(request)) as CloudflareToolResponse
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect((response as any).toolResult.content[0].text).toContain('KV_BINDING')
@@ -29,11 +28,11 @@ describe('Bindings API Tools', () => {
         serviceName: 'test-service',
         envName: 'production',
         emptyList: true,
-        errorTest: false
+        errorTest: false,
       })
       // @ts-ignore - Ignore type errors for testing purposes
-      const response = await BINDINGS_HANDLERS.bindings_list(request) as CloudflareToolResponse
-      
+      const response = (await BINDINGS_HANDLERS.bindings_list(request)) as CloudflareToolResponse
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect((response as any).toolResult.content[0].text).toContain('No bindings found')
@@ -44,11 +43,11 @@ describe('Bindings API Tools', () => {
         serviceName: 'non-existent-service',
         envName: 'production',
         emptyList: false,
-        errorTest: true
+        errorTest: true,
       })
       // @ts-ignore - Ignore type errors for testing purposes
-      const response = await BINDINGS_HANDLERS.bindings_list(request) as CloudflareToolResponse
-      
+      const response = (await BINDINGS_HANDLERS.bindings_list(request)) as CloudflareToolResponse
+
       verifyToolResponse(response, true)
       // @ts-ignore - We know this structure exists in our tests
       expect((response as any).toolResult.content[0].text).toContain('Error')
@@ -64,18 +63,18 @@ describe('Bindings API Tools', () => {
           {
             name: 'KV_BINDING',
             type: 'kv_namespace',
-            kv_namespace_id: 'kv-abc123'
+            kv_namespace_id: 'kv-abc123',
           },
           {
             name: 'R2_BINDING',
             type: 'r2_bucket',
-            bucket_name: 'test-bucket'
-          }
-        ]
+            bucket_name: 'test-bucket',
+          },
+        ],
       })
       // @ts-ignore - Ignore type errors for testing purposes
-      const response = await BINDINGS_HANDLERS.bindings_update(request) as CloudflareToolResponse
-      
+      const response = (await BINDINGS_HANDLERS.bindings_update(request)) as CloudflareToolResponse
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect((response as any).toolResult.content[0].text).toContain('Bindings updated successfully')
@@ -87,16 +86,16 @@ describe('Bindings API Tools', () => {
         envName: 'production',
         bindings: [],
         errorTest: true,
-        invalidConfig: false
+        invalidConfig: false,
       })
       // @ts-ignore - Ignore type errors for testing purposes
-      const response = await BINDINGS_HANDLERS.bindings_update(request) as CloudflareToolResponse
-      
+      const response = (await BINDINGS_HANDLERS.bindings_update(request)) as CloudflareToolResponse
+
       verifyToolResponse(response, true)
       // @ts-ignore - We know this structure exists in our tests
       expect((response as any).toolResult.content[0].text).toContain('Error')
     })
-    
+
     it('should reject invalid binding configurations', async () => {
       const request = createMockToolRequest('bindings_update', {
         serviceName: 'test-service',
@@ -104,15 +103,15 @@ describe('Bindings API Tools', () => {
         bindings: [
           {
             name: 'INVALID_BINDING',
-            type: 'invalid_type'
-          }
+            type: 'invalid_type',
+          },
         ],
         errorTest: false,
-        invalidConfig: true
+        invalidConfig: true,
       })
       // @ts-ignore - Ignore type errors for testing purposes
-      const response = await BINDINGS_HANDLERS.bindings_update(request) as CloudflareToolResponse
-      
+      const response = (await BINDINGS_HANDLERS.bindings_update(request)) as CloudflareToolResponse
+
       verifyToolResponse(response, true) // Expect error
       // @ts-ignore - We know this structure exists in our tests
       expect((response as any).toolResult.content[0].text).toContain('Invalid binding configuration')

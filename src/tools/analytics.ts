@@ -55,7 +55,7 @@ const WORKERS_ANALYTICS_SEARCH_TOOL: Tool = {
       status: {
         type: 'string',
         description: 'Filter by status (e.g., "success", "error")',
-      }
+      },
     },
     required: ['accountId'],
   },
@@ -64,16 +64,16 @@ const WORKERS_ANALYTICS_SEARCH_TOOL: Tool = {
 export const ANALYTICS_TOOLS = [ANALYTICS_GET_TOOL, WORKERS_ANALYTICS_SEARCH_TOOL]
 
 interface GraphQLResponse {
-  data?: any;
+  data?: any
   errors?: Array<{
-    message: string;
+    message: string
     locations?: Array<{
-      line: number;
-      column: number;
-    }>;
-    path?: string[];
-    extensions?: Record<string, any>;
-  }>;
+      line: number
+      column: number
+    }>
+    path?: string[]
+    extensions?: Record<string, any>
+  }>
 }
 
 export const ANALYTICS_HANDLERS: ToolHandlers = {
@@ -125,13 +125,13 @@ export const ANALYTICS_HANDLERS: ToolHandlers = {
       throw new Error(`Analytics API error: ${await analyticsResponse.text()}`)
     }
 
-    const analyticsData = await analyticsResponse.json() as GraphQLResponse
-    
+    const analyticsData = (await analyticsResponse.json()) as GraphQLResponse
+
     // Check for GraphQL errors
     if (analyticsData.errors) {
       throw new Error(`GraphQL error: ${JSON.stringify(analyticsData.errors)}`)
     }
-    
+
     return {
       content: [
         {
@@ -139,10 +139,10 @@ export const ANALYTICS_HANDLERS: ToolHandlers = {
           text: JSON.stringify(analyticsData, null, 2),
         },
       ],
-      metadata: {}
+      metadata: {},
     }
   },
-  
+
   workers_analytics_search: async (request) => {
     const { accountId, scriptName, startTime, endTime, limit, status } = request.params.arguments as {
       accountId: string
@@ -152,31 +152,31 @@ export const ANALYTICS_HANDLERS: ToolHandlers = {
       limit?: number
       status?: string
     }
-    
+
     // Set default time range if not provided (last 24 hours)
     const now = new Date()
     const defaultEndTime = now.toISOString()
     const defaultStartTime = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
-    
+
     const datetimeStart = startTime || defaultStartTime
     const datetimeEnd = endTime || defaultEndTime
     const resultLimit = limit || 100
-    
+
     // Build filter object for the GraphQL query
     const filter: Record<string, any> = {
       datetime_geq: datetimeStart,
-      datetime_leq: datetimeEnd
+      datetime_leq: datetimeEnd,
     }
-    
+
     // Add optional filters if provided
     if (scriptName) {
       filter.scriptName = scriptName
     }
-    
+
     if (status) {
       filter.status = status
     }
-    
+
     // Construct the GraphQL query
     const graphqlQuery = {
       query: `
@@ -206,8 +206,8 @@ export const ANALYTICS_HANDLERS: ToolHandlers = {
       variables: {
         accountTag: accountId,
         limit: resultLimit,
-        filter: filter
-      }
+        filter: filter,
+      },
     }
 
     try {
@@ -224,13 +224,13 @@ export const ANALYTICS_HANDLERS: ToolHandlers = {
         throw new Error(`Workers Analytics API error: ${await analyticsResponse.text()}`)
       }
 
-      const analyticsData = await analyticsResponse.json() as GraphQLResponse
-      
+      const analyticsData = (await analyticsResponse.json()) as GraphQLResponse
+
       // Check for GraphQL errors
       if (analyticsData.errors) {
         throw new Error(`GraphQL error: ${JSON.stringify(analyticsData.errors)}`)
       }
-      
+
       return {
         toolResult: {
           content: [

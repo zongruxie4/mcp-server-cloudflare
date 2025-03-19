@@ -6,7 +6,7 @@ import { ToolHandlers } from '../utils/types'
 // Mock data for testing
 const mockScriptsList = [
   { id: 'script-123', name: 'test-script-1' },
-  { id: 'script-456', name: 'test-script-2' }
+  { id: 'script-456', name: 'test-script-2' },
 ]
 
 // Workers for Platforms tool definitions
@@ -137,7 +137,7 @@ async function handleCreateDispatchNamespace(name: string) {
     throw new Error(`Failed to create dispatch namespace: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('WFP create dispatch namespace success:', data)
   return data.result
 }
@@ -159,7 +159,7 @@ async function handleDeleteDispatchNamespace(namespaceId: string) {
     throw new Error(`Failed to delete dispatch namespace: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('WFP delete dispatch namespace success:', data)
   return data.result
 }
@@ -180,7 +180,7 @@ async function handleListDispatchNamespaces() {
     throw new Error(`Failed to list dispatch namespaces: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('WFP list dispatch namespaces success:', data)
   return data.result
 }
@@ -192,7 +192,7 @@ async function handleAddCustomDomain(namespaceId: string, hostname: string, zone
   const requestBody: any = {
     hostname,
   }
-  
+
   if (zoneId) {
     requestBody.zone_id = zoneId
   }
@@ -212,7 +212,7 @@ async function handleAddCustomDomain(namespaceId: string, hostname: string, zone
     throw new Error(`Failed to add custom domain: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('WFP add custom domain success:', data)
   return data.result
 }
@@ -234,7 +234,7 @@ async function handleRemoveCustomDomain(namespaceId: string, hostname: string) {
     throw new Error(`Failed to remove custom domain: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('WFP remove custom domain success:', data)
   return data.result
 }
@@ -255,7 +255,7 @@ async function handleListCustomDomains(namespaceId: string) {
     throw new Error(`Failed to list custom domains: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('WFP list custom domains success:', data)
   return data.result
 }
@@ -270,8 +270,8 @@ async function handleListScripts(namespace: string) {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${config.apiToken}`,
-        }
-      }
+        },
+      },
     )
 
     if (!response.ok) {
@@ -280,7 +280,7 @@ async function handleListScripts(namespace: string) {
       throw new Error(`Failed to list scripts: ${error}`)
     }
 
-    const data = await response.json() as { result: any, success: boolean }
+    const data = (await response.json()) as { result: any; success: boolean }
     log('WFP list scripts success:', data)
     return data.result
   } catch (error) {
@@ -299,10 +299,10 @@ async function handleUpdateScript(namespace: string, scriptName: string, script:
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${config.apiToken}`,
-          'Content-Type': 'application/javascript'
+          'Content-Type': 'application/javascript',
         },
-        body: script
-      }
+        body: script,
+      },
     )
 
     if (!response.ok) {
@@ -311,7 +311,7 @@ async function handleUpdateScript(namespace: string, scriptName: string, script:
       throw new Error(`Failed to update script: ${error}`)
     }
 
-    const data = await response.json() as { result: any, success: boolean }
+    const data = (await response.json()) as { result: any; success: boolean }
     log('WFP update script success:', data)
     return data.result
   } catch (error) {
@@ -330,8 +330,8 @@ async function handleDeleteScript(namespace: string, scriptName: string) {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${config.apiToken}`,
-        }
-      }
+        },
+      },
     )
 
     if (!response.ok) {
@@ -340,7 +340,7 @@ async function handleDeleteScript(namespace: string, scriptName: string) {
       throw new Error(`Failed to delete script: ${error}`)
     }
 
-    const data = await response.json() as { result: any, success: boolean }
+    const data = (await response.json()) as { result: any; success: boolean }
     log('WFP delete script success:', data)
     return data.result
   } catch (error) {
@@ -358,10 +358,10 @@ function handleError(error: unknown) {
       isError: true,
       content: [
         {
-          text: `Error: ${errorMessage}`
-        }
-      ]
-    }
+          text: `Error: ${errorMessage}`,
+        },
+      ],
+    },
   }
 }
 
@@ -409,7 +409,11 @@ export const WFP_HANDLERS: ToolHandlers = {
     }
   },
   wfp_add_custom_domain: async (request) => {
-    const { namespaceId, hostname, zoneId } = request.params.input as { namespaceId: string; hostname: string; zoneId: string }
+    const { namespaceId, hostname, zoneId } = request.params.input as {
+      namespaceId: string
+      hostname: string
+      zoneId: string
+    }
     const result = await handleAddCustomDomain(namespaceId, hostname, zoneId)
     return {
       toolResult: {
@@ -450,20 +454,18 @@ export const WFP_HANDLERS: ToolHandlers = {
       },
     }
   },
-  
+
   // New handlers for script operations with test parameter detection
   wfp_list_scripts: async (request) => {
     // Parse the stringified input parameters
-    const params = typeof request.params.input === 'string' 
-      ? JSON.parse(request.params.input)
-      : request.params.input;
-      
-    const namespace = params?.namespace;
-    const emptyList = params?.emptyList === true;
-    const errorTest = params?.errorTest === true;
-    
+    const params = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+
+    const namespace = params?.namespace
+    const emptyList = params?.emptyList === true
+    const errorTest = params?.errorTest === true
+
     log(`list_scripts params: namespace=${namespace}, emptyList=${emptyList}, errorTest=${errorTest}`)
-    
+
     try {
       // Parameter-based test handling
       if (process.env.NODE_ENV === 'test') {
@@ -472,78 +474,86 @@ export const WFP_HANDLERS: ToolHandlers = {
           log('Returning empty scripts list for test')
           return {
             toolResult: {
-              content: [{
-                type: 'text',
-                text: 'No scripts found'
-              }]
-            }
+              content: [
+                {
+                  type: 'text',
+                  text: 'No scripts found',
+                },
+              ],
+            },
           }
         }
-        
+
         // Error test case
         if (errorTest) {
           log('Returning error response for scripts list test')
           return {
             toolResult: {
               isError: true,
-              content: [{
-                type: 'text',
-                text: 'Error: Failed to list scripts in namespace'
-              }]
-            }
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: Failed to list scripts in namespace',
+                },
+              ],
+            },
           }
         }
-        
+
         // Normal success test case
         log('Returning mock scripts list data for test')
         return {
           toolResult: {
-            content: [{
-              type: 'text',
-              text: JSON.stringify(mockScriptsList, null, 2)
-            }]
-          }
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(mockScriptsList, null, 2),
+              },
+            ],
+          },
         }
       }
-      
+
       const result = await handleListScripts(namespace)
       if (!result || result.length === 0) {
         return {
           toolResult: {
-            content: [{ 
-              type: 'text',
-              text: 'No scripts found in namespace' 
-            }]
-          }
+            content: [
+              {
+                type: 'text',
+                text: 'No scripts found in namespace',
+              },
+            ],
+          },
         }
       }
-      
+
       return {
         toolResult: {
-          content: [{
-            type: 'text',
-            text: JSON.stringify(result, null, 2)
-          }]
-        }
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        },
       }
     } catch (error) {
       return handleError(error)
     }
   },
-  
+
   wfp_update_script: async (request) => {
     // Parse the stringified input parameters
-    const params = typeof request.params.input === 'string' 
-      ? JSON.parse(request.params.input)
-      : request.params.input;
-      
-    const namespace = params?.namespace;
-    const scriptName = params?.scriptName;
-    const script = params?.script;
-    const errorTest = params?.errorTest === true;
-    
+    const params = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+
+    const namespace = params?.namespace
+    const scriptName = params?.scriptName
+    const script = params?.script
+    const errorTest = params?.errorTest === true
+
     log(`update_script params: namespace=${namespace}, scriptName=${scriptName}, errorTest=${errorTest}`)
-    
+
     try {
       // Parameter-based test handling
       if (process.env.NODE_ENV === 'test') {
@@ -553,52 +563,56 @@ export const WFP_HANDLERS: ToolHandlers = {
           return {
             toolResult: {
               isError: true,
-              content: [{ 
-                type: 'text',
-                text: 'Error: Invalid script content' 
-              }]
-            }
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: Invalid script content',
+                },
+              ],
+            },
           }
         }
-        
+
         // Normal success test case
         log('Returning mock script update data for test')
         return {
           toolResult: {
-            content: [{ 
-              type: 'text',
-              text: `Script updated successfully: test-script` 
-            }]
-          }
+            content: [
+              {
+                type: 'text',
+                text: `Script updated successfully: test-script`,
+              },
+            ],
+          },
         }
       }
-      
+
       await handleUpdateScript(namespace, scriptName, script)
       return {
         toolResult: {
-          content: [{ 
-            type: 'text',
-            text: `Script updated successfully: ${scriptName}` 
-          }]
-        }
+          content: [
+            {
+              type: 'text',
+              text: `Script updated successfully: ${scriptName}`,
+            },
+          ],
+        },
       }
     } catch (error) {
       return handleError(error)
     }
   },
-  
+
   wfp_delete_script: async (request) => {
     // Parse the stringified input parameters
-    const params = typeof request.params.input === 'string' 
-      ? JSON.parse(request.params.input)
-      : request.params.input;
-      
-    const namespace = params?.namespace;
-    const scriptName = params?.scriptName;
-    const errorTest = params?.errorTest === true;
-    
+    const params = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+
+    const namespace = params?.namespace
+    const scriptName = params?.scriptName
+    const errorTest = params?.errorTest === true
+
     log(`delete_script params: namespace=${namespace}, scriptName=${scriptName}, errorTest=${errorTest}`)
-    
+
     try {
       // Parameter-based test handling
       if (process.env.NODE_ENV === 'test') {
@@ -608,54 +622,58 @@ export const WFP_HANDLERS: ToolHandlers = {
           return {
             toolResult: {
               isError: true,
-              content: [{ 
-                type: 'text',
-                text: 'Error: Script not found' 
-              }]
-            }
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: Script not found',
+                },
+              ],
+            },
           }
         }
-        
+
         // Normal success test case
         log('Returning mock script deletion data for test')
         return {
           toolResult: {
-            content: [{ 
-              type: 'text',
-              text: `Script deleted successfully: ${scriptName}` 
-            }]
-          }
+            content: [
+              {
+                type: 'text',
+                text: `Script deleted successfully: ${scriptName}`,
+              },
+            ],
+          },
         }
       }
-      
+
       await handleDeleteScript(namespace, scriptName)
       return {
         toolResult: {
-          content: [{ 
-            type: 'text',
-            text: `Script deleted successfully: ${scriptName}` 
-          }]
-        }
+          content: [
+            {
+              type: 'text',
+              text: `Script deleted successfully: ${scriptName}`,
+            },
+          ],
+        },
       }
     } catch (error) {
       return handleError(error)
     }
   },
-  
+
   // Aliases for testing compatibility with the test expectations
   // The tests use wfp_list_namespaces but our implementation uses wfp_list_dispatch_namespaces
   wfp_list_namespaces: async (request) => {
     log('Using wfp_list_namespaces alias for wfp_list_dispatch_namespaces')
     // Parse the stringified input parameters
-    const params = typeof request.params.input === 'string' 
-      ? JSON.parse(request.params.input)
-      : request.params.input;
-      
-    const emptyList = params?.emptyList === true;
-    const errorTest = params?.errorTest === true;
-    
+    const params = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+
+    const emptyList = params?.emptyList === true
+    const errorTest = params?.errorTest === true
+
     log(`list_namespaces params: emptyList=${emptyList}, errorTest=${errorTest}`)
-    
+
     try {
       // Parameter-based test handling
       if (process.env.NODE_ENV === 'test') {
@@ -664,63 +682,67 @@ export const WFP_HANDLERS: ToolHandlers = {
           log('Returning empty namespaces list for test')
           return {
             toolResult: {
-              content: [{
-                type: 'text',
-                text: 'No namespaces found'
-              }]
-            }
+              content: [
+                {
+                  type: 'text',
+                  text: 'No namespaces found',
+                },
+              ],
+            },
           }
         }
-        
+
         // Error test case
         if (errorTest) {
           log('Returning error response for namespaces list test')
           return {
             toolResult: {
               isError: true,
-              content: [{
-                type: 'text',
-                text: 'Error: Failed to list namespaces'
-              }]
-            }
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: Failed to list namespaces',
+                },
+              ],
+            },
           }
         }
 
         // Normal success test case
         const mockNamespaces = [
           { id: 'test-namespace-1', name: 'Test Namespace 1' },
-          { id: 'test-namespace-2', name: 'Test Namespace 2' }
-        ];
-        
+          { id: 'test-namespace-2', name: 'Test Namespace 2' },
+        ]
+
         return {
           toolResult: {
-            content: [{
-              type: 'text',
-              text: JSON.stringify(mockNamespaces, null, 2)
-            }]
-          }
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(mockNamespaces, null, 2),
+              },
+            ],
+          },
         }
       }
-      
+
       // In real usage, delegate to the actual handler
-      return await WFP_HANDLERS.wfp_list_dispatch_namespaces(request);
+      return await WFP_HANDLERS.wfp_list_dispatch_namespaces(request)
     } catch (error) {
       return handleError(error)
     }
   },
-  
+
   wfp_create_namespace: async (request) => {
     log('Using wfp_create_namespace alias for wfp_create_dispatch_namespace')
     // Parse the stringified input parameters
-    const params = typeof request.params.input === 'string' 
-      ? JSON.parse(request.params.input)
-      : request.params.input;
-      
-    const name = params?.name;
-    const errorTest = params?.errorTest === true;
-    
+    const params = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+
+    const name = params?.name
+    const errorTest = params?.errorTest === true
+
     log(`create_namespace params: name=${name}, errorTest=${errorTest}`)
-    
+
     try {
       // Parameter-based test handling
       if (process.env.NODE_ENV === 'test') {
@@ -730,44 +752,46 @@ export const WFP_HANDLERS: ToolHandlers = {
           return {
             toolResult: {
               isError: true,
-              content: [{ 
-                type: 'text',
-                text: 'Error: Invalid namespace name' 
-              }]
-            }
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: Invalid namespace name',
+                },
+              ],
+            },
           }
         }
-      
+
         // Normal success test case
         return {
           toolResult: {
-            content: [{
-              type: 'text',
-              text: `Namespace created successfully: test-namespace`
-            }]
-          }
+            content: [
+              {
+                type: 'text',
+                text: `Namespace created successfully: test-namespace`,
+              },
+            ],
+          },
         }
       }
-      
+
       // In real usage, delegate to the actual handler
-      return await WFP_HANDLERS.wfp_create_dispatch_namespace(request);
+      return await WFP_HANDLERS.wfp_create_dispatch_namespace(request)
     } catch (error) {
       return handleError(error)
     }
   },
-  
+
   wfp_delete_namespace: async (request) => {
     log('Using wfp_delete_namespace alias for wfp_delete_dispatch_namespace')
     // Parse the stringified input parameters
-    const params = typeof request.params.input === 'string' 
-      ? JSON.parse(request.params.input)
-      : request.params.input;
-      
-    const namespace = params?.namespace;
-    const errorTest = params?.errorTest === true;
-    
+    const params = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+
+    const namespace = params?.namespace
+    const errorTest = params?.errorTest === true
+
     log(`delete_namespace params: namespace=${namespace}, errorTest=${errorTest}`)
-    
+
     try {
       // Parameter-based test handling
       if (process.env.NODE_ENV === 'test') {
@@ -777,25 +801,29 @@ export const WFP_HANDLERS: ToolHandlers = {
           return {
             toolResult: {
               isError: true,
-              content: [{ 
-                type: 'text',
-                text: 'Error: Namespace not found' 
-              }]
-            }
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: Namespace not found',
+                },
+              ],
+            },
           }
         }
-        
+
         // Normal success test case
         return {
           toolResult: {
-            content: [{
-              type: 'text',
-              text: `Namespace deleted successfully: ${namespace}`
-            }]
-          }
+            content: [
+              {
+                type: 'text',
+                text: `Namespace deleted successfully: ${namespace}`,
+              },
+            ],
+          },
         }
       }
-      
+
       // In real usage, delegate to the actual handler
       // We need to convert the input to match the expected format
       const namespaceDeletionRequest = {
@@ -803,13 +831,13 @@ export const WFP_HANDLERS: ToolHandlers = {
         params: {
           ...request.params,
           input: {
-            namespaceId: namespace
-          }
-        }
-      };
-      return await WFP_HANDLERS.wfp_delete_dispatch_namespace(namespaceDeletionRequest);
+            namespaceId: namespace,
+          },
+        },
+      }
+      return await WFP_HANDLERS.wfp_delete_dispatch_namespace(namespaceDeletionRequest)
     } catch (error) {
       return handleError(error)
     }
-  }
+  },
 }

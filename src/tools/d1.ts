@@ -190,7 +190,7 @@ export const D1_HANDLERS: ToolHandlers = {
     const results = await handleD1ListDatabases()
     return {
       content: [{ type: 'text', text: JSON.stringify(results, null, 2) }],
-      metadata: {}
+      metadata: {},
     }
   },
 
@@ -199,7 +199,7 @@ export const D1_HANDLERS: ToolHandlers = {
     const result = await handleD1CreateDatabase(name)
     return {
       content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      metadata: {}
+      metadata: {},
     }
   },
 
@@ -208,7 +208,7 @@ export const D1_HANDLERS: ToolHandlers = {
     await handleD1DeleteDatabase(databaseId)
     return {
       content: [{ type: 'text', text: `Successfully deleted database: ${databaseId}` }],
-      metadata: {}
+      metadata: {},
     }
   },
 
@@ -221,7 +221,7 @@ export const D1_HANDLERS: ToolHandlers = {
     const result = await handleD1Query(databaseId, query, params)
     return {
       content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-      metadata: {}
+      metadata: {},
     }
   },
 }

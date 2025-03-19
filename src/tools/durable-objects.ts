@@ -5,12 +5,12 @@ import { ToolHandlers } from '../utils/types'
 
 // Add this interface at the top of the file, after the imports
 interface CloudflareAPIResponse {
-  success?: boolean;
-  errors?: any[];
-  messages?: string[];
-  result?: any;
-  message?: string;
-  error?: string;
+  success?: boolean
+  errors?: any[]
+  messages?: string[]
+  result?: any
+  message?: string
+  error?: string
 }
 
 // Durable Objects tool definitions
@@ -215,7 +215,7 @@ async function handleCreateNamespace(name: string, script: string, className: st
     throw new Error(`Failed to create Durable Objects namespace: ${error}`)
   }
 
-  const data = await response.json() as CloudflareAPIResponse
+  const data = (await response.json()) as CloudflareAPIResponse
   log('DO create namespace success:', data)
   return data.result
 }
@@ -237,7 +237,7 @@ async function handleDeleteNamespace(namespaceId: string) {
     throw new Error(`Failed to delete Durable Objects namespace: ${error}`)
   }
 
-  const data = await response.json() as CloudflareAPIResponse
+  const data = (await response.json()) as CloudflareAPIResponse
   log('DO delete namespace success:', data)
   return data.result
 }
@@ -263,14 +263,14 @@ async function handleListNamespaces() {
       return { error: `Failed to list Durable Objects namespaces: ${error}` }
     }
 
-    const data = await response.json() as CloudflareAPIResponse
+    const data = (await response.json()) as CloudflareAPIResponse
     log('DO list namespaces success:', data)
-    
+
     // Handle empty namespaces list
     if (data.result.length === 0) {
       return { message: 'No Durable Object namespaces found' }
     }
-    
+
     return data.result
   } catch (error) {
     log('DO list namespaces exception:', error)
@@ -296,7 +296,7 @@ async function handleGetNamespace(namespaceId: string) {
       return { error: `Failed to get Durable Objects namespace: ${error}` }
     }
 
-    const data = await response.json() as CloudflareAPIResponse
+    const data = (await response.json()) as CloudflareAPIResponse
     log('DO get namespace success:', data)
     return data.result
   } catch (error) {
@@ -319,7 +319,7 @@ async function handleGetObject(namespaceId: string, objectId: string) {
     if (!response.ok) {
       const errorText = await response.text()
       log('DO get object error:', errorText)
-      
+
       // Check for 404 Not Found or if the error message mentions the object identifier is invalid
       if (response.status === 404 || errorText.includes('object identifier is invalid')) {
         return { error: 'Object not found' }
@@ -327,7 +327,7 @@ async function handleGetObject(namespaceId: string, objectId: string) {
       return { error: `Failed to get Durable Object: ${errorText}` }
     }
 
-    const data = await response.json() as CloudflareAPIResponse
+    const data = (await response.json()) as CloudflareAPIResponse
     log('DO get object success:', data)
     return data.result
   } catch (error) {
@@ -339,7 +339,7 @@ async function handleGetObject(namespaceId: string, objectId: string) {
 async function handleListObjects(namespaceId: string, limit?: number) {
   log('Executing do_list_objects for namespace:', namespaceId)
   let url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/workers/durable_objects/namespaces/${namespaceId}/objects`
-  
+
   if (limit) {
     url += `?limit=${limit}`
   }
@@ -358,14 +358,14 @@ async function handleListObjects(namespaceId: string, limit?: number) {
       return { error: `Failed to list Durable Objects: ${error}` }
     }
 
-    const data = await response.json() as CloudflareAPIResponse
+    const data = (await response.json()) as CloudflareAPIResponse
     log('DO list objects success:', data)
-    
+
     // Handle empty objects list
     if (data.result.length === 0) {
       return { message: 'No objects found in namespace' }
     }
-    
+
     return data.result
   } catch (error) {
     log('DO list objects exception:', error)
@@ -398,14 +398,14 @@ async function handleDeleteObject(namespaceId: string, objectId: string) {
       return { error: `Failed to delete Durable Object: ${errorText}` }
     }
 
-    const data = await response.json() as CloudflareAPIResponse
+    const data = (await response.json()) as CloudflareAPIResponse
     log('DO delete object success:', data)
-    
+
     // Ensure we correctly handle the success case
     if (data && data.success) {
       return { message: 'Durable Object deleted successfully' }
     }
-    
+
     // Return success message instead of the result data
     return { message: 'Durable Object deleted successfully' }
   } catch (error) {
@@ -438,14 +438,14 @@ async function handleAlarmList(namespaceId: string, objectId: string) {
       return { error: `Failed to list Durable Object alarms: ${errorText}` }
     }
 
-    const data = await response.json() as CloudflareAPIResponse
+    const data = (await response.json()) as CloudflareAPIResponse
     log('DO alarm list success:', data)
-    
+
     // Ensure we handle the success case correctly, even if result is null
     if (data && data.success) {
       return data.result || { scheduled_time: null }
     }
-    
+
     return data.result
   } catch (error) {
     log('DO alarm list exception:', error)
@@ -482,14 +482,14 @@ async function handleAlarmSet(namespaceId: string, objectId: string, scheduledTi
       return { error: `Failed to set Durable Object alarm: ${errorText}` }
     }
 
-    const data = await response.json() as CloudflareAPIResponse
+    const data = (await response.json()) as CloudflareAPIResponse
     log('DO alarm set success:', data)
-    
+
     // Ensure we handle the success case correctly
     if (data && data.success) {
       return data.result
     }
-    
+
     return data.result
   } catch (error) {
     log('DO alarm set exception:', error)
@@ -522,14 +522,14 @@ async function handleAlarmDelete(namespaceId: string, objectId: string) {
       return { error: `Failed to delete Durable Object alarm: ${errorText}` }
     }
 
-    const data = await response.json() as CloudflareAPIResponse
+    const data = (await response.json()) as CloudflareAPIResponse
     log('DO alarm delete success:', data)
-    
+
     // Ensure we handle the success case correctly
     if (data && data.success) {
       return { message: 'Alarm deleted successfully' }
     }
-    
+
     return data.result
   } catch (error) {
     log('DO alarm delete exception:', error)
@@ -548,7 +548,6 @@ export const DURABLE_OBJECTS_HANDLERS: ToolHandlers = {
         isError: false,
         content: [
           {
-
             text: JSON.stringify(result, null, 2),
           },
         ],
@@ -564,7 +563,6 @@ export const DURABLE_OBJECTS_HANDLERS: ToolHandlers = {
         isError: false,
         content: [
           {
-
             text: JSON.stringify(result, null, 2),
           },
         ],
@@ -575,38 +573,37 @@ export const DURABLE_OBJECTS_HANDLERS: ToolHandlers = {
     // Parse input parameters for test conditions
     const input = request?.params?.input ? JSON.parse(request.params.input as string) : {}
     const { emptyList = false, errorTest = false } = input
-    
+
     const result = await handleListNamespaces()
-    
+
     // Check if there was an error
     if (result && 'error' in result) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: `Error: ${result.error}`, mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: `Error: ${result.error}`, mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     // Check if there's a message (empty list)
     if (result && ('message' in result || 'messages' in result)) {
-      const typedResult = result as CloudflareAPIResponse;
-      const messageText = 'message' in result ? typedResult.message : 
-        (typedResult.messages && Array.isArray(typedResult.messages) && typedResult.messages.length > 0) ? 
-          typedResult.messages[0] : 'No objects found';
-          
+      const typedResult = result as CloudflareAPIResponse
+      const messageText =
+        'message' in result
+          ? typedResult.message
+          : typedResult.messages && Array.isArray(typedResult.messages) && typedResult.messages.length > 0
+            ? typedResult.messages[0]
+            : 'No objects found'
+
       return {
         toolResult: {
           isError: false,
-          content: [
-            { text: messageText, mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: messageText, mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     // Otherwise return the results as JSON
     return {
       toolResult: {
@@ -614,155 +611,140 @@ export const DURABLE_OBJECTS_HANDLERS: ToolHandlers = {
         content: [
           {
             text: JSON.stringify(result, null, 2),
-            mimeType: 'application/json'
-          }
-        ]
-      }
+            mimeType: 'application/json',
+          },
+        ],
+      },
     }
   },
   do_get_namespace: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
     const { namespaceId } = input as { namespaceId: string }
-    
+
     if (!namespaceId) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Namespace ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Namespace ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     const result = await handleGetNamespace(namespaceId)
-    
+
     // Check if there was an error
     if (result && 'error' in result) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: `Error: ${result.error}`, mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: `Error: ${result.error}`, mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     // Otherwise return the results as JSON
     return {
       toolResult: {
         isError: false,
         content: [
           {
-
             text: JSON.stringify(result, null, 2),
-            mimeType: 'application/json'
-          }
-        ]
-      }
+            mimeType: 'application/json',
+          },
+        ],
+      },
     }
   },
   do_get_object: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
     const { namespaceId, objectId } = input as { namespaceId: string; objectId: string }
-    
+
     if (!namespaceId) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Namespace ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Namespace ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     if (!objectId) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Object ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Object ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     const result = await handleGetObject(namespaceId, objectId)
-    
+
     // Check if there was an error
     if (result && 'error' in result) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: `Error: ${result.error}`, mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: `Error: ${result.error}`, mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     // Otherwise return the results as JSON
     return {
       toolResult: {
         isError: false,
         content: [
           {
-
             text: JSON.stringify(result, null, 2),
-            mimeType: 'application/json'
-          }
-        ]
-      }
+            mimeType: 'application/json',
+          },
+        ],
+      },
     }
   },
   do_list_objects: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
     const { namespaceId, limit } = input as { namespaceId: string; limit?: number }
-    
+
     if (!namespaceId) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Namespace ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Namespace ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     const result = await handleListObjects(namespaceId, limit)
-    
+
     // Check if there was an error
     if (result && 'error' in result) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: `Error: ${result.error}`, mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: `Error: ${result.error}`, mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     // Check if there's a message (empty list)
     if (result && ('message' in result || 'messages' in result)) {
-      const typedResult = result as CloudflareAPIResponse;
-      const messageText = 'message' in result ? typedResult.message : 
-        (typedResult.messages && Array.isArray(typedResult.messages) && typedResult.messages.length > 0) ? 
-          typedResult.messages[0] : 'No objects found';
-          
+      const typedResult = result as CloudflareAPIResponse
+      const messageText =
+        'message' in result
+          ? typedResult.message
+          : typedResult.messages && Array.isArray(typedResult.messages) && typedResult.messages.length > 0
+            ? typedResult.messages[0]
+            : 'No objects found'
+
       return {
         toolResult: {
           isError: false,
-          content: [
-            { text: messageText, mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: messageText, mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     // Otherwise return the results as JSON
     return {
       toolResult: {
@@ -770,69 +752,64 @@ export const DURABLE_OBJECTS_HANDLERS: ToolHandlers = {
         content: [
           {
             text: JSON.stringify(result, null, 2),
-            mimeType: 'application/json'
-          }
-        ]
-      }
+            mimeType: 'application/json',
+          },
+        ],
+      },
     }
   },
   do_delete_object: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
     const { namespaceId, objectId } = input as { namespaceId: string; objectId: string }
-    
+
     if (!namespaceId) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Namespace ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Namespace ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     if (!objectId) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Object ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Object ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     const result = await handleDeleteObject(namespaceId, objectId)
-    
+
     // Check if there was an error
     if (result && 'error' in result) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: `Error: ${result.error}`, mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: `Error: ${result.error}`, mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     // Check if there's a success message
     if (result && ('message' in result || 'messages' in result)) {
-      const typedResult = result as CloudflareAPIResponse;
-      const messageText = 'message' in result ? typedResult.message : 
-        (typedResult.messages && Array.isArray(typedResult.messages) && typedResult.messages.length > 0) ? 
-          typedResult.messages[0] : 'Durable Object deleted successfully';
-          
+      const typedResult = result as CloudflareAPIResponse
+      const messageText =
+        'message' in result
+          ? typedResult.message
+          : typedResult.messages && Array.isArray(typedResult.messages) && typedResult.messages.length > 0
+            ? typedResult.messages[0]
+            : 'Durable Object deleted successfully'
+
       return {
         toolResult: {
           isError: false,
-          content: [
-            { text: messageText, mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: messageText, mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     // Otherwise return the results as JSON
     return {
       toolResult: {
@@ -840,69 +817,64 @@ export const DURABLE_OBJECTS_HANDLERS: ToolHandlers = {
         content: [
           {
             text: JSON.stringify(result, null, 2),
-            mimeType: 'application/json'
-          }
-        ]
-      }
+            mimeType: 'application/json',
+          },
+        ],
+      },
     }
   },
   do_alarm_list: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
     const { namespaceId, objectId } = input as { namespaceId: string; objectId: string }
-    
+
     if (!namespaceId) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Namespace ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Namespace ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     if (!objectId) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Object ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Object ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     const result = await handleAlarmList(namespaceId, objectId)
-    
+
     // Check if there was an error
     if (result && 'error' in result) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: `Error: ${result.error}`, mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: `Error: ${result.error}`, mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     // Check if there's a message (empty list)
     if (result && ('message' in result || 'messages' in result)) {
-      const typedResult = result as CloudflareAPIResponse;
-      const messageText = 'message' in result ? typedResult.message : 
-        (typedResult.messages && Array.isArray(typedResult.messages) && typedResult.messages.length > 0) ? 
-          typedResult.messages[0] : 'No alarms found for this object';
-          
+      const typedResult = result as CloudflareAPIResponse
+      const messageText =
+        'message' in result
+          ? typedResult.message
+          : typedResult.messages && Array.isArray(typedResult.messages) && typedResult.messages.length > 0
+            ? typedResult.messages[0]
+            : 'No alarms found for this object'
+
       return {
         toolResult: {
           isError: false,
-          content: [
-            { text: messageText, mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: messageText, mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     // Otherwise return the results as JSON
     return {
       toolResult: {
@@ -910,84 +882,77 @@ export const DURABLE_OBJECTS_HANDLERS: ToolHandlers = {
         content: [
           {
             text: JSON.stringify(result, null, 2),
-            mimeType: 'application/json'
-          }
-        ]
-      }
+            mimeType: 'application/json',
+          },
+        ],
+      },
     }
   },
   do_alarm_set: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
-    const { namespaceId, objectId, scheduledTime } = input as { 
-      namespaceId: string; 
-      objectId: string;
-      scheduledTime: string;
+    const { namespaceId, objectId, scheduledTime } = input as {
+      namespaceId: string
+      objectId: string
+      scheduledTime: string
     }
-    
+
     if (!namespaceId) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Namespace ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Namespace ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     if (!objectId) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Object ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Object ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     if (!scheduledTime) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Scheduled time is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Scheduled time is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     const result = await handleAlarmSet(namespaceId, objectId, scheduledTime)
-    
+
     // Check if there was an error
     if (result && 'error' in result) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: `Error: ${result.error}`, mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: `Error: ${result.error}`, mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     // Check if there's a message (success message)
     if (result && ('message' in result || 'messages' in result)) {
-      const typedResult = result as CloudflareAPIResponse;
-      const messageText = 'message' in result ? typedResult.message : 
-        (typedResult.messages && Array.isArray(typedResult.messages) && typedResult.messages.length > 0) ? 
-          typedResult.messages[0] : 'Alarm set successfully';
-          
+      const typedResult = result as CloudflareAPIResponse
+      const messageText =
+        'message' in result
+          ? typedResult.message
+          : typedResult.messages && Array.isArray(typedResult.messages) && typedResult.messages.length > 0
+            ? typedResult.messages[0]
+            : 'Alarm set successfully'
+
       return {
         toolResult: {
           isError: false,
-          content: [
-            { text: messageText, mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: messageText, mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     // Otherwise return the results as JSON
     return {
       toolResult: {
@@ -995,69 +960,64 @@ export const DURABLE_OBJECTS_HANDLERS: ToolHandlers = {
         content: [
           {
             text: JSON.stringify(result, null, 2),
-            mimeType: 'application/json'
-          }
-        ]
-      }
+            mimeType: 'application/json',
+          },
+        ],
+      },
     }
   },
   do_alarm_delete: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
     const { namespaceId, objectId } = input as { namespaceId: string; objectId: string }
-    
+
     if (!namespaceId) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Namespace ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Namespace ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     if (!objectId) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Object ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Object ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     const result = await handleAlarmDelete(namespaceId, objectId)
-    
+
     // Check if there was an error
     if (result && 'error' in result) {
       return {
         toolResult: {
           isError: true,
-          content: [
-            { text: `Error: ${result.error}`, mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: `Error: ${result.error}`, mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     // Check if there's a message (success message)
     if (result && ('message' in result || 'messages' in result)) {
-      const typedResult = result as CloudflareAPIResponse;
-      const messageText = 'message' in result ? typedResult.message : 
-        (typedResult.messages && Array.isArray(typedResult.messages) && typedResult.messages.length > 0) ? 
-          typedResult.messages[0] : 'Alarm deleted successfully';
-          
+      const typedResult = result as CloudflareAPIResponse
+      const messageText =
+        'message' in result
+          ? typedResult.message
+          : typedResult.messages && Array.isArray(typedResult.messages) && typedResult.messages.length > 0
+            ? typedResult.messages[0]
+            : 'Alarm deleted successfully'
+
       return {
         toolResult: {
           isError: false,
-          content: [
-            { text: messageText, mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: messageText, mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     // Otherwise return success message
     return {
       toolResult: {
@@ -1065,10 +1025,10 @@ export const DURABLE_OBJECTS_HANDLERS: ToolHandlers = {
         content: [
           {
             text: 'Alarm deleted successfully',
-            mimeType: 'text/plain'
-          }
-        ]
-      }
+            mimeType: 'text/plain',
+          },
+        ],
+      },
     }
   },
 }

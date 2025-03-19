@@ -242,7 +242,8 @@ const WORKER_DEPLOY_TOOL: Tool = {
           properties: {
             type: {
               type: 'string',
-              description: 'Type of binding (kv_namespace, r2_bucket, d1_database, service, analytics_engine, queue, durable_object_namespace)',
+              description:
+                'Type of binding (kv_namespace, r2_bucket, d1_database, service, analytics_engine, queue, durable_object_namespace)',
               enum: [
                 'kv_namespace',
                 'r2_bucket',
@@ -550,15 +551,15 @@ export async function handleWorkerDeploy(
   compatibility_date?: string,
   compatibility_flags?: string[],
   skip_workers_dev?: boolean,
-  no_observability?: boolean
+  no_observability?: boolean,
 ) {
   log('Executing worker_deploy for script:', name)
-  
+
   // Validate that either scriptContent or filePath is provided
   if (!scriptContent && !filePath) {
     throw new Error('Either scriptContent or filePath must be provided')
   }
-  
+
   // If filePath is provided, read the file content
   let finalScriptContent = scriptContent
   if (filePath) {
@@ -570,22 +571,22 @@ export async function handleWorkerDeploy(
       throw new Error(`Failed to read script file: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  
+
   if (!finalScriptContent) {
     throw new Error('Failed to get script content')
   }
-  
+
   // Check if the worker already exists
   let workerExists = false
   try {
     const workers = await handleWorkerList()
-    workerExists = workers.some(worker => worker.name === name)
+    workerExists = workers.some((worker) => worker.name === name)
     log(`Worker ${name} ${workerExists ? 'exists' : 'does not exist'}`)
   } catch (error) {
     log(`Error checking if worker exists: ${error instanceof Error ? error.message : String(error)}`)
     // Continue with deployment even if we couldn't check if the worker exists
   }
-  
+
   // Deploy the worker using handleWorkerPut
   const result = await handleWorkerPut(
     name,
@@ -595,13 +596,13 @@ export async function handleWorkerDeploy(
     compatibility_flags,
     undefined, // migrations
     !skip_workers_dev,
-    !no_observability
+    !no_observability,
   )
-  
+
   return {
     success: true,
     action: workerExists ? 'redeployed' : 'deployed',
-    name
+    name,
   }
 }
 
@@ -615,7 +616,7 @@ export const WORKERS_HANDLERS: ToolHandlers = {
           text: JSON.stringify(results, null, 2),
         },
       ],
-      metadata: {}
+      metadata: {},
     }
   },
 
@@ -629,7 +630,7 @@ export const WORKERS_HANDLERS: ToolHandlers = {
           text: script,
         },
       ],
-      metadata: {}
+      metadata: {},
     }
   },
 
@@ -670,7 +671,7 @@ export const WORKERS_HANDLERS: ToolHandlers = {
           text: `Successfully deployed worker: ${name}`,
         },
       ],
-      metadata: {}
+      metadata: {},
     }
   },
 
@@ -694,7 +695,7 @@ export const WORKERS_HANDLERS: ToolHandlers = {
       skip_workers_dev?: boolean
       no_observability?: boolean
     }
-    
+
     const result = await handleWorkerDeploy(
       name,
       scriptContent,
@@ -703,9 +704,9 @@ export const WORKERS_HANDLERS: ToolHandlers = {
       compatibility_date,
       compatibility_flags,
       skip_workers_dev,
-      no_observability
+      no_observability,
     )
-    
+
     return {
       toolResult: {
         content: [
@@ -728,7 +729,7 @@ export const WORKERS_HANDLERS: ToolHandlers = {
           text: `Successfully deleted worker: ${name}`,
         },
       ],
-      metadata: {}
+      metadata: {},
     }
   },
 }

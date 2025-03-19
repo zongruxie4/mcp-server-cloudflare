@@ -3,18 +3,17 @@ import { SECRETS_HANDLERS } from '../../src/tools/secrets'
 import { createMockToolRequest, verifyToolResponse } from '../utils/test-helpers'
 
 describe('Secrets API Tools', () => {
-
   describe('secrets_list', () => {
     it('should list secrets successfully', async () => {
       const request = createMockToolRequest('secrets_list', {
         scriptName: 'test-script',
         envName: 'production',
         emptyList: false,
-        errorTest: false
+        errorTest: false,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await SECRETS_HANDLERS.secrets_list(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('SECRET_KEY_1')
@@ -27,11 +26,11 @@ describe('Secrets API Tools', () => {
         scriptName: 'test-script',
         envName: 'production',
         emptyList: true,
-        errorTest: false
+        errorTest: false,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await SECRETS_HANDLERS.secrets_list(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('No secrets found')
@@ -42,11 +41,11 @@ describe('Secrets API Tools', () => {
         scriptName: 'non-existent-script',
         envName: 'production',
         emptyList: false,
-        errorTest: true
+        errorTest: true,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await SECRETS_HANDLERS.secrets_list(request)
-      
+
       verifyToolResponse(response, true)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Error')
@@ -60,11 +59,11 @@ describe('Secrets API Tools', () => {
         envName: 'production',
         secretName: 'SECRET_KEY',
         secretValue: 'secret-value',
-        errorTest: false
+        errorTest: false,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await SECRETS_HANDLERS.secrets_create(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Secret created successfully')
@@ -78,11 +77,11 @@ describe('Secrets API Tools', () => {
         envName: 'production',
         secretName: 'INVALID-SECRET-NAME',
         secretValue: 'secret-value',
-        errorTest: true
+        errorTest: true,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await SECRETS_HANDLERS.secrets_create(request)
-      
+
       verifyToolResponse(response, true)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Error')
@@ -95,11 +94,11 @@ describe('Secrets API Tools', () => {
         scriptName: 'test-script',
         envName: 'production',
         secretName: 'SECRET_KEY',
-        errorTest: false
+        errorTest: false,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await SECRETS_HANDLERS.secrets_delete(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Secret deleted successfully')
@@ -110,11 +109,11 @@ describe('Secrets API Tools', () => {
         scriptName: 'test-script',
         envName: 'production',
         secretName: 'NON_EXISTENT_SECRET',
-        errorTest: true
+        errorTest: true,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await SECRETS_HANDLERS.secrets_delete(request)
-      
+
       verifyToolResponse(response, true)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Error')

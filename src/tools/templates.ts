@@ -51,11 +51,7 @@ const TEMPLATE_CREATE_WORKER_TOOL: Tool = {
   },
 }
 
-export const TEMPLATES_TOOLS = [
-  TEMPLATE_LIST_TOOL,
-  TEMPLATE_GET_TOOL,
-  TEMPLATE_CREATE_WORKER_TOOL,
-]
+export const TEMPLATES_TOOLS = [TEMPLATE_LIST_TOOL, TEMPLATE_GET_TOOL, TEMPLATE_CREATE_WORKER_TOOL]
 
 // Handler functions for Templates operations
 async function handleListTemplates() {
@@ -74,7 +70,7 @@ async function handleListTemplates() {
     throw new Error(`Failed to list templates: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Template list success:', data)
   return data.result
 }
@@ -95,7 +91,7 @@ async function handleGetTemplate(templateId: string) {
     throw new Error(`Failed to get template: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Template get success:', data)
   return data.result
 }
@@ -108,7 +104,7 @@ async function handleCreateWorkerFromTemplate(templateId: string, name: string, 
     template_id: templateId,
     name,
   }
-  
+
   if (config) {
     requestBody.config = config
   }
@@ -128,7 +124,7 @@ async function handleCreateWorkerFromTemplate(templateId: string, name: string, 
     throw new Error(`Failed to create worker from template: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Template create worker success:', data)
   return data.result
 }
@@ -140,16 +136,16 @@ const mockTemplates = [
     name: 'Test Template 1',
     description: 'A template for testing purposes',
     type: 'worker',
-    tags: ['test', 'example']
+    tags: ['test', 'example'],
   },
   {
     id: 'test-template-2',
     name: 'Test Template 2',
     description: 'Another template for testing',
     type: 'worker',
-    tags: ['test', 'demo']
-  }
-];
+    tags: ['test', 'demo'],
+  },
+]
 
 const mockTemplateDetails = {
   id: 'template-abc123',
@@ -157,68 +153,73 @@ const mockTemplateDetails = {
   description: 'Template details for testing',
   content: {
     'index.js': 'addEventListener("fetch", (event) => { event.respondWith(new Response("Hello World")) })',
-    'wrangler.toml': 'name = "test-app"\n'
+    'wrangler.toml': 'name = "test-app"\n',
   },
   type: 'worker',
-  tags: ['test', 'example']
-};
+  tags: ['test', 'example'],
+}
 
 // Export handlers
 export const TEMPLATES_HANDLERS: ToolHandlers = {
   template_list: async (request) => {
     try {
       // Parse the stringified input parameters
-      const params = typeof request.params.input === 'string' 
-        ? JSON.parse(request.params.input)
-        : (request.params.input || {});
+      const params =
+        typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input || {}
 
-      const emptyList = params?.emptyList === true;
-      const errorTest = params?.errorTest === true;
-      
-      log(`template_list params: emptyList=${emptyList}, errorTest=${errorTest}`);
-      
+      const emptyList = params?.emptyList === true
+      const errorTest = params?.errorTest === true
+
+      log(`template_list params: emptyList=${emptyList}, errorTest=${errorTest}`)
+
       // Parameter-based test handling
       if (process.env.NODE_ENV === 'test') {
         // Error test case
         if (errorTest) {
-          log('Returning error response for template list test');
+          log('Returning error response for template list test')
           return {
             toolResult: {
               isError: true,
-              content: [{ 
-                type: 'text',
-                text: 'Error: API error' 
-              }]
-            }
-          };
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: API error',
+                },
+              ],
+            },
+          }
         }
-        
+
         // Empty list test case
         if (emptyList) {
-          log('Returning empty template list for test');
+          log('Returning empty template list for test')
           return {
             toolResult: {
-              content: [{
-                type: 'text',
-                text: JSON.stringify({ message: 'No templates found' }, null, 2)
-              }]
-            }
-          };
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify({ message: 'No templates found' }, null, 2),
+                },
+              ],
+            },
+          }
         }
-        
+
         // Normal success test case
         return {
           toolResult: {
-            content: [{
-              type: 'text',
-              text: JSON.stringify(mockTemplates, null, 2)
-            }]
-          }
-        };
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(mockTemplates, null, 2),
+              },
+            ],
+          },
+        }
       }
 
       // Non-test environment: call the actual API
-      const result = await handleListTemplates();
+      const result = await handleListTemplates()
       return {
         toolResult: {
           content: [
@@ -228,9 +229,9 @@ export const TEMPLATES_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     } catch (error: any) {
-      log(`Error in template_list: ${error?.message || 'Unknown error'}`);
+      log(`Error in template_list: ${error?.message || 'Unknown error'}`)
       return {
         toolResult: {
           isError: true,
@@ -241,50 +242,52 @@ export const TEMPLATES_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     }
   },
   template_get: async (request) => {
     try {
       // Parse the stringified input parameters
-      const params = typeof request.params.input === 'string' 
-        ? JSON.parse(request.params.input)
-        : request.params.input;
+      const params = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
 
-      const templateId = params?.templateId || 'template-abc123';
-      const errorTest = params?.errorTest === true;
-      
-      log(`template_get params: templateId=${templateId}, errorTest=${errorTest}`);
-      
+      const templateId = params?.templateId || 'template-abc123'
+      const errorTest = params?.errorTest === true
+
+      log(`template_get params: templateId=${templateId}, errorTest=${errorTest}`)
+
       // Parameter-based test handling
       if (process.env.NODE_ENV === 'test') {
         // Error test case
         if (errorTest || templateId === 'non-existent-template') {
-          log('Returning error response for template get test');
+          log('Returning error response for template get test')
           return {
             toolResult: {
               isError: true,
-              content: [{ 
-                type: 'text',
-                text: 'Error: Template not found' 
-              }]
-            }
-          };
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: Template not found',
+                },
+              ],
+            },
+          }
         }
-        
+
         // Normal success test case
         return {
           toolResult: {
-            content: [{
-              type: 'text',
-              text: JSON.stringify(mockTemplateDetails, null, 2)
-            }]
-          }
-        };
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(mockTemplateDetails, null, 2),
+              },
+            ],
+          },
+        }
       }
 
       // Non-test environment: call the actual API
-      const result = await handleGetTemplate(templateId);
+      const result = await handleGetTemplate(templateId)
       return {
         toolResult: {
           content: [
@@ -294,9 +297,9 @@ export const TEMPLATES_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     } catch (error: any) {
-      log(`Error in template_get: ${error?.message || 'Unknown error'}`);
+      log(`Error in template_get: ${error?.message || 'Unknown error'}`)
       return {
         toolResult: {
           isError: true,
@@ -307,61 +310,63 @@ export const TEMPLATES_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     }
   },
   template_create_worker: async (request) => {
     try {
       // Parse the stringified input parameters
-      const params = typeof request.params.input === 'string' 
-        ? JSON.parse(request.params.input)
-        : request.params.input;
+      const params = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
 
-      const templateId = params?.templateId || 'template-abc123';
-      const name = params?.name || 'test-worker';
-      const config = params?.config || {};
-      const errorTest = params?.errorTest === true;
-      
-      log(`template_create_worker params: templateId=${templateId}, name=${name}, errorTest=${errorTest}`);
-      
+      const templateId = params?.templateId || 'template-abc123'
+      const name = params?.name || 'test-worker'
+      const config = params?.config || {}
+      const errorTest = params?.errorTest === true
+
+      log(`template_create_worker params: templateId=${templateId}, name=${name}, errorTest=${errorTest}`)
+
       // Parameter-based test handling
       if (process.env.NODE_ENV === 'test') {
         // Error test case
         if (errorTest || templateId === 'non-existent-template') {
-          log('Returning error response for template create worker test');
+          log('Returning error response for template create worker test')
           return {
             toolResult: {
               isError: true,
-              content: [{ 
-                type: 'text',
-                text: 'Error: Template not found' 
-              }]
-            }
-          };
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: Template not found',
+                },
+              ],
+            },
+          }
         }
-        
+
         // Normal success test case
         const mockResult = {
           success: true,
           message: 'Worker created successfully',
           worker: {
             name: name,
-            created_from: templateId
-          }
-        };
-        
+            created_from: templateId,
+          },
+        }
+
         return {
           toolResult: {
-            content: [{
-              type: 'text',
-              text: JSON.stringify(mockResult, null, 2)
-            }]
-          }
-        };
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(mockResult, null, 2),
+              },
+            ],
+          },
+        }
       }
 
       // Non-test environment: call the actual API
-      const result = await handleCreateWorkerFromTemplate(templateId, name, config);
+      const result = await handleCreateWorkerFromTemplate(templateId, name, config)
       return {
         toolResult: {
           content: [
@@ -371,9 +376,9 @@ export const TEMPLATES_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     } catch (error: any) {
-      log(`Error in template_create_worker: ${error?.message || 'Unknown error'}`);
+      log(`Error in template_create_worker: ${error?.message || 'Unknown error'}`)
       return {
         toolResult: {
           isError: true,
@@ -384,7 +389,7 @@ export const TEMPLATES_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     }
   },
 }

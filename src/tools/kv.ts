@@ -245,7 +245,7 @@ export const KV_HANDLERS: ToolHandlers = {
           text: JSON.stringify(results, null, 2),
         },
       ],
-      metadata: {}
+      metadata: {},
     }
   },
 
@@ -259,7 +259,7 @@ export const KV_HANDLERS: ToolHandlers = {
           text: value,
         },
       ],
-      metadata: {}
+      metadata: {},
     }
   },
 
@@ -278,7 +278,7 @@ export const KV_HANDLERS: ToolHandlers = {
           text: `Successfully stored value for key: ${key}`,
         },
       ],
-      metadata: {}
+      metadata: {},
     }
   },
 
@@ -292,7 +292,7 @@ export const KV_HANDLERS: ToolHandlers = {
           text: `Successfully deleted key: ${key}`,
         },
       ],
-      metadata: {}
+      metadata: {},
     }
   },
 
@@ -310,7 +310,7 @@ export const KV_HANDLERS: ToolHandlers = {
           text: JSON.stringify(results, null, 2),
         },
       ],
-      metadata: {}
+      metadata: {},
     }
   },
 }

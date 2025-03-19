@@ -13,7 +13,7 @@ export const workersAiMocks = {
           description: 'A 7 billion parameter chat model from Meta',
           type: 'text',
           input_type: 'prompt',
-          capabilities: ['chat', 'embeddings']
+          capabilities: ['chat', 'embeddings'],
         },
         {
           id: '@cf/stabilityai/stable-diffusion-xl-base-1.0',
@@ -21,7 +21,7 @@ export const workersAiMocks = {
           description: 'A state-of-the-art text-to-image model',
           type: 'image',
           input_type: 'prompt',
-          capabilities: ['image-generation']
+          capabilities: ['image-generation'],
         },
         {
           id: '@cf/deepseek/deepseek-coder-6.7b-instruct',
@@ -29,54 +29,54 @@ export const workersAiMocks = {
           description: 'A 6.7 billion parameter coding model',
           type: 'text',
           input_type: 'prompt',
-          capabilities: ['code-generation', 'code-completion']
-        }
+          capabilities: ['code-generation', 'code-completion'],
+        },
       ],
       success: true,
       errors: [],
-      messages: []
+      messages: [],
     },
     empty: {
       result: [],
       success: true,
       errors: [],
-      messages: ['No models found']
+      messages: ['No models found'],
     },
     error: {
       result: null,
       success: false,
       errors: [{ code: 10000, message: 'API error when listing models' }],
-      messages: []
-    }
+      messages: [],
+    },
   },
   runModel: {
     textSuccess: {
       result: {
-        response: "This is a test response from the AI model"
+        response: 'This is a test response from the AI model',
       },
       success: true,
       errors: [],
-      messages: []
+      messages: [],
     },
     imageSuccess: {
       result: {
-        data: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+        data: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
       },
       success: true,
       errors: [],
-      messages: []
+      messages: [],
     },
     error: {
       result: null,
       success: false,
       errors: [{ code: 10001, message: 'Error: Failed to run model: invalid input format' }],
-      messages: []
+      messages: [],
     },
     modelNotFound: {
       result: null,
       success: false,
       errors: [{ code: 10002, message: 'Error: Model not found: @cf/non-existent-model' }],
-      messages: []
-    }
-  }
+      messages: [],
+    },
+  },
 }

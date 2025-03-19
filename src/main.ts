@@ -26,10 +26,10 @@ import { WRANGLER_HANDLERS, WRANGLER_TOOLS } from './tools/wrangler'
 // Combine all tools
 
 const ALL_TOOLS = [
-  ...KV_TOOLS, 
-  ...WORKER_TOOLS, 
-  ...ANALYTICS_TOOLS, 
-  ...R2_TOOLS, 
+  ...KV_TOOLS,
+  ...WORKER_TOOLS,
+  ...ANALYTICS_TOOLS,
+  ...R2_TOOLS,
   ...D1_TOOLS,
   ...DURABLE_OBJECTS_TOOLS,
   ...QUEUES_TOOLS,
@@ -43,7 +43,7 @@ const ALL_TOOLS = [
   ...ZONES_TOOLS,
   ...SECRETS_TOOLS,
   ...VERSIONS_TOOLS,
-  ...WRANGLER_TOOLS
+  ...WRANGLER_TOOLS,
 ]
 
 // Create server
