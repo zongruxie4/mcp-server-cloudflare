@@ -3,12 +3,10 @@ import { exec } from 'child_process'
 import { promisify } from 'util'
 import {
   AccountInfo,
+  ensureWranglerAuthentication,
   fetchInternal,
   FetchResult,
-  getAuthTokens,
-  isAccessTokenExpired,
   isDirectory,
-  refreshToken,
 } from './utils/wrangler'
 import chalk from 'chalk'
 import os from 'node:os'
@@ -37,29 +35,12 @@ export async function init(accountTag: string | undefined) {
   startSection(`Checking for existing Wrangler auth info`, `Step 1 of 3`)
   updateStatus(chalk.gray(`If anything goes wrong, try running 'npx wrangler@latest login' manually and retrying.`))
 
-  try {
-    getAuthTokens()
-  } catch (e: any) {
-    updateStatus(`${chalk.underline.red('Warning:')} ${chalk.gray(e.message)}`, false)
-    updateStatus(`Running '${chalk.yellow('npx wrangler login')}' and retrying...`, false)
-
-    const { stderr, stdout } = await execAsync('npx wrangler@latest login')
-    if (stderr) updateStatus(chalk.gray(stderr))
-
-    getAuthTokens()
+  const authenticated = await ensureWranglerAuthentication()
+  if (!authenticated) {
+    throw new Error('Failed to authenticate with Wrangler. Please try running npx wrangler@latest login manually and then retry.')
   }
 
   updateStatus(`Wrangler auth info loaded!`)
-
-  if (isAccessTokenExpired()) {
-    updateStatus(`Access token expired, refreshing...`, false)
-    if (await refreshToken()) {
-      updateStatus('Successfully refreshed access token')
-    } else {
-      throw new Error('Failed to refresh access token')
-    }
-  }
-
   endSection('Done')
   startSection(`Fetching account info`, `Step 2 of 3`)
 
