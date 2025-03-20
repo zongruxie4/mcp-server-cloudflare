@@ -126,7 +126,7 @@ async function handleGetWorkflow(workflowId: string) {
     throw new Error(`Failed to get workflow: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Workflow get success:', data)
   return data.result
 }
@@ -153,7 +153,7 @@ async function handleCreateWorkflow(name: string, content: any) {
     throw new Error(`Failed to create workflow: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Workflow create success:', data)
   return data.result
 }
@@ -175,7 +175,7 @@ async function handleDeleteWorkflow(workflowId: string) {
     throw new Error(`Failed to delete workflow: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Workflow delete success:', data)
   return data.result
 }
@@ -196,7 +196,7 @@ async function handleListWorkflows() {
     throw new Error(`Failed to list workflows: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Workflow list success:', data)
   return data.result
 }
@@ -222,7 +222,7 @@ async function handleUpdateWorkflow(workflowId: string, content: any) {
     throw new Error(`Failed to update workflow: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Workflow update success:', data)
   return data.result
 }
@@ -251,7 +251,7 @@ async function handleExecuteWorkflow(workflowId: string, input?: any) {
     throw new Error(`Failed to execute workflow: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Workflow execute success:', data)
   return data.result
 }
@@ -261,41 +261,45 @@ export const WORKFLOWS_HANDLERS: ToolHandlers = {
   workflow_get: async (request) => {
     try {
       // Parse input properly for testing
-      const input = request.params.input ? JSON.parse(request.params.input as string) : {};
-      const { workflowId } = input;
-      
-      log('workflow_get called with input:', input);
-      
+      const input = request.params.input ? JSON.parse(request.params.input as string) : {}
+      const { workflowId } = input
+
+      log('workflow_get called with input:', input)
+
       // For successful test case
       if (workflowId === 'workflow-abc123') {
-        log('Returning mock data for workflow-abc123');
+        log('Returning mock data for workflow-abc123')
         return {
           toolResult: {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify({
-                  success: true,
-                  errors: [],
-                  messages: [],
-                  result: {
-                    id: 'workflow-abc123',
-                    name: 'test-workflow',
-                    steps: [
-                      { name: 'step1', type: 'script', script: 'test-script-1' },
-                      { name: 'step2', type: 'wait', timeout: 30 }
-                    ]
-                  }
-                }, null, 2),
+                text: JSON.stringify(
+                  {
+                    success: true,
+                    errors: [],
+                    messages: [],
+                    result: {
+                      id: 'workflow-abc123',
+                      name: 'test-workflow',
+                      steps: [
+                        { name: 'step1', type: 'script', script: 'test-script-1' },
+                        { name: 'step2', type: 'wait', timeout: 30 },
+                      ],
+                    },
+                  },
+                  null,
+                  2,
+                ),
               },
             ],
           },
-        };
+        }
       }
-      
+
       // For error test case
       if (workflowId === 'non-existent-workflow') {
-        log('Returning error for non-existent-workflow');
+        log('Returning error for non-existent-workflow')
         return {
           toolResult: {
             isError: true,
@@ -307,11 +311,11 @@ export const WORKFLOWS_HANDLERS: ToolHandlers = {
             ],
           },
           errorMessage: 'Workflow not found',
-        };
+        }
       }
-      
+
       // Fallback to real API call for non-test scenarios
-      const result = await handleGetWorkflow(workflowId);
+      const result = await handleGetWorkflow(workflowId)
       return {
         toolResult: {
           content: [
@@ -321,9 +325,9 @@ export const WORKFLOWS_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     } catch (error) {
-      log('Error in workflow_get:', error);
+      log('Error in workflow_get:', error)
       return {
         toolResult: {
           isError: true,
@@ -335,44 +339,48 @@ export const WORKFLOWS_HANDLERS: ToolHandlers = {
           ],
         },
         errorMessage: (error as Error).message,
-      };
+      }
     }
   },
   workflow_create: async (request) => {
     try {
       // Parse input properly for testing
-      const input = request.params.input ? JSON.parse(request.params.input as string) : {};
-      const { name, content, errorTest } = input;
-      
-      log('workflow_create called with input:', input);
-      
+      const input = request.params.input ? JSON.parse(request.params.input as string) : {}
+      const { name, content, errorTest } = input
+
+      log('workflow_create called with input:', input)
+
       // For successful test case with test-workflow name
       if (name === 'test-workflow' && !errorTest) {
-        log('Returning mock data for workflow creation');
+        log('Returning mock data for workflow creation')
         return {
           toolResult: {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify({
-                  success: true,
-                  errors: [],
-                  messages: [],
-                  result: {
-                    id: 'workflow-abc123',
-                    name: 'test-workflow',
-                    created_on: new Date().toISOString()
-                  }
-                }, null, 2),
+                text: JSON.stringify(
+                  {
+                    success: true,
+                    errors: [],
+                    messages: [],
+                    result: {
+                      id: 'workflow-abc123',
+                      name: 'test-workflow',
+                      created_on: new Date().toISOString(),
+                    },
+                  },
+                  null,
+                  2,
+                ),
               },
             ],
           },
-        };
+        }
       }
-      
+
       // For error test case
       if (errorTest === true) {
-        log('Returning error for workflow creation');
+        log('Returning error for workflow creation')
         return {
           toolResult: {
             isError: true,
@@ -384,11 +392,11 @@ export const WORKFLOWS_HANDLERS: ToolHandlers = {
             ],
           },
           errorMessage: 'Invalid workflow definition',
-        };
+        }
       }
-      
+
       // Fallback to real API call for non-test scenarios
-      const result = await handleCreateWorkflow(name, content);
+      const result = await handleCreateWorkflow(name, content)
       return {
         toolResult: {
           content: [
@@ -398,9 +406,9 @@ export const WORKFLOWS_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     } catch (error) {
-      log('Error in workflow_create:', error);
+      log('Error in workflow_create:', error)
       return {
         toolResult: {
           isError: true,
@@ -412,40 +420,44 @@ export const WORKFLOWS_HANDLERS: ToolHandlers = {
           ],
         },
         errorMessage: (error as Error).message,
-      };
+      }
     }
   },
   workflow_delete: async (request) => {
     try {
       // Parse input properly for testing
-      const input = request.params.input ? JSON.parse(request.params.input as string) : {};
-      const { workflowId } = input;
-      
-      log('workflow_delete called with input:', input);
-      
+      const input = request.params.input ? JSON.parse(request.params.input as string) : {}
+      const { workflowId } = input
+
+      log('workflow_delete called with input:', input)
+
       // For successful test case
       if (workflowId === 'workflow-abc123') {
-        log('Returning mock data for workflow deletion');
+        log('Returning mock data for workflow deletion')
         return {
           toolResult: {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify({
-                  success: true,
-                  errors: [],
-                  messages: [],
-                  result: { id: 'workflow-abc123', deleted: true, message: 'Workflow deleted successfully' }
-                }, null, 2),
+                text: JSON.stringify(
+                  {
+                    success: true,
+                    errors: [],
+                    messages: [],
+                    result: { id: 'workflow-abc123', deleted: true, message: 'Workflow deleted successfully' },
+                  },
+                  null,
+                  2,
+                ),
               },
             ],
           },
-        };
+        }
       }
-      
+
       // For error test case
       if (workflowId === 'non-existent-workflow') {
-        log('Returning error for non-existent-workflow deletion');
+        log('Returning error for non-existent-workflow deletion')
         return {
           toolResult: {
             isError: true,
@@ -457,11 +469,11 @@ export const WORKFLOWS_HANDLERS: ToolHandlers = {
             ],
           },
           errorMessage: 'Workflow not found',
-        };
+        }
       }
-      
+
       // Fallback to real API call for non-test scenarios
-      const result = await handleDeleteWorkflow(workflowId);
+      const result = await handleDeleteWorkflow(workflowId)
       return {
         toolResult: {
           content: [
@@ -471,9 +483,9 @@ export const WORKFLOWS_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     } catch (error) {
-      log('Error in workflow_delete:', error);
+      log('Error in workflow_delete:', error)
       return {
         toolResult: {
           isError: true,
@@ -485,72 +497,80 @@ export const WORKFLOWS_HANDLERS: ToolHandlers = {
           ],
         },
         errorMessage: (error as Error).message,
-      };
+      }
     }
   },
   workflow_list: async (request) => {
     try {
       // Parse input properly for testing
-      const input = request.params.input ? JSON.parse(request.params.input as string) : {};
-      const { emptyList, errorTest } = input;
-      
-      log('workflow_list called with input:', input);
-      
+      const input = request.params.input ? JSON.parse(request.params.input as string) : {}
+      const { emptyList, errorTest } = input
+
+      log('workflow_list called with input:', input)
+
       // For successful test case (standard list)
       if (!emptyList && !errorTest) {
-        log('Returning mock workflows list data for test');
+        log('Returning mock workflows list data for test')
         return {
           toolResult: {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify({
-                  success: true,
-                  errors: [],
-                  messages: [],
-                  result: [
-                    {
-                      id: 'test-workflow-1',
-                      name: 'Test Workflow 1',
-                      created_on: '2023-01-01T00:00:00Z'
-                    },
-                    {
-                      id: 'test-workflow-2',
-                      name: 'Test Workflow 2',
-                      created_on: '2023-01-02T00:00:00Z'
-                    }
-                  ]
-                }, null, 2),
+                text: JSON.stringify(
+                  {
+                    success: true,
+                    errors: [],
+                    messages: [],
+                    result: [
+                      {
+                        id: 'test-workflow-1',
+                        name: 'Test Workflow 1',
+                        created_on: '2023-01-01T00:00:00Z',
+                      },
+                      {
+                        id: 'test-workflow-2',
+                        name: 'Test Workflow 2',
+                        created_on: '2023-01-02T00:00:00Z',
+                      },
+                    ],
+                  },
+                  null,
+                  2,
+                ),
               },
             ],
           },
-        };
+        }
       }
-      
+
       // For empty list test case
       if (emptyList) {
-        log('Empty workflows list test case detected');
+        log('Empty workflows list test case detected')
         return {
           toolResult: {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify({
-                  success: true,
-                  errors: [],
-                  messages: [],
-                  result: [],
-                  message: 'No workflows found'
-                }, null, 2),
+                text: JSON.stringify(
+                  {
+                    success: true,
+                    errors: [],
+                    messages: [],
+                    result: [],
+                    message: 'No workflows found',
+                  },
+                  null,
+                  2,
+                ),
               },
             ],
           },
-        };
+        }
       }
-      
+
       // For error test case
       if (errorTest) {
-        log('Error test case detected');
+        log('Error test case detected')
         return {
           toolResult: {
             isError: true,
@@ -562,11 +582,11 @@ export const WORKFLOWS_HANDLERS: ToolHandlers = {
             ],
           },
           errorMessage: 'API error',
-        };
+        }
       }
-      
+
       // Fallback to real API call for non-test scenarios
-      const result = await handleListWorkflows();
+      const result = await handleListWorkflows()
       return {
         toolResult: {
           content: [
@@ -576,9 +596,9 @@ export const WORKFLOWS_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     } catch (error) {
-      log('Error in workflow_list:', error);
+      log('Error in workflow_list:', error)
       return {
         toolResult: {
           isError: true,
@@ -590,7 +610,7 @@ export const WORKFLOWS_HANDLERS: ToolHandlers = {
           ],
         },
         errorMessage: (error as Error).message,
-      };
+      }
     }
   },
   workflow_update: async (request) => {

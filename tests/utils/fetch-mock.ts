@@ -29,12 +29,17 @@ export function createMockJsonResponse(data: any, status = 200) {
 export function createMockFetch(successResponse: any, failureResponse?: any) {
   return vi.fn().mockImplementation((url: string) => {
     if (url.includes('error') || url.includes('non-existent')) {
-      return Promise.resolve(createMockJsonResponse(failureResponse || { 
-        success: false, 
-        errors: [{ code: 10000, message: 'Not found' }], 
-        messages: [], 
-        result: null 
-      }, 404))
+      return Promise.resolve(
+        createMockJsonResponse(
+          failureResponse || {
+            success: false,
+            errors: [{ code: 10000, message: 'Not found' }],
+            messages: [],
+            result: null,
+          },
+          404,
+        ),
+      )
     }
     return Promise.resolve(createMockJsonResponse(successResponse))
   })
@@ -49,7 +54,7 @@ export function createMockCloudflareAPI(mockFetch: any = vi.fn()) {
   return {
     fetch: mockFetch,
     accountId: 'test-account-id',
-    token: 'test-api-token'
+    token: 'test-api-token',
   }
 }
 
@@ -59,28 +64,28 @@ export function createMockCloudflareAPI(mockFetch: any = vi.fn()) {
  */
 export function setupFetchMock(options: any = {}) {
   globalMockOptions = options
-  
+
   // Determine which responses to use based on options
   let mockResponses: any = mockData.durableObjects
-  
+
   // Handle empty list case
   if (options.emptyList) {
     mockResponses = {
       ...mockResponses,
-      listNamespaces: { success: true, errors: [], messages: ["No namespaces found"], result: [] },
-      listObjects: { success: true, errors: [], messages: ["No objects found in namespace"], result: [] },
-      listAlarms: { success: true, errors: [], messages: ["No alarms found for this object"], result: [] }
+      listNamespaces: { success: true, errors: [], messages: ['No namespaces found'], result: [] },
+      listObjects: { success: true, errors: [], messages: ['No objects found in namespace'], result: [] },
+      listAlarms: { success: true, errors: [], messages: ['No alarms found for this object'], result: [] },
     }
   }
-  
+
   // Handle error case
-  const errorResponse = { 
-    success: false, 
-    errors: [{ code: 10000, message: 'API error' }], 
-    messages: [], 
-    result: null 
+  const errorResponse = {
+    success: false,
+    errors: [{ code: 10000, message: 'API error' }],
+    messages: [],
+    result: null,
   }
-  
+
   if (options.errorTest) {
     mockResponses = {
       ...mockResponses,
@@ -93,14 +98,14 @@ export function setupFetchMock(options: any = {}) {
       deleteObject: errorResponse,
       listAlarms: errorResponse,
       setAlarm: errorResponse,
-      deleteAlarm: errorResponse
+      deleteAlarm: errorResponse,
     }
   }
-  
+
   // Create and store global fetch mock
   globalFetchMock = vi.fn().mockImplementation((url: string, options: any) => {
     console.log(`[TEST] Mock fetch called with URL: ${url}`)
-    
+
     // Handle different URL patterns
     if (url.includes('/namespaces') && !url.includes('/objects')) {
       // Handle namespace operations
@@ -136,19 +141,24 @@ export function setupFetchMock(options: any = {}) {
         return Promise.resolve(createMockJsonResponse(mockResponses.listObjects))
       }
     }
-    
+
     // Default response
-    return Promise.resolve(createMockJsonResponse({
-      success: false,
-      errors: [{ code: 404, message: 'Not found' }],
-      messages: [],
-      result: null
-    }, 404))
+    return Promise.resolve(
+      createMockJsonResponse(
+        {
+          success: false,
+          errors: [{ code: 404, message: 'Not found' }],
+          messages: [],
+          result: null,
+        },
+        404,
+      ),
+    )
   })
-  
+
   // Mock global fetch
   global.fetch = globalFetchMock
-  
+
   return globalFetchMock
 }
 

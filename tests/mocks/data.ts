@@ -13,8 +13,8 @@ export const mockData = {
         producers: [
           {
             name: 'producer-1',
-            script: 'test-script-1'
-          }
+            script: 'test-script-1',
+          },
         ],
         consumers: [
           {
@@ -23,17 +23,17 @@ export const mockData = {
             settings: {
               batch_size: 100,
               max_retries: 3,
-              max_wait_time_ms: 1000
-            }
-          }
-        ]
-      }
+              max_wait_time_ms: 1000,
+            },
+          },
+        ],
+      },
     },
     delete: {
       success: true,
       errors: [],
       messages: [],
-      result: null
+      result: null,
     },
     list: {
       success: true,
@@ -48,8 +48,8 @@ export const mockData = {
           producers: [
             {
               name: 'producer-1',
-              script: 'test-script-1'
-            }
+              script: 'test-script-1',
+            },
           ],
           consumers: [
             {
@@ -58,10 +58,10 @@ export const mockData = {
               settings: {
                 batch_size: 100,
                 max_retries: 3,
-                max_wait_time_ms: 1000
-              }
-            }
-          ]
+                max_wait_time_ms: 1000,
+              },
+            },
+          ],
         },
         {
           queue_id: 'queue-def456',
@@ -69,9 +69,9 @@ export const mockData = {
           modified_on: '2023-01-02T00:00:00Z',
           name: 'test-queue-2',
           producers: [],
-          consumers: []
-        }
-      ]
+          consumers: [],
+        },
+      ],
     },
     get: {
       success: true,
@@ -85,8 +85,8 @@ export const mockData = {
         producers: [
           {
             name: 'producer-1',
-            script: 'test-script-1'
-          }
+            script: 'test-script-1',
+          },
         ],
         consumers: [
           {
@@ -95,27 +95,27 @@ export const mockData = {
             settings: {
               batch_size: 100,
               max_retries: 3,
-              max_wait_time_ms: 1000
-            }
-          }
-        ]
-      }
+              max_wait_time_ms: 1000,
+            },
+          },
+        ],
+      },
     },
     sendMessage: {
       success: true,
       errors: [],
       messages: [],
       result: {
-        message_id: 'msg-123abc'
-      }
+        message_id: 'msg-123abc',
+      },
     },
     sendBatch: {
       success: true,
       errors: [],
       messages: [],
       result: {
-        message_ids: ['msg-123abc', 'msg-456def', 'msg-789ghi']
-      }
+        message_ids: ['msg-123abc', 'msg-456def', 'msg-789ghi'],
+      },
     },
     getMessage: {
       success: true,
@@ -127,23 +127,23 @@ export const mockData = {
             body: 'Test message content',
             id: 'msg-123abc',
             timestamp: 1672531200000,
-            receipt_handle: 'receipt-123abc'
-          }
-        ]
-      }
+            receipt_handle: 'receipt-123abc',
+          },
+        ],
+      },
     },
     deleteMessage: {
       success: true,
       errors: [],
       messages: [],
-      result: null
+      result: null,
     },
     updateVisibility: {
       success: true,
       errors: [],
       messages: [],
-      result: null
-    }
+      result: null,
+    },
   },
 
   // Durable Objects API mock responses
@@ -157,15 +157,15 @@ export const mockData = {
           id: 'namespace-abc123',
           name: 'test-namespace-1',
           script: 'test-script-1',
-          class: 'TestClass1'
+          class: 'TestClass1',
         },
         {
           id: 'namespace-def456',
           name: 'test-namespace-2',
           script: 'test-script-2',
-          class: 'TestClass2'
-        }
-      ]
+          class: 'TestClass2',
+        },
+      ],
     },
     getNamespace: {
       success: true,
@@ -175,8 +175,8 @@ export const mockData = {
         id: 'namespace-abc123',
         name: 'test-namespace',
         script: 'test-script',
-        class: 'TestClass'
-      }
+        class: 'TestClass',
+      },
     },
     createNamespace: {
       success: true,
@@ -186,14 +186,14 @@ export const mockData = {
         id: 'namespace-abc123',
         name: 'test-namespace',
         script: 'test-script',
-        class: 'TestClass'
-      }
+        class: 'TestClass',
+      },
     },
     deleteNamespace: {
       success: true,
       errors: [],
       messages: [],
-      result: null
+      result: null,
     },
     listObjects: {
       success: true,
@@ -202,13 +202,13 @@ export const mockData = {
       result: [
         {
           id: 'object-abc123',
-          created_at: '2023-01-01T00:00:00Z'
+          created_at: '2023-01-01T00:00:00Z',
         },
         {
           id: 'object-def456',
-          created_at: '2023-01-02T00:00:00Z'
-        }
-      ]
+          created_at: '2023-01-02T00:00:00Z',
+        },
+      ],
     },
     getObject: {
       success: true,
@@ -216,14 +216,14 @@ export const mockData = {
       messages: [],
       result: {
         id: 'object-abc123',
-        created_at: '2023-01-01T00:00:00Z'
-      }
+        created_at: '2023-01-01T00:00:00Z',
+      },
     },
     deleteObject: {
       success: true,
       errors: [],
       messages: [],
-      result: null
+      result: null,
     },
     listAlarms: {
       success: true,
@@ -231,24 +231,24 @@ export const mockData = {
       messages: [],
       result: [
         {
-          scheduled_time: '2023-01-01T00:00:00Z'
-        }
-      ]
+          scheduled_time: '2023-01-01T00:00:00Z',
+        },
+      ],
     },
     setAlarm: {
       success: true,
       errors: [],
       messages: [],
       result: {
-        scheduled_time: '2023-01-01T00:00:00Z'
-      }
+        scheduled_time: '2023-01-01T00:00:00Z',
+      },
     },
     deleteAlarm: {
       success: true,
       errors: [],
       messages: [],
-      result: null
-    }
+      result: null,
+    },
   },
 
   // Workers AI API mock responses
@@ -263,25 +263,25 @@ export const mockData = {
           name: '@cf/meta/llama-2-7b-chat-int8',
           description: 'Meta Llama 2 7B Chat model',
           size: '7B parameters',
-          capabilities: ['text-generation', 'chat']
+          capabilities: ['text-generation', 'chat'],
         },
         {
           id: 'model-def456',
           name: '@cf/stabilityai/stable-diffusion-xl-base-1.0',
           description: 'Stability AI Stable Diffusion XL model',
           size: '2.6B parameters',
-          capabilities: ['image-generation']
-        }
-      ]
+          capabilities: ['image-generation'],
+        },
+      ],
     },
     runModel: {
       success: true,
       errors: [],
       messages: [],
       result: {
-        response: 'This is a test response from the AI model.'
-      }
-    }
+        response: 'This is a test response from the AI model.',
+      },
+    },
   },
 
   // Workflows API mock responses
@@ -296,16 +296,16 @@ export const mockData = {
           name: 'test-workflow-1',
           created_on: '2023-01-01T00:00:00Z',
           modified_on: '2023-01-01T00:00:00Z',
-          version: 1
+          version: 1,
         },
         {
           id: 'workflow-def456',
           name: 'test-workflow-2',
           created_on: '2023-01-02T00:00:00Z',
           modified_on: '2023-01-02T00:00:00Z',
-          version: 2
-        }
-      ]
+          version: 2,
+        },
+      ],
     },
     get: {
       success: true,
@@ -322,16 +322,16 @@ export const mockData = {
             {
               name: 'step1',
               type: 'script',
-              script: 'test-script-1'
+              script: 'test-script-1',
             },
             {
               name: 'step2',
               type: 'wait',
-              timeout: 30
-            }
-          ]
-        }
-      }
+              timeout: 30,
+            },
+          ],
+        },
+      },
     },
     create: {
       success: true,
@@ -342,15 +342,15 @@ export const mockData = {
         name: 'test-workflow',
         created_on: '2023-01-01T00:00:00Z',
         modified_on: '2023-01-01T00:00:00Z',
-        version: 1
-      }
+        version: 1,
+      },
     },
     delete: {
       success: true,
       errors: [],
       messages: [],
-      result: null
-    }
+      result: null,
+    },
   },
 
   // Templates API mock responses
@@ -366,7 +366,7 @@ export const mockData = {
           description: 'A test template',
           type: 'worker',
           created_on: '2023-01-01T00:00:00Z',
-          updated_on: '2023-01-01T00:00:00Z'
+          updated_on: '2023-01-01T00:00:00Z',
         },
         {
           id: 'template-def456',
@@ -374,9 +374,9 @@ export const mockData = {
           description: 'Another test template',
           type: 'worker',
           created_on: '2023-01-02T00:00:00Z',
-          updated_on: '2023-01-02T00:00:00Z'
-        }
-      ]
+          updated_on: '2023-01-02T00:00:00Z',
+        },
+      ],
     },
     get: {
       success: true,
@@ -389,9 +389,9 @@ export const mockData = {
         type: 'worker',
         created_on: '2023-01-01T00:00:00Z',
         updated_on: '2023-01-01T00:00:00Z',
-        code: 'addEventListener("fetch", (event) => { event.respondWith(new Response("Hello World")); });'
-      }
-    }
+        code: 'addEventListener("fetch", (event) => { event.respondWith(new Response("Hello World")); });',
+      },
+    },
   },
 
   // Workers for Platforms API mock responses
@@ -404,14 +404,14 @@ export const mockData = {
         {
           id: 'namespace-abc123',
           name: 'test-namespace-1',
-          created_on: '2023-01-01T00:00:00Z'
+          created_on: '2023-01-01T00:00:00Z',
         },
         {
           id: 'namespace-def456',
           name: 'test-namespace-2',
-          created_on: '2023-01-02T00:00:00Z'
-        }
-      ]
+          created_on: '2023-01-02T00:00:00Z',
+        },
+      ],
     },
     createNamespace: {
       success: true,
@@ -420,14 +420,14 @@ export const mockData = {
       result: {
         id: 'namespace-abc123',
         name: 'test-namespace',
-        created_on: '2023-01-01T00:00:00Z'
-      }
+        created_on: '2023-01-01T00:00:00Z',
+      },
     },
     deleteNamespace: {
       success: true,
       errors: [],
       messages: [],
-      result: null
+      result: null,
     },
     listScripts: {
       success: true,
@@ -438,15 +438,15 @@ export const mockData = {
           id: 'script-abc123',
           name: 'test-script-1',
           created_on: '2023-01-01T00:00:00Z',
-          modified_on: '2023-01-01T00:00:00Z'
+          modified_on: '2023-01-01T00:00:00Z',
         },
         {
           id: 'script-def456',
           name: 'test-script-2',
           created_on: '2023-01-02T00:00:00Z',
-          modified_on: '2023-01-02T00:00:00Z'
-        }
-      ]
+          modified_on: '2023-01-02T00:00:00Z',
+        },
+      ],
     },
     updateScript: {
       success: true,
@@ -456,15 +456,15 @@ export const mockData = {
         id: 'script-abc123',
         name: 'test-script',
         created_on: '2023-01-01T00:00:00Z',
-        modified_on: '2023-01-01T00:00:00Z'
-      }
+        modified_on: '2023-01-01T00:00:00Z',
+      },
     },
     deleteScript: {
       success: true,
       errors: [],
       messages: [],
-      result: null
-    }
+      result: null,
+    },
   },
 
   // Bindings API mock responses
@@ -477,26 +477,26 @@ export const mockData = {
         {
           name: 'KV_BINDING',
           type: 'kv_namespace',
-          kv_namespace_id: 'kv-abc123'
+          kv_namespace_id: 'kv-abc123',
         },
         {
           name: 'R2_BINDING',
           type: 'r2_bucket',
-          bucket_name: 'test-bucket'
+          bucket_name: 'test-bucket',
         },
         {
           name: 'DO_BINDING',
           type: 'durable_object_namespace',
-          namespace_id: 'namespace-abc123'
-        }
-      ]
+          namespace_id: 'namespace-abc123',
+        },
+      ],
     },
     update: {
       success: true,
       errors: [],
       messages: [],
-      result: null
-    }
+      result: null,
+    },
   },
 
   // Routing API mock responses
@@ -509,14 +509,14 @@ export const mockData = {
         {
           id: 'route-abc123',
           pattern: 'example.com/*',
-          script: 'test-script-1'
+          script: 'test-script-1',
         },
         {
           id: 'route-def456',
           pattern: 'api.example.com/*',
-          script: 'test-script-2'
-        }
-      ]
+          script: 'test-script-2',
+        },
+      ],
     },
     create: {
       success: true,
@@ -525,15 +525,15 @@ export const mockData = {
       result: {
         id: 'route-abc123',
         pattern: 'example.com/*',
-        script: 'test-script'
-      }
+        script: 'test-script',
+      },
     },
     delete: {
       success: true,
       errors: [],
       messages: [],
-      result: null
-    }
+      result: null,
+    },
   },
 
   // Cron API mock responses
@@ -546,14 +546,14 @@ export const mockData = {
         {
           cron: '*/5 * * * *',
           created_on: '2023-01-01T00:00:00Z',
-          modified_on: '2023-01-01T00:00:00Z'
+          modified_on: '2023-01-01T00:00:00Z',
         },
         {
           cron: '0 0 * * *',
           created_on: '2023-01-02T00:00:00Z',
-          modified_on: '2023-01-02T00:00:00Z'
-        }
-      ]
+          modified_on: '2023-01-02T00:00:00Z',
+        },
+      ],
     },
     update: {
       success: true,
@@ -563,10 +563,10 @@ export const mockData = {
         {
           cron: '*/10 * * * *',
           created_on: '2023-01-01T00:00:00Z',
-          modified_on: '2023-01-01T00:00:00Z'
-        }
-      ]
-    }
+          modified_on: '2023-01-01T00:00:00Z',
+        },
+      ],
+    },
   },
 
   // Zones API mock responses
@@ -582,7 +582,7 @@ export const mockData = {
           status: 'active',
           paused: false,
           type: 'full',
-          development_mode: 0
+          development_mode: 0,
         },
         {
           id: 'zone-def456',
@@ -590,9 +590,9 @@ export const mockData = {
           status: 'active',
           paused: false,
           type: 'full',
-          development_mode: 0
-        }
-      ]
+          development_mode: 0,
+        },
+      ],
     },
     get: {
       success: true,
@@ -604,9 +604,9 @@ export const mockData = {
         status: 'active',
         paused: false,
         type: 'full',
-        development_mode: 0
-      }
-    }
+        development_mode: 0,
+      },
+    },
   },
 
   // Secrets API mock responses
@@ -619,14 +619,14 @@ export const mockData = {
         {
           name: 'SECRET_KEY_1',
           type: 'secret_text',
-          created_on: '2023-01-01T00:00:00Z'
+          created_on: '2023-01-01T00:00:00Z',
         },
         {
           name: 'SECRET_KEY_2',
           type: 'secret_text',
-          created_on: '2023-01-02T00:00:00Z'
-        }
-      ]
+          created_on: '2023-01-02T00:00:00Z',
+        },
+      ],
     },
     create: {
       success: true,
@@ -635,15 +635,15 @@ export const mockData = {
       result: {
         name: 'SECRET_KEY',
         type: 'secret_text',
-        created_on: '2023-01-01T00:00:00Z'
-      }
+        created_on: '2023-01-01T00:00:00Z',
+      },
     },
     delete: {
       success: true,
       errors: [],
       messages: [],
-      result: null
-    }
+      result: null,
+    },
   },
 
   // Versions API mock responses
@@ -659,8 +659,8 @@ export const mockData = {
           created_on: '2023-01-01T00:00:00Z',
           metadata: {
             author_id: 'user-123',
-            author_email: 'user@example.com'
-          }
+            author_email: 'user@example.com',
+          },
         },
         {
           id: 'version-def456',
@@ -668,10 +668,10 @@ export const mockData = {
           created_on: '2023-01-02T00:00:00Z',
           metadata: {
             author_id: 'user-123',
-            author_email: 'user@example.com'
-          }
-        }
-      ]
+            author_email: 'user@example.com',
+          },
+        },
+      ],
     },
     get: {
       success: true,
@@ -683,11 +683,11 @@ export const mockData = {
         created_on: '2023-01-01T00:00:00Z',
         metadata: {
           author_id: 'user-123',
-          author_email: 'user@example.com'
+          author_email: 'user@example.com',
         },
-        script: 'addEventListener("fetch", (event) => { event.respondWith(new Response("Hello World")); });'
-      }
-    }
+        script: 'addEventListener("fetch", (event) => { event.respondWith(new Response("Hello World")); });',
+      },
+    },
   },
 
   // Wrangler API mock responses
@@ -701,15 +701,15 @@ export const mockData = {
           id: 'project-abc123',
           name: 'test-project-1',
           created_on: '2023-01-01T00:00:00Z',
-          updated_on: '2023-01-01T00:00:00Z'
+          updated_on: '2023-01-01T00:00:00Z',
         },
         {
           id: 'project-def456',
           name: 'test-project-2',
           created_on: '2023-01-02T00:00:00Z',
-          updated_on: '2023-01-02T00:00:00Z'
-        }
-      ]
-    }
-  }
+          updated_on: '2023-01-02T00:00:00Z',
+        },
+      ],
+    },
+  },
 }

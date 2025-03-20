@@ -41,32 +41,35 @@ export const mockHandlers = [
   http.get(durableObjectsUrlPattern, async ({ request }) => {
     const url = new URL(request.url)
     console.log('[MSW] Intercepted DO request:', request.method, url.toString())
-    
+
     // List namespaces
     if (url.pathname.endsWith('/namespaces') && !url.pathname.includes('/objects')) {
       console.log('[MSW] Handling list namespaces request')
       return HttpResponse.json(mockData.durableObjects.listNamespaces)
     }
-    
+
     // Get namespace
     if (url.pathname.includes('/namespaces/') && !url.pathname.includes('/objects')) {
       if (url.pathname.includes('namespace-abc123')) {
         console.log('[MSW] Handling get namespace request')
         return HttpResponse.json(mockData.durableObjects.getNamespace)
       }
-      
+
       if (url.pathname.includes('non-existent-namespace')) {
         console.log('[MSW] Handling non-existent namespace request')
-        return HttpResponse.json({ success: false, errors: [{ code: 10000, message: 'Namespace not found' }], messages: [], result: null }, { status: 404 })
+        return HttpResponse.json(
+          { success: false, errors: [{ code: 10000, message: 'Namespace not found' }], messages: [], result: null },
+          { status: 404 },
+        )
       }
     }
-    
+
     // List objects
     if (url.pathname.includes('/objects') && !url.pathname.includes('/objects/')) {
       console.log('[MSW] Handling list objects request')
       return HttpResponse.json(mockData.durableObjects.listObjects)
     }
-    
+
     // Get object
     if (url.pathname.includes('/objects/')) {
       if (url.pathname.includes('object-abc123')) {
@@ -74,26 +77,29 @@ export const mockHandlers = [
         return HttpResponse.json(mockData.durableObjects.getObject)
       }
     }
-    
+
     console.log('[MSW] Unmatched DO GET request:', url.toString())
     return HttpResponse.json({ error: 'Not Found' }, { status: 404 })
   }),
-  
+
   // Delete object handler
   http.delete(durableObjectsUrlPattern, async ({ request }) => {
     const url = new URL(request.url)
     console.log('[MSW] Intercepted DO DELETE request:', url.toString())
-    
+
     if (url.pathname.includes('object-abc123')) {
       console.log('[MSW] Handling delete object request')
       return HttpResponse.json(mockData.durableObjects.deleteObject)
     }
-    
+
     if (url.pathname.includes('non-existent-object')) {
       console.log('[MSW] Handling delete non-existent object request')
-      return HttpResponse.json({ success: false, errors: [{ code: 10000, message: 'Object not found' }], messages: [], result: null }, { status: 404 })
+      return HttpResponse.json(
+        { success: false, errors: [{ code: 10000, message: 'Object not found' }], messages: [], result: null },
+        { status: 404 },
+      )
     }
-    
+
     console.log('[MSW] Unmatched DO DELETE request:', url.toString())
     return HttpResponse.json({ error: 'Not Found' }, { status: 404 })
   }),
@@ -190,20 +196,29 @@ export const mockHandlers = [
   http.put(`${baseUrl}/accounts/:accountId/workers/services/:scriptName/environments/:envName/secrets`, async () => {
     return HttpResponse.json(mockData.secrets.create)
   }),
-  http.delete(`${baseUrl}/accounts/:accountId/workers/services/:scriptName/environments/:envName/secrets/:secretName`, async () => {
-    return HttpResponse.json(mockData.secrets.delete)
-  }),
+  http.delete(
+    `${baseUrl}/accounts/:accountId/workers/services/:scriptName/environments/:envName/secrets/:secretName`,
+    async () => {
+      return HttpResponse.json(mockData.secrets.delete)
+    },
+  ),
 
   // Versions API
-  http.get(`${baseUrl}/accounts/:accountId/workers/services/:serviceName/environments/:envName/content/v2/versions`, async () => {
-    return HttpResponse.json(mockData.versions.list)
-  }),
-  http.get(`${baseUrl}/accounts/:accountId/workers/services/:serviceName/environments/:envName/content/v2/versions/:versionId`, async () => {
-    return HttpResponse.json(mockData.versions.get)
-  }),
+  http.get(
+    `${baseUrl}/accounts/:accountId/workers/services/:serviceName/environments/:envName/content/v2/versions`,
+    async () => {
+      return HttpResponse.json(mockData.versions.list)
+    },
+  ),
+  http.get(
+    `${baseUrl}/accounts/:accountId/workers/services/:serviceName/environments/:envName/content/v2/versions/:versionId`,
+    async () => {
+      return HttpResponse.json(mockData.versions.get)
+    },
+  ),
 
   // Wrangler API
   http.get(`${baseUrl}/accounts/:accountId/pages/projects`, async () => {
     return HttpResponse.json(mockData.wrangler.listProjects)
-  })
+  }),
 ]

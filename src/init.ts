@@ -1,13 +1,7 @@
 // Shell out to `npx wrangler@latest whoami`
 import { exec } from 'child_process'
 import { promisify } from 'util'
-import {
-  AccountInfo,
-  ensureWranglerAuthentication,
-  fetchInternal,
-  FetchResult,
-  isDirectory,
-} from './utils/wrangler'
+import { AccountInfo, ensureWranglerAuthentication, fetchInternal, FetchResult, isDirectory } from './utils/wrangler'
 import chalk from 'chalk'
 import os from 'node:os'
 import path from 'node:path'
@@ -37,7 +31,9 @@ export async function init(accountTag: string | undefined) {
 
   const authenticated = await ensureWranglerAuthentication()
   if (!authenticated) {
-    throw new Error('Failed to authenticate with Wrangler. Please try running npx wrangler@latest login manually and then retry.')
+    throw new Error(
+      'Failed to authenticate with Wrangler. Please try running npx wrangler@latest login manually and then retry.',
+    )
   }
 
   updateStatus(`Wrangler auth info loaded!`)

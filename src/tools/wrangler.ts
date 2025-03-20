@@ -38,10 +38,7 @@ const WRANGLER_CONFIG_UPDATE_TOOL: Tool = {
   },
 }
 
-export const WRANGLER_TOOLS = [
-  WRANGLER_CONFIG_GET_TOOL,
-  WRANGLER_CONFIG_UPDATE_TOOL,
-]
+export const WRANGLER_TOOLS = [WRANGLER_CONFIG_GET_TOOL, WRANGLER_CONFIG_UPDATE_TOOL]
 
 // Handler functions for Wrangler.toml operations
 async function handleWranglerConfigGet(scriptName: string) {
@@ -60,7 +57,7 @@ async function handleWranglerConfigGet(scriptName: string) {
     throw new Error(`Failed to get wrangler.toml configuration: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Wrangler config get success:', data)
   return data.result
 }
@@ -84,7 +81,7 @@ async function handleWranglerConfigUpdate(scriptName: string, configContent: str
     throw new Error(`Failed to update wrangler.toml configuration: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Wrangler config update success:', data)
   return data.result
 }

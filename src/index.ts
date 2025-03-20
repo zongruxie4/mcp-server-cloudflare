@@ -2,7 +2,13 @@
 import { init } from './init'
 import { config, log } from './utils/helpers'
 import { main } from './main'
-import { getAuthTokens, isAccessTokenExpired, LocalState, refreshToken, ensureWranglerAuthentication } from './utils/wrangler'
+import {
+  getAuthTokens,
+  isAccessTokenExpired,
+  LocalState,
+  refreshToken,
+  ensureWranglerAuthentication,
+} from './utils/wrangler'
 
 // Handle process events
 process.on('uncaughtException', (error) => {
@@ -37,7 +43,7 @@ if (cmd === 'init') {
     if (!isAuthenticated) {
       throw new Error('Failed to authenticate with Wrangler. Please run `npx wrangler login` manually and try again.')
     }
-    
+
     // Set the API token from the authenticated state
     config.apiToken = LocalState.accessToken?.value
   }

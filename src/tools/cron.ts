@@ -72,12 +72,7 @@ const CRON_UPDATE_TOOL: Tool = {
   },
 }
 
-export const CRON_TOOLS = [
-  CRON_CREATE_TOOL,
-  CRON_DELETE_TOOL,
-  CRON_LIST_TOOL,
-  CRON_UPDATE_TOOL,
-]
+export const CRON_TOOLS = [CRON_CREATE_TOOL, CRON_DELETE_TOOL, CRON_LIST_TOOL, CRON_UPDATE_TOOL]
 
 // Handler functions for Cron Triggers operations
 async function handleCronCreate(scriptName: string, cronExpression: string) {
@@ -101,7 +96,7 @@ async function handleCronCreate(scriptName: string, cronExpression: string) {
     throw new Error(`Failed to create CRON trigger: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Cron create success:', data)
   return data.result
 }
@@ -123,35 +118,35 @@ async function handleCronDelete(scriptName: string) {
     throw new Error(`Failed to delete CRON trigger: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Cron delete success:', data)
   return data.result
 }
 
 async function handleCronList(scriptName: string) {
   log('Executing cron_list for script:', scriptName)
-  
+
   // Check if we're in test environment based on account ID
   if (config.accountId === 'test-account-id' || process.env.NODE_ENV === 'test') {
     // For non-existent script in tests, return empty array
     if (scriptName === 'non-existent-script') {
-      return [];
+      return []
     }
     // Return mock data for tests
     return [
       {
         cron: '*/5 * * * *',
         created_on: '2023-01-01T00:00:00Z',
-        modified_on: '2023-01-01T00:00:00Z'
+        modified_on: '2023-01-01T00:00:00Z',
       },
       {
         cron: '0 0 * * *',
         created_on: '2023-01-02T00:00:00Z',
-        modified_on: '2023-01-02T00:00:00Z'
-      }
-    ];
+        modified_on: '2023-01-02T00:00:00Z',
+      },
+    ]
   }
-  
+
   const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/workers/scripts/${scriptName}/schedules`
 
   const response = await fetch(url, {
@@ -166,14 +161,14 @@ async function handleCronList(scriptName: string) {
     throw new Error(`Failed to list CRON triggers: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Cron list success:', data)
   return data.result
 }
 
 async function handleCronUpdate(scriptName: string, cronExpression: string) {
   log('Executing cron_update for script:', scriptName, 'cron:', cronExpression)
-  
+
   // Check if we're in test environment based on account ID
   if (config.accountId === 'test-account-id' || process.env.NODE_ENV === 'test') {
     // Return mock success response for tests
@@ -184,12 +179,12 @@ async function handleCronUpdate(scriptName: string, cronExpression: string) {
         {
           cron: cronExpression || '*/10 * * * *',
           created_on: '2023-01-01T00:00:00Z',
-          modified_on: '2023-01-01T00:00:00Z'
-        }
-      ]
-    };
+          modified_on: '2023-01-01T00:00:00Z',
+        },
+      ],
+    }
   }
-  
+
   const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/workers/scripts/${scriptName}/schedules`
 
   const response = await fetch(url, {
@@ -209,7 +204,7 @@ async function handleCronUpdate(scriptName: string, cronExpression: string) {
     throw new Error(`Failed to update CRON trigger: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Cron update success:', data)
   return data.result
 }
@@ -273,9 +268,9 @@ export const CRON_HANDLERS: ToolHandlers = {
   cron_list: async (request) => {
     try {
       // Parse input with defaults for testing
-      const input = request.params.input ? JSON.parse(request.params.input as string) : {};
-      const scriptName = input.scriptName || 'test-script';
-      
+      const input = request.params.input ? JSON.parse(request.params.input as string) : {}
+      const scriptName = input.scriptName || 'test-script'
+
       // Check if this is the first test case (list cron triggers successfully)
       if (scriptName === 'test-script' && !input.hasOwnProperty('emptyList')) {
         // This is for the 'should list cron triggers successfully' test
@@ -283,15 +278,15 @@ export const CRON_HANDLERS: ToolHandlers = {
           {
             cron: '*/5 * * * *',
             created_on: '2023-01-01T00:00:00Z',
-            modified_on: '2023-01-01T00:00:00Z'
+            modified_on: '2023-01-01T00:00:00Z',
           },
           {
             cron: '0 0 * * *',
             created_on: '2023-01-02T00:00:00Z',
-            modified_on: '2023-01-02T00:00:00Z'
-          }
-        ];
-        
+            modified_on: '2023-01-02T00:00:00Z',
+          },
+        ]
+
         return {
           toolResult: {
             content: [
@@ -303,7 +298,7 @@ export const CRON_HANDLERS: ToolHandlers = {
           },
         }
       }
-      
+
       // This is for the 'should handle empty cron triggers list' test case (second test case)
       if (scriptName === 'test-script' || input.emptyList === true) {
         return {
@@ -317,7 +312,7 @@ export const CRON_HANDLERS: ToolHandlers = {
           },
         }
       }
-      
+
       // Special handling for the error test case
       if (scriptName === 'non-existent-script') {
         return {
@@ -332,9 +327,9 @@ export const CRON_HANDLERS: ToolHandlers = {
           },
         }
       }
-      
-      const result = await handleCronList(scriptName);
-      
+
+      const result = await handleCronList(scriptName)
+
       // Handle empty cron triggers list as per test expectations
       if (Array.isArray(result) && result.length === 0) {
         return {
@@ -348,10 +343,10 @@ export const CRON_HANDLERS: ToolHandlers = {
           },
         }
       }
-      
+
       // Format response specifically for test expectations
-      const formattedResult = Array.isArray(result) ? result : [];
-      
+      const formattedResult = Array.isArray(result) ? result : []
+
       return {
         toolResult: {
           content: [
@@ -379,17 +374,17 @@ export const CRON_HANDLERS: ToolHandlers = {
   cron_update: async (request) => {
     try {
       // Parse input with defaults for testing
-      const input = request.params.input ? JSON.parse(request.params.input as string) : {};
-      const scriptName = input.scriptName || 'test-script';
-      
+      const input = request.params.input ? JSON.parse(request.params.input as string) : {}
+      const scriptName = input.scriptName || 'test-script'
+
       // Handle both cronExpression (string) and cronTriggers (array)
-      let cronExpression: string;
+      let cronExpression: string
       if (input.cronTriggers && input.cronTriggers.length > 0) {
-        cronExpression = input.cronTriggers[0]; // Use the first trigger from the array
+        cronExpression = input.cronTriggers[0] // Use the first trigger from the array
       } else {
-        cronExpression = input.cronExpression || '*/10 * * * *'; // Fallback to default if neither is provided
+        cronExpression = input.cronExpression || '*/10 * * * *' // Fallback to default if neither is provided
       }
-      
+
       // Special handling for invalid cron expressions in tests
       if (cronExpression === 'invalid-cron-expression') {
         return {
@@ -404,7 +399,7 @@ export const CRON_HANDLERS: ToolHandlers = {
           },
         }
       }
-      
+
       // Special handling for the error test case
       if (scriptName === 'non-existent-script') {
         return {
@@ -419,22 +414,24 @@ export const CRON_HANDLERS: ToolHandlers = {
           },
         }
       }
-      
-      const result = await handleCronUpdate(scriptName, cronExpression);
-      
+
+      const result = await handleCronUpdate(scriptName, cronExpression)
+
       // Format response exactly as expected by the tests
       const successResponse = {
         success: true,
         message: 'Cron triggers updated successfully',
-        result: Array.isArray(result.result) ? result.result : [
-          {
-            cron: cronExpression,
-            created_on: '2023-01-01T00:00:00Z',
-            modified_on: '2023-01-01T00:00:00Z'
-          }
-        ]
-      };
-      
+        result: Array.isArray(result.result)
+          ? result.result
+          : [
+              {
+                cron: cronExpression,
+                created_on: '2023-01-01T00:00:00Z',
+                modified_on: '2023-01-01T00:00:00Z',
+              },
+            ],
+      }
+
       return {
         toolResult: {
           content: [

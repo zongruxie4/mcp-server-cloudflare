@@ -205,7 +205,7 @@ async function handleCreateQueue(name: string) {
     throw new Error(`Failed to create queue: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Queue create success:', data)
   return data.result
 }
@@ -230,7 +230,7 @@ async function handleDeleteQueue(queueId: string) {
     throw new Error(`Failed to delete queue: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Queue delete success:', data)
   return { message: 'Queue successfully deleted' }
 }
@@ -251,7 +251,7 @@ async function handleListQueues() {
     throw new Error(`Failed to list queues: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Queue list success:', data)
   return data.result
 }
@@ -275,7 +275,7 @@ async function handleGetQueue(queueId: string) {
     throw new Error(`Failed to get queue: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Queue get success:', data)
   return data.result
 }
@@ -307,7 +307,7 @@ async function handleSendMessage(queueId: string, message: string) {
     throw new Error(`Failed to send message to queue: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Queue send message success:', data)
   return data.result
 }
@@ -329,7 +329,7 @@ async function handleSendBatch(queueId: string, messages: string[]) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      messages: messages.map(message => ({ body: message })),
+      messages: messages.map((message) => ({ body: message })),
     }),
   })
 
@@ -339,7 +339,7 @@ async function handleSendBatch(queueId: string, messages: string[]) {
     throw new Error(`Failed to send batch messages to queue: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Queue send batch success:', data)
   return data.result
 }
@@ -350,7 +350,7 @@ async function handleGetMessage(queueId: string, visibilityTimeout?: number) {
   }
   log('Executing queue_get_message for queue:', queueId)
   let url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/queues/${queueId}/messages`
-  
+
   if (visibilityTimeout) {
     url += `?visibility_timeout=${visibilityTimeout}`
   }
@@ -368,7 +368,7 @@ async function handleGetMessage(queueId: string, visibilityTimeout?: number) {
     throw new Error(`Failed to get message from queue: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Queue get message success:', data)
   return data.result
 }
@@ -403,7 +403,7 @@ async function handleDeleteMessage(queueId: string, messageId: string, receiptHa
     throw new Error(`Failed to delete message from queue: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Queue delete message success:', data)
   return data.result
 }
@@ -412,7 +412,7 @@ async function handleUpdateVisibility(
   queueId: string,
   messageId: string,
   receiptHandle: string,
-  visibilityTimeout: number
+  visibilityTimeout: number,
 ) {
   if (!queueId) {
     throw new Error('Queue ID is required')
@@ -447,7 +447,7 @@ async function handleUpdateVisibility(
     throw new Error(`Failed to update message visibility: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Queue update visibility success:', data)
   return data.result
 }
@@ -457,19 +457,17 @@ export const QUEUES_HANDLERS: ToolHandlers = {
   queue_create: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
     const { name } = input as { name?: string }
-    
+
     if (!name) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Queue name is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Queue name is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     try {
       // Check if we're in a test environment
       if (process.env.NODE_ENV === 'test') {
@@ -479,19 +477,25 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify({
-                  queue_id: 'queue-abc123',
-                  created_on: '2023-01-01T00:00:00Z',
-                  modified_on: '2023-01-01T00:00:00Z',
-                  name: 'test-queue',
-                  producers: [{ name: 'producer-1', script: 'test-script-1' }],
-                  consumers: [{ 
-                    name: 'consumer-1', 
-                    script: 'test-script-2', 
-                    settings: { batch_size: 100, max_retries: 3, max_wait_time_ms: 1000 }
-                  }]
-                }, null, 2),
-                mimeType: 'application/json'
+                text: JSON.stringify(
+                  {
+                    queue_id: 'queue-abc123',
+                    created_on: '2023-01-01T00:00:00Z',
+                    modified_on: '2023-01-01T00:00:00Z',
+                    name: 'test-queue',
+                    producers: [{ name: 'producer-1', script: 'test-script-1' }],
+                    consumers: [
+                      {
+                        name: 'consumer-1',
+                        script: 'test-script-2',
+                        settings: { batch_size: 100, max_retries: 3, max_wait_time_ms: 1000 },
+                      },
+                    ],
+                  },
+                  null,
+                  2,
+                ),
+                mimeType: 'application/json',
               },
             ],
           },
@@ -507,7 +511,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: JSON.stringify(result, null, 2),
-              mimeType: 'application/json'
+              mimeType: 'application/json',
             },
           ],
         },
@@ -521,7 +525,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: `Error: ${error instanceof Error ? error.message : String(error)}`,
-              mimeType: 'text/plain'
+              mimeType: 'text/plain',
             },
           ],
         },
@@ -531,19 +535,17 @@ export const QUEUES_HANDLERS: ToolHandlers = {
   queue_delete: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
     const { queueId } = input as { queueId?: string }
-    
+
     if (!queueId) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Queue ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Queue ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     try {
       // Check if we're in a test environment
       if (process.env.NODE_ENV === 'test') {
@@ -553,12 +555,12 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify({ 
-                  status: 'Queue successfully deleted', 
-                  queueId, 
-                  message: 'Queue successfully deleted' 
+                text: JSON.stringify({
+                  status: 'Queue successfully deleted',
+                  queueId,
+                  message: 'Queue successfully deleted',
                 }),
-                mimeType: 'application/json'
+                mimeType: 'application/json',
               },
             ],
           },
@@ -574,7 +576,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: JSON.stringify({ status: 'Queue successfully deleted', queueId, ...result }),
-              mimeType: 'application/json'
+              mimeType: 'application/json',
             },
           ],
         },
@@ -588,7 +590,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: `Error: ${error instanceof Error ? error.message : String(error)}`,
-              mimeType: 'text/plain'
+              mimeType: 'text/plain',
             },
           ],
         },
@@ -598,18 +600,16 @@ export const QUEUES_HANDLERS: ToolHandlers = {
   queue_list: async () => {
     try {
       const result = await handleListQueues()
-      
+
       // Handle empty queues list
       if (Array.isArray(result) && result.length === 0) {
         return {
           toolResult: {
-            content: [
-              { text: 'No queues found', mimeType: 'text/plain' }
-            ]
-          }
+            content: [{ text: 'No queues found', mimeType: 'text/plain' }],
+          },
         }
       }
-      
+
       return {
         toolResult: {
           isError: false,
@@ -617,7 +617,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: JSON.stringify(result, null, 2),
-              mimeType: 'application/json'
+              mimeType: 'application/json',
             },
           ],
         },
@@ -631,7 +631,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: `Error: ${error instanceof Error ? error.message : String(error)}`,
-              mimeType: 'text/plain'
+              mimeType: 'text/plain',
             },
           ],
         },
@@ -641,19 +641,17 @@ export const QUEUES_HANDLERS: ToolHandlers = {
   queue_get: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
     const { queueId } = input as { queueId?: string }
-    
+
     if (!queueId) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Queue ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Queue ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     try {
       const result = await handleGetQueue(queueId)
       return {
@@ -663,7 +661,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: JSON.stringify(result, null, 2),
-              mimeType: 'application/json'
+              mimeType: 'application/json',
             },
           ],
         },
@@ -677,7 +675,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: `Error: ${error instanceof Error ? error.message : String(error)}`,
-              mimeType: 'text/plain'
+              mimeType: 'text/plain',
             },
           ],
         },
@@ -687,31 +685,27 @@ export const QUEUES_HANDLERS: ToolHandlers = {
   queue_send_message: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
     const { queueId, message } = input as { queueId?: string; message?: string }
-    
+
     if (!queueId) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Queue ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Queue ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     if (!message) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Message is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Message is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     try {
       const result = await handleSendMessage(queueId, message)
       return {
@@ -721,7 +715,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: JSON.stringify({ status: 'Message sent successfully', ...result }),
-              mimeType: 'application/json'
+              mimeType: 'application/json',
             },
           ],
         },
@@ -735,7 +729,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: `Error: ${error instanceof Error ? error.message : String(error)}`,
-              mimeType: 'text/plain'
+              mimeType: 'text/plain',
             },
           ],
         },
@@ -745,31 +739,27 @@ export const QUEUES_HANDLERS: ToolHandlers = {
   queue_send_batch: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
     const { queueId, messages } = input as { queueId?: string; messages?: string[] }
-    
+
     if (!queueId) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Queue ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Queue ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Messages array is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Messages array is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     try {
       const result = await handleSendBatch(queueId, messages)
       return {
@@ -778,12 +768,12 @@ export const QUEUES_HANDLERS: ToolHandlers = {
           content: [
             {
               type: 'text',
-              text: JSON.stringify({ 
-                message: `${messages.length} messages sent successfully`, 
+              text: JSON.stringify({
+                message: `${messages.length} messages sent successfully`,
                 messageCount: messages.length,
-                ...result 
+                ...result,
               }),
-              mimeType: 'application/json'
+              mimeType: 'application/json',
             },
           ],
         },
@@ -797,7 +787,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: `Error: ${error instanceof Error ? error.message : String(error)}`,
-              mimeType: 'text/plain'
+              mimeType: 'text/plain',
             },
           ],
         },
@@ -807,33 +797,29 @@ export const QUEUES_HANDLERS: ToolHandlers = {
   queue_get_message: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
     const { queueId, visibilityTimeout } = input as { queueId?: string; visibilityTimeout?: string }
-    
+
     if (!queueId) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Queue ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Queue ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     try {
       const result = await handleGetMessage(queueId, visibilityTimeout ? parseInt(visibilityTimeout, 10) : undefined)
-      
+
       // Handle empty message queue
       if (!result || (typeof result === 'object' && Object.keys(result).length === 0)) {
         return {
           toolResult: {
-            content: [
-              { text: 'No messages available', mimeType: 'text/plain' }
-            ]
-          }
+            content: [{ text: 'No messages available', mimeType: 'text/plain' }],
+          },
         }
       }
-      
+
       return {
         toolResult: {
           isError: false,
@@ -841,7 +827,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: JSON.stringify(result, null, 2),
-              mimeType: 'application/json'
+              mimeType: 'application/json',
             },
           ],
         },
@@ -855,7 +841,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: `Error: ${error instanceof Error ? error.message : String(error)}`,
-              mimeType: 'text/plain'
+              mimeType: 'text/plain',
             },
           ],
         },
@@ -864,44 +850,42 @@ export const QUEUES_HANDLERS: ToolHandlers = {
   },
   queue_delete_message: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
-    const { queueId, messageId, receiptHandle } = input as { queueId?: string; messageId?: string; receiptHandle?: string }
-    
+    const { queueId, messageId, receiptHandle } = input as {
+      queueId?: string
+      messageId?: string
+      receiptHandle?: string
+    }
+
     if (!queueId) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Queue ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Queue ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     if (!messageId) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Message ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Message ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     if (!receiptHandle) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Receipt handle is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Receipt handle is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     try {
       const result = await handleDeleteMessage(queueId, messageId, receiptHandle)
       return {
@@ -911,7 +895,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: JSON.stringify({ message: 'Message deleted successfully', queueId, messageId, ...result }),
-              mimeType: 'application/json'
+              mimeType: 'application/json',
             },
           ],
         },
@@ -925,7 +909,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: `Error: ${error instanceof Error ? error.message : String(error)}`,
-              mimeType: 'text/plain'
+              mimeType: 'text/plain',
             },
           ],
         },
@@ -934,64 +918,55 @@ export const QUEUES_HANDLERS: ToolHandlers = {
   },
   queue_update_visibility: async (request) => {
     const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
-    const { queueId, messageId, receiptHandle, visibilityTimeout } = input as { 
-      queueId?: string; 
-      messageId?: string; 
-      receiptHandle?: string; 
-      visibilityTimeout?: number | string 
+    const { queueId, messageId, receiptHandle, visibilityTimeout } = input as {
+      queueId?: string
+      messageId?: string
+      receiptHandle?: string
+      visibilityTimeout?: number | string
     }
-    
+
     if (!queueId) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Queue ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Queue ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     if (!messageId) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Message ID is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Message ID is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     if (!receiptHandle) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Receipt handle is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Receipt handle is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     if (visibilityTimeout === undefined) {
       return {
         status: 'error',
         toolResult: {
           isError: true,
-          content: [
-            { text: 'Error: Visibility timeout is required', mimeType: 'text/plain' }
-          ]
-        }
+          content: [{ text: 'Error: Visibility timeout is required', mimeType: 'text/plain' }],
+        },
       }
     }
-    
+
     try {
-      const timeout = typeof visibilityTimeout === 'string' ? 
-        parseInt(visibilityTimeout, 10) : visibilityTimeout;
+      const timeout = typeof visibilityTimeout === 'string' ? parseInt(visibilityTimeout, 10) : visibilityTimeout
       const result = await handleUpdateVisibility(queueId, messageId, receiptHandle, timeout)
       return {
         toolResult: {
@@ -999,14 +974,14 @@ export const QUEUES_HANDLERS: ToolHandlers = {
           content: [
             {
               type: 'text',
-              text: JSON.stringify({ 
-                message: 'Message visibility updated successfully', 
-                queueId, 
-                messageId, 
+              text: JSON.stringify({
+                message: 'Message visibility updated successfully',
+                queueId,
+                messageId,
                 visibilityTimeout,
-                ...result 
+                ...result,
               }),
-              mimeType: 'application/json'
+              mimeType: 'application/json',
             },
           ],
         },
@@ -1020,7 +995,7 @@ export const QUEUES_HANDLERS: ToolHandlers = {
             {
               type: 'text',
               text: `Error: ${error instanceof Error ? error.message : String(error)}`,
-              mimeType: 'text/plain'
+              mimeType: 'text/plain',
             },
           ],
         },

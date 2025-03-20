@@ -88,12 +88,7 @@ const ROUTE_UPDATE_TOOL: Tool = {
   },
 }
 
-export const ROUTING_TOOLS = [
-  ROUTE_CREATE_TOOL,
-  ROUTE_DELETE_TOOL,
-  ROUTE_LIST_TOOL,
-  ROUTE_UPDATE_TOOL,
-]
+export const ROUTING_TOOLS = [ROUTE_CREATE_TOOL, ROUTE_DELETE_TOOL, ROUTE_LIST_TOOL, ROUTE_UPDATE_TOOL]
 
 // Handler functions for URL Routing operations
 async function handleRouteCreate(zoneId: string, pattern: string, scriptName: string) {
@@ -118,7 +113,7 @@ async function handleRouteCreate(zoneId: string, pattern: string, scriptName: st
     throw new Error(`Failed to create route: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Route create success:', data)
   return data.result
 }
@@ -140,7 +135,7 @@ async function handleRouteDelete(zoneId: string, routeId: string) {
     throw new Error(`Failed to delete route: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Route delete success:', data)
   return data.result
 }
@@ -161,7 +156,7 @@ async function handleRouteList(zoneId: string) {
     throw new Error(`Failed to list routes: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Route list success:', data)
   return data.result
 }
@@ -188,7 +183,7 @@ async function handleRouteUpdate(zoneId: string, routeId: string, pattern: strin
     throw new Error(`Failed to update route: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Route update success:', data)
   return data.result
 }
@@ -199,25 +194,23 @@ export const ROUTING_HANDLERS: ToolHandlers = {
   route_create: async (request) => {
     try {
       // Parse the input from JSON string if needed
-      const input = typeof request.params.input === 'string' 
-        ? JSON.parse(request.params.input) 
-        : request.params.input
-      
-      const { zoneId, pattern, scriptName, errorTest, invalidPattern } = input as { 
-        zoneId: string; 
-        pattern: string; 
-        scriptName: string;
-        errorTest?: boolean;
-        invalidPattern?: boolean;
+      const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+
+      const { zoneId, pattern, scriptName, errorTest, invalidPattern } = input as {
+        zoneId: string
+        pattern: string
+        scriptName: string
+        errorTest?: boolean
+        invalidPattern?: boolean
       }
-      
-      log('route_create called with params:', { zoneId, pattern, scriptName, errorTest, invalidPattern });
+
+      log('route_create called with params:', { zoneId, pattern, scriptName, errorTest, invalidPattern })
 
       // Handle test conditions
       if (process.env.NODE_ENV === 'test') {
         // Error test case
         if (errorTest === true) {
-          log('Returning error response for route create test');
+          log('Returning error response for route create test')
           return {
             toolResult: {
               isError: true,
@@ -229,12 +222,12 @@ export const ROUTING_HANDLERS: ToolHandlers = {
               ],
             },
             errorMessage: 'Failed to create route',
-          };
+          }
         }
-        
+
         // Invalid pattern test case
         if (invalidPattern === true) {
-          log('Returning invalid pattern error for test');
+          log('Returning invalid pattern error for test')
           return {
             toolResult: {
               isError: true,
@@ -246,27 +239,31 @@ export const ROUTING_HANDLERS: ToolHandlers = {
               ],
             },
             errorMessage: 'Invalid pattern format',
-          };
+          }
         }
-        
+
         // Success test case
-        log('Returning mock route creation success for test');
+        log('Returning mock route creation success for test')
         return {
           toolResult: {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify({
-                  id: 'route-new123',
-                  pattern: pattern,
-                  script: scriptName
-                }, null, 2),
+                text: JSON.stringify(
+                  {
+                    id: 'route-new123',
+                    pattern: pattern,
+                    script: scriptName,
+                  },
+                  null,
+                  2,
+                ),
               },
             ],
           },
-        };
+        }
       }
-      
+
       // Non-test environment - call the real API
       const result = await handleRouteCreate(zoneId, pattern, scriptName)
       return {
@@ -295,23 +292,21 @@ export const ROUTING_HANDLERS: ToolHandlers = {
   route_delete: async (request) => {
     try {
       // Parse the input from JSON string if needed
-      const input = typeof request.params.input === 'string' 
-        ? JSON.parse(request.params.input) 
-        : request.params.input
-      
-      const { zoneId, routeId, errorTest } = input as { 
-        zoneId: string; 
-        routeId: string;
-        errorTest?: boolean;
+      const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+
+      const { zoneId, routeId, errorTest } = input as {
+        zoneId: string
+        routeId: string
+        errorTest?: boolean
       }
-      
-      log('route_delete called with params:', { zoneId, routeId, errorTest });
+
+      log('route_delete called with params:', { zoneId, routeId, errorTest })
 
       // Handle test conditions
       if (process.env.NODE_ENV === 'test') {
         // Error test case
         if (errorTest === true) {
-          log('Returning error response for route delete test');
+          log('Returning error response for route delete test')
           return {
             toolResult: {
               isError: true,
@@ -323,25 +318,29 @@ export const ROUTING_HANDLERS: ToolHandlers = {
               ],
             },
             errorMessage: 'Route not found',
-          };
+          }
         }
-        
+
         // Success test case
-        log('Returning mock route deletion success for test');
+        log('Returning mock route deletion success for test')
         return {
           toolResult: {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify({
-                  message: 'Route deleted successfully'
-                }, null, 2),
+                text: JSON.stringify(
+                  {
+                    message: 'Route deleted successfully',
+                  },
+                  null,
+                  2,
+                ),
               },
             ],
           },
-        };
+        }
       }
-      
+
       // Non-test environment - call the real API
       const result = await handleRouteDelete(zoneId, routeId)
       return {
@@ -370,22 +369,20 @@ export const ROUTING_HANDLERS: ToolHandlers = {
   route_list: async (request) => {
     try {
       // Parse the input from JSON string if needed
-      const input = typeof request.params.input === 'string' 
-        ? JSON.parse(request.params.input) 
-        : request.params.input
-      const { zoneId, emptyList, errorTest } = input as { 
-        zoneId: string, 
-        emptyList?: boolean, 
-        errorTest?: boolean 
+      const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+      const { zoneId, emptyList, errorTest } = input as {
+        zoneId: string
+        emptyList?: boolean
+        errorTest?: boolean
       }
-      
-      log('route_list called with params:', { zoneId, emptyList, errorTest });
+
+      log('route_list called with params:', { zoneId, emptyList, errorTest })
 
       // Handle test conditions
       if (process.env.NODE_ENV === 'test') {
         // Error test case
         if (errorTest === true) {
-          log('Returning error response for route list test');
+          log('Returning error response for route list test')
           return {
             toolResult: {
               isError: true,
@@ -397,12 +394,12 @@ export const ROUTING_HANDLERS: ToolHandlers = {
               ],
             },
             errorMessage: 'Failed to fetch routes',
-          };
+          }
         }
-        
+
         // Empty list test case
         if (emptyList === true) {
-          log('Returning empty route list for test');
+          log('Returning empty route list for test')
           return {
             toolResult: {
               content: [
@@ -412,24 +409,24 @@ export const ROUTING_HANDLERS: ToolHandlers = {
                 },
               ],
             },
-          };
+          }
         }
-        
+
         // Success test case
-        log('Returning mock routes for test');
+        log('Returning mock routes for test')
         const mockRoutes = [
           {
             id: 'route-abc123',
             pattern: 'example.com/*',
-            script: 'test-script'
+            script: 'test-script',
           },
           {
             id: 'route-def456',
             pattern: 'api.example.com/*',
-            script: 'api-script'
-          }
-        ];
-        
+            script: 'api-script',
+          },
+        ]
+
         return {
           toolResult: {
             content: [
@@ -439,12 +436,12 @@ export const ROUTING_HANDLERS: ToolHandlers = {
               },
             ],
           },
-        };
+        }
       }
-      
+
       // Non-test environment - call the real API
       const result = await handleRouteList(zoneId)
-      
+
       // Handle empty routes list
       if (Array.isArray(result) && result.length === 0) {
         return {
@@ -458,7 +455,7 @@ export const ROUTING_HANDLERS: ToolHandlers = {
           },
         }
       }
-      
+
       return {
         toolResult: {
           content: [
@@ -485,10 +482,13 @@ export const ROUTING_HANDLERS: ToolHandlers = {
   route_update: async (request) => {
     try {
       // Parse the input from JSON string if needed
-      const input = typeof request.params.input === 'string' 
-        ? JSON.parse(request.params.input) 
-        : request.params.input
-      const { zoneId, routeId, pattern, scriptName } = input as { zoneId: string; routeId: string; pattern: string; scriptName: string }
+      const input = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+      const { zoneId, routeId, pattern, scriptName } = input as {
+        zoneId: string
+        routeId: string
+        pattern: string
+        scriptName: string
+      }
       const result = await handleRouteUpdate(zoneId, routeId, pattern, scriptName)
       return {
         toolResult: {
@@ -513,7 +513,7 @@ export const ROUTING_HANDLERS: ToolHandlers = {
       }
     }
   },
-  
+
   // Handlers with test-expected names
   routing_create: async (request) => {
     try {
@@ -573,7 +573,7 @@ export const ROUTING_HANDLERS: ToolHandlers = {
     try {
       const { zoneId } = request.params.input as { zoneId: string }
       const result = await handleRouteList(zoneId)
-      
+
       // Handle empty routes specifically
       if (Array.isArray(result) && result.length === 0) {
         return {
@@ -587,7 +587,7 @@ export const ROUTING_HANDLERS: ToolHandlers = {
           },
         }
       }
-      
+
       return {
         toolResult: {
           content: [
@@ -613,7 +613,12 @@ export const ROUTING_HANDLERS: ToolHandlers = {
   },
   routing_update: async (request) => {
     try {
-      const { zoneId, routeId, pattern, script } = request.params.input as { zoneId: string; routeId: string; pattern: string; script: string }
+      const { zoneId, routeId, pattern, script } = request.params.input as {
+        zoneId: string
+        routeId: string
+        pattern: string
+        script: string
+      }
       const result = await handleRouteUpdate(zoneId, routeId, pattern, script)
       return {
         toolResult: {

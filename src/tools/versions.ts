@@ -57,11 +57,7 @@ const VERSION_ROLLBACK_TOOL: Tool = {
   },
 }
 
-export const VERSIONS_TOOLS = [
-  VERSION_LIST_TOOL,
-  VERSION_GET_TOOL,
-  VERSION_ROLLBACK_TOOL,
-]
+export const VERSIONS_TOOLS = [VERSION_LIST_TOOL, VERSION_GET_TOOL, VERSION_ROLLBACK_TOOL]
 
 // Handler functions for Version Management operations
 async function handleVersionList(scriptName: string) {
@@ -80,7 +76,7 @@ async function handleVersionList(scriptName: string) {
     throw new Error(`Failed to list versions: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Version list success:', data)
   return data.result
 }
@@ -101,7 +97,7 @@ async function handleVersionGet(scriptName: string, versionId: string) {
     throw new Error(`Failed to get version: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Version get success:', data)
   return data.result
 }
@@ -127,7 +123,7 @@ async function handleVersionRollback(scriptName: string, versionId: string) {
     throw new Error(`Failed to rollback to version: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Version rollback success:', data)
   return data.result
 }

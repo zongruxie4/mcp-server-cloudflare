@@ -18,19 +18,19 @@ export const server = setupServer(...mockHandlers)
 // More aggressive debugging configuration for MSW
 beforeAll(() => {
   // Enable network request debugging
-  server.listen({ 
+  server.listen({
     onUnhandledRequest: 'warn',
   })
-  
+
   // Log all requests that pass through MSW
   server.events.on('request:start', ({ request }) => {
     console.log(`[MSW] Request started: ${request.method} ${request.url}`)
   })
-  
+
   server.events.on('request:match', ({ request }) => {
     console.log(`[MSW] Request matched: ${request.method} ${request.url}`)
   })
-  
+
   server.events.on('request:unhandled', ({ request }) => {
     console.log(`[MSW] Request not handled: ${request.method} ${request.url}`)
   })

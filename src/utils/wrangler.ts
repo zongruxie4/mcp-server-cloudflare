@@ -462,7 +462,7 @@ export async function ensureWranglerAuthentication(): Promise<boolean> {
   try {
     // Try to get auth tokens
     getAuthTokens()
-    
+
     // If tokens are expired, try to refresh them
     if (isAccessTokenExpired()) {
       console.log('Wrangler access token expired, attempting to refresh...')
@@ -487,7 +487,7 @@ export async function ensureWranglerAuthentication(): Promise<boolean> {
     const { stderr, stdout } = await execAsync('npx wrangler@latest login')
     if (stderr) console.error(stderr)
     if (stdout) console.log(stdout)
-    
+
     // Try to get auth tokens again
     getAuthTokens()
     return true

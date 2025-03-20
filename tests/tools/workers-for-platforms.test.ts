@@ -15,7 +15,7 @@ describe('Workers for Platforms API Tools', () => {
       const request = createMockToolRequest('wfp_list_namespaces')
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await WFP_HANDLERS.wfp_list_namespaces(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('test-namespace-1')
@@ -27,7 +27,7 @@ describe('Workers for Platforms API Tools', () => {
       const request = createMockToolRequest('wfp_list_namespaces', { emptyList: true })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await WFP_HANDLERS.wfp_list_namespaces(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('No namespaces found')
@@ -37,7 +37,7 @@ describe('Workers for Platforms API Tools', () => {
       const request = createMockToolRequest('wfp_list_namespaces', { errorTest: true })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await WFP_HANDLERS.wfp_list_namespaces(request)
-      
+
       verifyToolResponse(response, true)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Error')
@@ -47,11 +47,11 @@ describe('Workers for Platforms API Tools', () => {
   describe('wfp_create_namespace', () => {
     it('should create a namespace successfully', async () => {
       const request = createMockToolRequest('wfp_create_namespace', {
-        name: 'test-namespace'
+        name: 'test-namespace',
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await WFP_HANDLERS.wfp_create_namespace(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Namespace created successfully')
@@ -62,11 +62,11 @@ describe('Workers for Platforms API Tools', () => {
     it('should handle API errors', async () => {
       const request = createMockToolRequest('wfp_create_namespace', {
         name: 'invalid-namespace',
-        errorTest: true
+        errorTest: true,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await WFP_HANDLERS.wfp_create_namespace(request)
-      
+
       verifyToolResponse(response, true)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Error')
@@ -76,11 +76,11 @@ describe('Workers for Platforms API Tools', () => {
   describe('wfp_delete_namespace', () => {
     it('should delete a namespace successfully', async () => {
       const request = createMockToolRequest('wfp_delete_namespace', {
-        namespace: 'test-namespace'
+        namespace: 'test-namespace',
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await WFP_HANDLERS.wfp_delete_namespace(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Namespace deleted successfully')
@@ -89,11 +89,11 @@ describe('Workers for Platforms API Tools', () => {
     it('should handle API errors', async () => {
       const request = createMockToolRequest('wfp_delete_namespace', {
         namespace: 'non-existent-namespace',
-        errorTest: true
+        errorTest: true,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await WFP_HANDLERS.wfp_delete_namespace(request)
-      
+
       verifyToolResponse(response, true)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Error')
@@ -103,11 +103,11 @@ describe('Workers for Platforms API Tools', () => {
   describe('wfp_list_scripts', () => {
     it('should list scripts successfully', async () => {
       const request = createMockToolRequest('wfp_list_scripts', {
-        namespace: 'test-namespace'
+        namespace: 'test-namespace',
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await WFP_HANDLERS.wfp_list_scripts(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('test-script-1')
@@ -118,11 +118,11 @@ describe('Workers for Platforms API Tools', () => {
     it('should handle empty script list', async () => {
       const request = createMockToolRequest('wfp_list_scripts', {
         namespace: 'test-namespace',
-        emptyList: true
+        emptyList: true,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await WFP_HANDLERS.wfp_list_scripts(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('No scripts found')
@@ -134,11 +134,11 @@ describe('Workers for Platforms API Tools', () => {
       const request = createMockToolRequest('wfp_update_script', {
         namespace: 'test-namespace',
         scriptName: 'test-script',
-        script: 'addEventListener("fetch", (event) => { event.respondWith(new Response("Hello World")); });'
+        script: 'addEventListener("fetch", (event) => { event.respondWith(new Response("Hello World")); });',
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await WFP_HANDLERS.wfp_update_script(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Script updated successfully')
@@ -151,11 +151,11 @@ describe('Workers for Platforms API Tools', () => {
         namespace: 'test-namespace',
         scriptName: 'test-script',
         script: 'invalid-script',
-        errorTest: true
+        errorTest: true,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await WFP_HANDLERS.wfp_update_script(request)
-      
+
       verifyToolResponse(response, true)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Error')
@@ -166,11 +166,11 @@ describe('Workers for Platforms API Tools', () => {
     it('should delete a script successfully', async () => {
       const request = createMockToolRequest('wfp_delete_script', {
         namespace: 'test-namespace',
-        scriptName: 'test-script'
+        scriptName: 'test-script',
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await WFP_HANDLERS.wfp_delete_script(request)
-      
+
       verifyToolResponse(response)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Script deleted successfully')
@@ -180,11 +180,11 @@ describe('Workers for Platforms API Tools', () => {
       const request = createMockToolRequest('wfp_delete_script', {
         namespace: 'test-namespace',
         scriptName: 'non-existent-script',
-        errorTest: true
+        errorTest: true,
       })
       // @ts-ignore - Ignore type errors for testing purposes
       const response = await WFP_HANDLERS.wfp_delete_script(request)
-      
+
       verifyToolResponse(response, true)
       // @ts-ignore - We know this structure exists in our tests
       expect(response.toolResult.content[0].text).toContain('Error')

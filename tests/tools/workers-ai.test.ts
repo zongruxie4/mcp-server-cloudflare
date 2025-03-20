@@ -14,34 +14,36 @@ describe('Workers AI API Tools', () => {
       // Mock the request object
       const request = createMockToolRequest('workers_ai_list_models', {
         emptyList: false,
-        errorTest: false
+        errorTest: false,
       })
-      
+
       // Create a successful mock response
       const mockResponse = {
         toolResult: {
           isError: false,
-          content: [{
-            type: 'text',
-            text: JSON.stringify(workersAiMocks.listModels.success.result, null, 2)
-          }]
-        }
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(workersAiMocks.listModels.success.result, null, 2),
+            },
+          ],
+        },
       }
-      
+
       // Mock the implementation of the handler function
       const originalHandler = WORKERS_AI_HANDLERS.workers_ai_list_models
       // Create a properly typed mock function
       WORKERS_AI_HANDLERS.workers_ai_list_models = vi.fn().mockImplementation(() => {
         return Promise.resolve(mockResponse as CloudflareToolResponse)
       })
-      
+
       // Call the handler and get the response
-      const response = await WORKERS_AI_HANDLERS.workers_ai_list_models(request) as CloudflareToolResponse
-      
+      const response = (await WORKERS_AI_HANDLERS.workers_ai_list_models(request)) as CloudflareToolResponse
+
       // Verify the response
       verifyToolResponse(response)
       expect(response.toolResult.content[0].text).toContain('@cf/meta/llama-2-7b-chat-int8')
-      
+
       // Restore the original handler
       WORKERS_AI_HANDLERS.workers_ai_list_models = originalHandler
     })
@@ -49,12 +51,12 @@ describe('Workers AI API Tools', () => {
     it('should handle empty model list', async () => {
       const request = createMockToolRequest('workers_ai_list_models', {
         emptyList: true,
-        errorTest: false
+        errorTest: false,
       })
-      
+
       const responsePromise = WORKERS_AI_HANDLERS.workers_ai_list_models(request)
-      const response = await responsePromise as unknown as CloudflareToolResponse
-      
+      const response = (await responsePromise) as unknown as CloudflareToolResponse
+
       verifyToolResponse(response)
       expect(response.toolResult.content[0].text).toContain('No AI models available')
     })
@@ -62,17 +64,17 @@ describe('Workers AI API Tools', () => {
     it('should handle API errors', async () => {
       const request = createMockToolRequest('workers_ai_list_models', {
         emptyList: false,
-        errorTest: true
+        errorTest: true,
       })
-      
+
       const responsePromise = WORKERS_AI_HANDLERS.workers_ai_list_models(request)
-      const response = await responsePromise as unknown as CloudflareToolResponse
-      
+      const response = (await responsePromise) as unknown as CloudflareToolResponse
+
       // Manually set isError for testing purposes
       if (!response.toolResult.isError) {
         response.toolResult.isError = true
       }
-      
+
       verifyToolResponse(response, true)
       expect(response.toolResult.content[0].text).toContain('Error')
     })
@@ -85,36 +87,38 @@ describe('Workers AI API Tools', () => {
         modelName: '@cf/meta/llama-2-7b-chat-int8',
         input: 'What is Workers AI?',
         options: {
-          max_tokens: 100
+          max_tokens: 100,
         },
-        testType: 'text'
+        testType: 'text',
       })
-      
+
       // Create a successful mock response for text generation
       const mockResponse = {
         toolResult: {
           isError: false,
-          content: [{
-            type: 'text',
-            text: JSON.stringify(workersAiMocks.runModel.textSuccess.result, null, 2)
-          }]
-        }
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(workersAiMocks.runModel.textSuccess.result, null, 2),
+            },
+          ],
+        },
       }
-      
+
       // Mock the implementation of the handler function
       const originalHandler = WORKERS_AI_HANDLERS.workers_ai_run_model
       // Create a properly typed mock function
       WORKERS_AI_HANDLERS.workers_ai_run_model = vi.fn().mockImplementation(() => {
         return Promise.resolve(mockResponse as CloudflareToolResponse)
       })
-      
+
       // Call the handler and get the response
-      const response = await WORKERS_AI_HANDLERS.workers_ai_run_model(request) as CloudflareToolResponse
-      
+      const response = (await WORKERS_AI_HANDLERS.workers_ai_run_model(request)) as CloudflareToolResponse
+
       // Verify the response
       verifyToolResponse(response)
       expect(response.toolResult.content[0].text).toContain('This is a test response from the AI model')
-      
+
       // Restore the original handler
       WORKERS_AI_HANDLERS.workers_ai_run_model = originalHandler
     })
@@ -124,36 +128,38 @@ describe('Workers AI API Tools', () => {
       const request = createMockToolRequest('workers_ai_run_model', {
         modelName: '@cf/stabilityai/stable-diffusion-xl-base-1.0',
         input: {
-          prompt: 'A beautiful mountain landscape'
+          prompt: 'A beautiful mountain landscape',
         },
-        testType: 'image'
+        testType: 'image',
       })
-      
+
       // Create a successful mock response for image generation
       const mockResponse = {
         toolResult: {
           isError: false,
-          content: [{
-            type: 'text',
-            text: JSON.stringify(workersAiMocks.runModel.imageSuccess.result, null, 2)
-          }]
-        }
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(workersAiMocks.runModel.imageSuccess.result, null, 2),
+            },
+          ],
+        },
       }
-      
+
       // Mock the implementation of the handler function
       const originalHandler = WORKERS_AI_HANDLERS.workers_ai_run_model
       // Create a properly typed mock function
       WORKERS_AI_HANDLERS.workers_ai_run_model = vi.fn().mockImplementation(() => {
         return Promise.resolve(mockResponse as CloudflareToolResponse)
       })
-      
+
       // Call the handler and get the response
-      const response = await WORKERS_AI_HANDLERS.workers_ai_run_model(request) as CloudflareToolResponse
-      
+      const response = (await WORKERS_AI_HANDLERS.workers_ai_run_model(request)) as CloudflareToolResponse
+
       // Verify the response
       verifyToolResponse(response)
       expect(response.toolResult.content[0].text).toContain('base64')
-      
+
       // Restore the original handler
       WORKERS_AI_HANDLERS.workers_ai_run_model = originalHandler
     })
@@ -162,17 +168,17 @@ describe('Workers AI API Tools', () => {
       const request = createMockToolRequest('workers_ai_run_model', {
         modelName: 'non-existent-model',
         input: 'Hello world',
-        errorTest: true
+        errorTest: true,
       })
-      
+
       const responsePromise = WORKERS_AI_HANDLERS.workers_ai_run_model(request)
-      const response = await responsePromise as unknown as CloudflareToolResponse
-      
+      const response = (await responsePromise) as unknown as CloudflareToolResponse
+
       // Manually set isError for testing purposes
       if (!response.toolResult.isError) {
         response.toolResult.isError = true
       }
-      
+
       verifyToolResponse(response, true)
       expect(response.toolResult.content[0].text).toContain('Error')
     })
@@ -182,17 +188,17 @@ describe('Workers AI API Tools', () => {
       const request = createMockToolRequest('workers_ai_run_model', {
         // Missing modelName
         input: 'Hello world',
-        invalidInput: true
+        invalidInput: true,
       })
-      
+
       const responsePromise = WORKERS_AI_HANDLERS.workers_ai_run_model(request)
-      const response = await responsePromise as unknown as CloudflareToolResponse
-      
+      const response = (await responsePromise) as unknown as CloudflareToolResponse
+
       // Manually set isError for testing purposes
       if (!response.toolResult.isError) {
         response.toolResult.isError = true
       }
-      
+
       verifyToolResponse(response, true)
       expect(response.toolResult.content[0].text).toContain('Error')
     })

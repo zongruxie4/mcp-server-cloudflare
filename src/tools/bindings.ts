@@ -186,7 +186,7 @@ async function handleServiceBindingCreate(
   scriptName: string,
   bindingName: string,
   service: string,
-  environment?: string
+  environment?: string,
 ) {
   log('Executing service_binding_create for script:', scriptName, 'binding:', bindingName)
   const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/workers/scripts/${scriptName}/bindings/service`
@@ -195,7 +195,7 @@ async function handleServiceBindingCreate(
     name: bindingName,
     service,
   }
-  
+
   if (environment) {
     requestBody.environment = environment
   }
@@ -215,7 +215,7 @@ async function handleServiceBindingCreate(
     throw new Error(`Failed to create service binding: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Service binding create success:', data)
   return data.result
 }
@@ -237,7 +237,7 @@ async function handleServiceBindingDelete(scriptName: string, bindingName: strin
     throw new Error(`Failed to delete service binding: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Service binding delete success:', data)
   return data.result
 }
@@ -258,7 +258,7 @@ async function handleServiceBindingList(scriptName: string) {
     throw new Error(`Failed to list service bindings: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Service binding list success:', data)
   return data.result
 }
@@ -267,7 +267,7 @@ async function handleServiceBindingUpdate(
   scriptName: string,
   bindingName: string,
   service: string,
-  environment?: string
+  environment?: string,
 ) {
   log('Executing service_binding_update for script:', scriptName, 'binding:', bindingName)
   const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/workers/scripts/${scriptName}/bindings/service/${bindingName}`
@@ -275,7 +275,7 @@ async function handleServiceBindingUpdate(
   const requestBody: any = {
     service,
   }
-  
+
   if (environment) {
     requestBody.environment = environment
   }
@@ -295,7 +295,7 @@ async function handleServiceBindingUpdate(
     throw new Error(`Failed to update service binding: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Service binding update success:', data)
   return data.result
 }
@@ -322,7 +322,7 @@ async function handleEnvVarSet(scriptName: string, key: string, value: string) {
     throw new Error(`Failed to set environment variable: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Env var set success:', data)
   return data.result
 }
@@ -344,7 +344,7 @@ async function handleEnvVarDelete(scriptName: string, key: string) {
     throw new Error(`Failed to delete environment variable: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Env var delete success:', data)
   return data.result
 }
@@ -365,7 +365,7 @@ async function handleEnvVarList(scriptName: string) {
     throw new Error(`Failed to list environment variables: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Env var list success:', data)
   return data.result
 }
@@ -389,7 +389,7 @@ async function handleEnvVarBulkSet(scriptName: string, vars: Record<string, stri
     throw new Error(`Failed to bulk set environment variables: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Env var bulk set success:', data)
   return data.result
 }
@@ -397,33 +397,33 @@ async function handleEnvVarBulkSet(scriptName: string, vars: Record<string, stri
 // Additional handler functions for test compatibility
 async function handleBindingsList(serviceName: string, envName: string) {
   log('Executing bindings_list for service:', serviceName, 'environment:', envName)
-  
+
   // Check if we're in test environment to return mock data
   if (process.env.NODE_ENV === 'test' || config.accountId === 'test-account-id') {
     // For non-existent service in tests, return empty array
     if (serviceName === 'non-existent-service') {
-      return [];
+      return []
     }
     // Return mock data for tests
     return [
       {
         name: 'KV_BINDING',
         type: 'kv_namespace',
-        kv_namespace_id: 'kv-abc123'
+        kv_namespace_id: 'kv-abc123',
       },
       {
         name: 'R2_BINDING',
         type: 'r2_bucket',
-        bucket_name: 'test-bucket'
+        bucket_name: 'test-bucket',
       },
       {
         name: 'DO_BINDING',
         type: 'durable_object_namespace',
-        namespace_id: 'namespace-abc123'
-      }
-    ];
+        namespace_id: 'namespace-abc123',
+      },
+    ]
   }
-  
+
   // For non-test environments, call the actual API
   const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/workers/services/${serviceName}/environments/${envName}/bindings`
 
@@ -439,20 +439,20 @@ async function handleBindingsList(serviceName: string, envName: string) {
     throw new Error(`Failed to list bindings: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Bindings list success:', data)
   return data.result
 }
 
 async function handleBindingsUpdate(serviceName: string, envName: string, bindings: any[]) {
   log('Executing bindings_update for service:', serviceName, 'environment:', envName)
-  
+
   // Check if we're in test environment to return mock data
   if (process.env.NODE_ENV === 'test' || config.accountId === 'test-account-id') {
     // Return mock success response for tests
-    return { success: true, message: 'Bindings updated successfully' };
+    return { success: true, message: 'Bindings updated successfully' }
   }
-  
+
   // For non-test environments, call the actual API
   const url = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/workers/services/${serviceName}/environments/${envName}/bindings`
 
@@ -473,7 +473,7 @@ async function handleBindingsUpdate(serviceName: string, envName: string, bindin
     throw new Error(`Failed to update bindings: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Bindings update success:', data)
   return data.result
 }
@@ -483,7 +483,12 @@ export const BINDINGS_HANDLERS: ToolHandlers = {
   // Original handlers
   service_binding_create: async (request) => {
     try {
-      const { scriptName, bindingName, service, environment } = request.params.input as { scriptName: string; bindingName: string; service: string; environment: string }
+      const { scriptName, bindingName, service, environment } = request.params.input as {
+        scriptName: string
+        bindingName: string
+        service: string
+        environment: string
+      }
       const result = await handleServiceBindingCreate(scriptName, bindingName, service, environment)
       return {
         toolResult: {
@@ -564,7 +569,12 @@ export const BINDINGS_HANDLERS: ToolHandlers = {
   },
   service_binding_update: async (request) => {
     try {
-      const { scriptName, bindingName, service, environment } = request.params.input as { scriptName: string; bindingName: string; service: string; environment: string }
+      const { scriptName, bindingName, service, environment } = request.params.input as {
+        scriptName: string
+        bindingName: string
+        service: string
+        environment: string
+      }
       const result = await handleServiceBindingUpdate(scriptName, bindingName, service, environment)
       return {
         toolResult: {
@@ -697,9 +707,7 @@ export const BINDINGS_HANDLERS: ToolHandlers = {
       }
     }
   },
-  
 
-  
   // Test-compatible handlers
   bindings_list: async (request) => {
     try {
@@ -708,74 +716,80 @@ export const BINDINGS_HANDLERS: ToolHandlers = {
         {
           name: 'KV_BINDING',
           type: 'kv_namespace',
-          kv_namespace_id: 'kv-abc123'
+          kv_namespace_id: 'kv-abc123',
         },
         {
           name: 'R2_BINDING',
           type: 'r2_bucket',
-          bucket_name: 'test-bucket'
+          bucket_name: 'test-bucket',
         },
         {
           name: 'DO_BINDING',
           type: 'durable_object_namespace',
-          namespace_id: 'namespace-abc123'
-        }
-      ];
+          namespace_id: 'namespace-abc123',
+        },
+      ]
       // Parse the stringified input parameters
-      const params = typeof request.params.input === 'string' 
-        ? JSON.parse(request.params.input)
-        : request.params.input;
-      
-      const serviceName = params?.serviceName || 'test-service';
-      const envName = params?.envName || 'production';
-      const emptyList = params?.emptyList === true;
-      const errorTest = params?.errorTest === true;
-      
-      log(`bindings_list params: serviceName=${serviceName}, envName=${envName}, emptyList=${emptyList}, errorTest=${errorTest}`);
-      
+      const params = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+
+      const serviceName = params?.serviceName || 'test-service'
+      const envName = params?.envName || 'production'
+      const emptyList = params?.emptyList === true
+      const errorTest = params?.errorTest === true
+
+      log(
+        `bindings_list params: serviceName=${serviceName}, envName=${envName}, emptyList=${emptyList}, errorTest=${errorTest}`,
+      )
+
       // Parameter-based test handling
       if (process.env.NODE_ENV === 'test') {
         // Empty list test case
         if (emptyList) {
-          log('Returning empty bindings list for test');
+          log('Returning empty bindings list for test')
           return {
             toolResult: {
-              content: [{
-                type: 'text',
-                text: JSON.stringify({ message: 'No bindings found' }, null, 2)
-              }]
-            }
-          };
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify({ message: 'No bindings found' }, null, 2),
+                },
+              ],
+            },
+          }
         }
-        
+
         // Error test case
         if (errorTest) {
-          log('Returning error response for bindings list test');
+          log('Returning error response for bindings list test')
           return {
             toolResult: {
               isError: true,
-              content: [{ 
-                type: 'text',
-                text: 'Error: Service not found' 
-              }]
-            }
-          };
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: Service not found',
+                },
+              ],
+            },
+          }
         }
-        
+
         // Normal success test case
         return {
           toolResult: {
-            content: [{
-              type: 'text',
-              text: JSON.stringify(mockBindings, null, 2)
-            }]
-          }
-        };
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(mockBindings, null, 2),
+              },
+            ],
+          },
+        }
       }
-      
+
       // Normal API handling for non-test environment
-      const result = await handleBindingsList(serviceName, envName);
-      
+      const result = await handleBindingsList(serviceName, envName)
+
       // Handle empty bindings list
       if (Array.isArray(result) && result.length === 0) {
         return {
@@ -789,10 +803,10 @@ export const BINDINGS_HANDLERS: ToolHandlers = {
           },
         }
       }
-      
+
       // Format response
-      const formattedResult = Array.isArray(result) ? result : [];
-      
+      const formattedResult = Array.isArray(result) ? result : []
+
       return {
         toolResult: {
           content: [
@@ -802,9 +816,9 @@ export const BINDINGS_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     } catch (error: any) {
-      log(`Error in bindings_list: ${error?.message || 'Unknown error'}`);
+      log(`Error in bindings_list: ${error?.message || 'Unknown error'}`)
       return {
         toolResult: {
           isError: true,
@@ -815,81 +829,87 @@ export const BINDINGS_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     }
   },
   bindings_update: async (request) => {
     try {
       // Parse the stringified input parameters
-      const params = typeof request.params.input === 'string' 
-        ? JSON.parse(request.params.input)
-        : request.params.input;
-      
-      const serviceName = params?.serviceName || 'test-service';
-      const envName = params?.envName || 'production';
-      const bindings = params?.bindings || [];
-      const errorTest = params?.errorTest === true;
-      const invalidConfig = params?.invalidConfig === true;
-      
-      log(`bindings_update params: serviceName=${serviceName}, envName=${envName}, errorTest=${errorTest}, invalidConfig=${invalidConfig}`);
-      
+      const params = typeof request.params.input === 'string' ? JSON.parse(request.params.input) : request.params.input
+
+      const serviceName = params?.serviceName || 'test-service'
+      const envName = params?.envName || 'production'
+      const bindings = params?.bindings || []
+      const errorTest = params?.errorTest === true
+      const invalidConfig = params?.invalidConfig === true
+
+      log(
+        `bindings_update params: serviceName=${serviceName}, envName=${envName}, errorTest=${errorTest}, invalidConfig=${invalidConfig}`,
+      )
+
       // Parameter-based test handling
       if (process.env.NODE_ENV === 'test') {
         // Invalid config test case
         if (invalidConfig) {
-          log('Returning error response for invalid binding configuration test');
+          log('Returning error response for invalid binding configuration test')
           return {
             toolResult: {
               isError: true,
-              content: [{ 
-                type: 'text',
-                text: 'Error: Invalid binding configuration' 
-              }]
-            }
-          };
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: Invalid binding configuration',
+                },
+              ],
+            },
+          }
         }
-        
+
         // Error test case
         if (errorTest) {
-          log('Returning error response for bindings update test');
+          log('Returning error response for bindings update test')
           return {
             toolResult: {
               isError: true,
-              content: [{ 
-                type: 'text',
-                text: 'Error: Service not found' 
-              }]
-            }
-          };
+              content: [
+                {
+                  type: 'text',
+                  text: 'Error: Service not found',
+                },
+              ],
+            },
+          }
         }
-        
+
         // Normal success test case
         const successMessage = {
           success: true,
           message: 'Bindings updated successfully',
-          result: null
-        };
-        
+          result: null,
+        }
+
         return {
           toolResult: {
-            content: [{
-              type: 'text',
-              text: JSON.stringify(successMessage, null, 2)
-            }]
-          }
-        };
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(successMessage, null, 2),
+              },
+            ],
+          },
+        }
       }
-      
+
       // Normal API handling for non-test environment
-      const result = await handleBindingsUpdate(serviceName, envName, bindings);
-      
+      const result = await handleBindingsUpdate(serviceName, envName, bindings)
+
       // Format the response
       const successMessage = {
         success: true,
         message: 'Bindings updated successfully',
-        result: null
-      };
-      
+        result: null,
+      }
+
       return {
         toolResult: {
           content: [
@@ -899,9 +919,9 @@ export const BINDINGS_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     } catch (error: any) {
-      log(`Error in bindings_update: ${error?.message || 'Unknown error'}`);
+      log(`Error in bindings_update: ${error?.message || 'Unknown error'}`)
       return {
         toolResult: {
           isError: true,
@@ -912,7 +932,7 @@ export const BINDINGS_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     }
   },
 }

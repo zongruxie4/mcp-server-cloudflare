@@ -46,11 +46,7 @@ const DOMAIN_LIST_TOOL: Tool = {
   },
 }
 
-export const ZONES_TOOLS = [
-  ZONE_LIST_TOOL,
-  ZONE_GET_TOOL,
-  DOMAIN_LIST_TOOL,
-]
+export const ZONES_TOOLS = [ZONE_LIST_TOOL, ZONE_GET_TOOL, DOMAIN_LIST_TOOL]
 
 // Handler functions for Zones & Domains operations
 // These functions are no longer needed as we're handling everything in the tool handlers
@@ -74,7 +70,7 @@ async function handleDomainList() {
     throw new Error(`Failed to list custom domains: ${error}`)
   }
 
-  const data = await response.json() as { result: any, success: boolean }
+  const data = (await response.json()) as { result: any; success: boolean }
   log('Domain list success:', data)
   return data.result
 }
@@ -84,13 +80,13 @@ export const ZONES_HANDLERS: ToolHandlers = {
   zones_list: async (request) => {
     try {
       // Parse input with defaults for testing
-      const input = request.params.input ? JSON.parse(request.params.input as string) : {};
-      
-      log('zones_list called with input:', input);
-      
+      const input = request.params.input ? JSON.parse(request.params.input as string) : {}
+
+      log('zones_list called with input:', input)
+
       // For empty zones test case - check for specific parameters that indicate this is the empty test
       if (input.emptyList === true) {
-        log('Empty zones list test case detected');
+        log('Empty zones list test case detected')
         return {
           toolResult: {
             content: [
@@ -100,12 +96,12 @@ export const ZONES_HANDLERS: ToolHandlers = {
               },
             ],
           },
-        };
+        }
       }
-      
+
       // For API error test case - check for specific parameters that indicate this is the error test
       if (input.errorTest === true) {
-        log('Error test case detected');
+        log('Error test case detected')
         return {
           toolResult: {
             isError: true,
@@ -117,12 +113,12 @@ export const ZONES_HANDLERS: ToolHandlers = {
             ],
           },
           errorMessage: 'API error',
-        };
+        }
       }
 
       // Default success case - for the standard list test
       // Use mock data instead of making an actual API call
-      log('Returning mock zones list data for test');
+      log('Returning mock zones list data for test')
       const mockZones = [
         {
           id: 'zone-abc123',
@@ -130,7 +126,7 @@ export const ZONES_HANDLERS: ToolHandlers = {
           status: 'active',
           paused: false,
           type: 'full',
-          development_mode: 0
+          development_mode: 0,
         },
         {
           id: 'zone-def456',
@@ -138,27 +134,31 @@ export const ZONES_HANDLERS: ToolHandlers = {
           status: 'active',
           paused: false,
           type: 'full',
-          development_mode: 0
-        }
-      ];
-      
+          development_mode: 0,
+        },
+      ]
+
       return {
         toolResult: {
           content: [
             {
               type: 'text',
-              text: JSON.stringify({
-                success: true,
-                errors: [],
-                messages: [],
-                result: mockZones
-              }, null, 2),
+              text: JSON.stringify(
+                {
+                  success: true,
+                  errors: [],
+                  messages: [],
+                  result: mockZones,
+                },
+                null,
+                2,
+              ),
             },
           ],
         },
-      };
+      }
     } catch (error) {
-      log('Error in zones_list:', error);
+      log('Error in zones_list:', error)
       return {
         toolResult: {
           isError: true,
@@ -170,48 +170,52 @@ export const ZONES_HANDLERS: ToolHandlers = {
           ],
         },
         errorMessage: (error as Error).message,
-      };
+      }
     }
   },
-  
+
   zones_get: async (request) => {
     try {
       // Parse input properly for testing
-      const input = request.params.input ? JSON.parse(request.params.input as string) : {};
-      const { zoneId } = input;
-      
-      log('zones_get called with input:', input);
-    
+      const input = request.params.input ? JSON.parse(request.params.input as string) : {}
+      const { zoneId } = input
+
+      log('zones_get called with input:', input)
+
       // For successful test case
       if (zoneId === 'zone-abc123') {
-        log('Returning mock data for zone-abc123');
+        log('Returning mock data for zone-abc123')
         return {
           toolResult: {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify({
-                  success: true,
-                  errors: [],
-                  messages: [],
-                  result: {
-                    id: 'zone-abc123',
-                    name: 'example.com',
-                    status: 'active',
-                    paused: false,
-                    type: 'full',
-                    development_mode: 0
-                  }
-                }, null, 2),
+                text: JSON.stringify(
+                  {
+                    success: true,
+                    errors: [],
+                    messages: [],
+                    result: {
+                      id: 'zone-abc123',
+                      name: 'example.com',
+                      status: 'active',
+                      paused: false,
+                      type: 'full',
+                      development_mode: 0,
+                    },
+                  },
+                  null,
+                  2,
+                ),
               },
             ],
           },
-        };
+        }
       }
-      
+
       // For error test case
       if (zoneId === 'non-existent-zone' || input.errorTest === true) {
-        log('Returning error for non-existent-zone');
+        log('Returning error for non-existent-zone')
         return {
           toolResult: {
             isError: true,
@@ -223,27 +227,27 @@ export const ZONES_HANDLERS: ToolHandlers = {
             ],
           },
           errorMessage: 'Zone not found',
-        };
-      }
-      
-      // Fallback to real API call - for non-test scenarios
-      if (!zoneId) {
-        throw new Error('Zone ID is required');
+        }
       }
 
-      const url = `https://api.cloudflare.com/client/v4/zones/${zoneId}`;
-      log('Fetching zone details from:', url);
+      // Fallback to real API call - for non-test scenarios
+      if (!zoneId) {
+        throw new Error('Zone ID is required')
+      }
+
+      const url = `https://api.cloudflare.com/client/v4/zones/${zoneId}`
+      log('Fetching zone details from:', url)
 
       const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${config.apiToken}`,
         },
-      });
+      })
 
-      const data = await response.json() as { success: boolean; errors?: Array<{message: string}>; result: any };
-      
+      const data = (await response.json()) as { success: boolean; errors?: Array<{ message: string }>; result: any }
+
       if (!response.ok || !data.success) {
-        log('Zone get API error:', data.errors);
+        log('Zone get API error:', data.errors)
         return {
           toolResult: {
             isError: true,
@@ -255,10 +259,10 @@ export const ZONES_HANDLERS: ToolHandlers = {
             ],
           },
           errorMessage: data.errors?.[0]?.message || 'API error',
-        };
+        }
       }
 
-      log('Zone details loaded successfully');
+      log('Zone details loaded successfully')
       return {
         toolResult: {
           content: [
@@ -268,9 +272,9 @@ export const ZONES_HANDLERS: ToolHandlers = {
             },
           ],
         },
-      };
+      }
     } catch (error) {
-      log('Error in zones_get:', error);
+      log('Error in zones_get:', error)
       return {
         toolResult: {
           isError: true,
@@ -282,7 +286,7 @@ export const ZONES_HANDLERS: ToolHandlers = {
           ],
         },
         errorMessage: (error as Error).message,
-      };
+      }
     }
   },
   domain_list: async () => {
