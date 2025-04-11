@@ -1,0 +1,29 @@
+{
+	"name": "@repo/mcp-common",
+	"version": "0.16.0",
+	"private": true,
+	"sideEffects": false,
+	"main": "./src/index.ts",
+	"scripts": {
+		"check:lint": "run-eslint-workers",
+		"check:types": "run-tsc",
+		"test": "vitest run",
+		"test:coverage": "run-vitest-coverage"
+	},
+	"dependencies": {
+		"@cloudflare/workers-oauth-provider": "0.0.2",
+		"@hono/zod-validator": "0.4.3",
+		"hono": "4.7.6",
+		"zod": "3.24.2"
+	},
+	"devDependencies": {
+		"@cloudflare/types": "6.29.1",
+		"@cloudflare/vitest-pool-workers": "0.8.14",
+		"@cloudflare/workers-types": "4.20250410.0",
+		"@repo/eslint-config": "workspace:*",
+		"@repo/tools": "workspace:*",
+		"@repo/typescript-config": "workspace:*",
+		"@vitest/ui": "3.0.9",
+		"vitest": "3.0.9"
+	}
+}

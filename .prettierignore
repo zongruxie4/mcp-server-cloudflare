@@ -1,2 +1,6 @@
-*.md
-*.yaml
+.changeset
+pnpm-lock.yaml
+vitest.config.ts.timestamp*
+vite.config.ts.timestamp*
+worker-configuration.d.ts
+**/dist/**

@@ -1,0 +1,10 @@
+{
+	"name": "@repo/tools",
+	"version": "0.31.1",
+	"private": true,
+	"sideEffects": false,
+	"type": "module",
+	"directories": {
+		"bin": "bin"
+	}
+}
