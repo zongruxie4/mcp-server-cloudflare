@@ -21,7 +21,7 @@ Replace the content with the following configuration. Once you restart Claude De
       "command": "npx",
       "args": [
         "mcp-remote",
-        "https://mcp-cloudflare-staging.r.workers.dev/sse"
+        "https://mcp.cloudflare.com/workers/observability/sse"
       ]
     }
   }
