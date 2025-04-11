@@ -17,7 +17,7 @@ Replace the content with the following configuration. Once you restart Claude De
 ```
 {
   "mcpServers": {
-    "math": {
+    "cloudflare": {
       "command": "npx",
       "args": [
         "mcp-remote",

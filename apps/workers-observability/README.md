@@ -48,11 +48,11 @@ Replace the content with the following configuration. Once you restart Claude De
 ```
 {
   "mcpServers": {
-    "math": {
+    "cloudflare": {
       "command": "npx",
       "args": [
         "mcp-remote",
-        "https://mcp-cloudflare-staging.<your-subdomain>.workers.dev/sse"
+        "https://mcp-cloudflare-staging.<your-subdomain>.workers.dev/workers/observability/sse"
       ]
     }
   }
