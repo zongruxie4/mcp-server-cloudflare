@@ -11,8 +11,8 @@
 	"module": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"files": [
-	  "dist",
-	  "README.md"
+		"dist",
+		"README.md"
 	],
 	"access": "public",
 	"sideEffects": false,
@@ -28,7 +28,6 @@
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@sentry/cli": "2.43.0",
 		"@vitest/ui": "3.0.9",
 		"prettier": "3.5.3",
 		"syncpack": "13.0.3",
@@ -38,6 +37,7 @@
 	"packageManager": "pnpm@10.8.0",
 	"pnpm": {
 		"onlyBuiltDependencies": [
+			"esbuild",
 			"sharp",
 			"workerd"
 		],

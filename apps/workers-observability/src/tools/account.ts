@@ -1,40 +1,6 @@
 import { z } from "zod";
 import type { MyMCP } from "../index";
-
-const AccountSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	created_on: z.string(),
-});
-type AccountsListResponseSchema = z.infer<typeof AccountsListResponseSchema>;
-const AccountsListResponseSchema = z.object({
-	result: z.array(AccountSchema),
-	success: z.boolean(),
-	errors: z.array(z.any()),
-	messages: z.array(z.any()),
-});
-
-export async function handleAccountsList({
-	apiToken,
-}: {
-	apiToken: string;
-}): Promise<AccountsListResponseSchema["result"]> {
-	// Currently limited to 50 accounts
-	const response = await fetch("https://api.cloudflare.com/client/v4/accounts?per_page=50", {
-		method: "GET",
-		headers: {
-			Authorization: `Bearer ${apiToken}`,
-			Accept: "application/javascript",
-		},
-	});
-
-	if (!response.ok) {
-		const error = await response.text();
-		throw new Error(`Cloudflare API request failed: ${error}`);
-	}
-
-	return AccountsListResponseSchema.parse(await response.json()).result;
-}
+import { handleAccountsList } from "@repo/mcp-common/src/api/account"
 
 export function registerAccountTools(agent: MyMCP) {
 	// Tool to list all accounts
