@@ -1,4 +1,9 @@
 import type { z } from "zod";
+import { Cloudflare } from 'cloudflare';
+
+export function getCloudflareClient(apiToken: string) {
+	return new Cloudflare({ apiToken })
+}
 
 /**
  * Makes a request to the Cloudflare API

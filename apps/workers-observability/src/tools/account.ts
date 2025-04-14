@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { MyMCP } from "../index";
 import { handleAccountsList } from "@repo/mcp-common/src/api/account"
+import { getCloudflareClient } from "@repo/mcp-common/src/cloudflare-api";
 
 export function registerAccountTools(agent: MyMCP) {
 	// Tool to list all accounts
@@ -10,7 +11,7 @@ export function registerAccountTools(agent: MyMCP) {
 		{},
 		async () => {
 			try {
-				const results = await handleAccountsList({ apiToken: agent.props.accessToken });
+				const results = await handleAccountsList({client: getCloudflareClient(agent.props.accessToken)});
 				// Sort accounts by created_on date (newest first)
 				const accounts = results
 					// order by created_on desc ( newest first )

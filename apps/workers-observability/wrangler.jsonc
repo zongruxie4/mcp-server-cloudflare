@@ -19,6 +19,20 @@
 	"dev": {
 		"port": 8976
 	},
+	"durable_objects": {
+		"bindings": [
+			{
+				"class_name": "MyMCP",
+				"name": "MCP_OBJECT"
+			}
+		]
+	},
+	"kv_namespaces": [
+		{
+			"binding": "OAUTH_KV",
+			"id": "DEV_KV"
+		}
+	],
 	"workers_dev": false,
 	"preview_urls": false,
 	"env": {
