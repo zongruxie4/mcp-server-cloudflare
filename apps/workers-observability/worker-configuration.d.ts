@@ -2,6 +2,7 @@
 // Runtime types generated with workerd@1.20250310.0 2025-03-10 
 export interface Env {
 	OAUTH_KV: KVNamespace;
+	// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 	MCP_OBJECT: DurableObjectNamespace<import("./src/index").MyMCP>;
 	AI: Ai;
     CLOUDFLARE_CLIENT_ID: string;

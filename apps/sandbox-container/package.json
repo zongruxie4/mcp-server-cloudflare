@@ -4,6 +4,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
+		"check:types": "run-tsc",
 		"deploy": "wrangler deploy",
 		"dev": "concurrently \"tsx container/index.ts\" \"wrangler dev --var \"ENVIRONMENT:dev\"\"",
 		"build": "docker build .",
