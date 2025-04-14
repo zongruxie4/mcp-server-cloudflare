@@ -1,0 +1,36 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "sandbox-container",
+	"main": "server/index.ts",
+	"compatibility_date": "2025-04-03",
+	"containers": [
+		{
+			"name": "sandbox-container",
+			"image": "./Dockerfile",
+			"class_name": "ContainerMcpAgent",
+			"max_instances": 2,
+			"rollout_step_percentage": 100
+		}
+	],
+	"durable_objects": {
+		"bindings": [
+			{
+				"class_name": "ContainerMcpAgent",
+				"name": "CONTAINER_MCP_AGENT"
+			},
+			{
+				"class_name": "ContainerManager",
+				"name": "CONTAINER_MANAGER"
+			}
+		]
+	},
+	"migrations": [
+		{
+			"new_sqlite_classes": ["ContainerManager", "ContainerMcpAgent"],
+			"tag": "v1"
+		}
+	],
+	"observability": {
+		"enabled": true
+	}
+}

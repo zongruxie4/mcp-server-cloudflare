@@ -1,0 +1,34 @@
+{
+	"name": "containers-starter",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "concurrently \"tsx container/index.ts\" \"wrangler dev --var \"ENVIRONMENT:dev\"\"",
+		"build": "docker build .",
+		"start": "wrangler dev",
+		"start:container": "tsx container/index.ts"
+	},
+	"dependencies": {
+		"@cloudflare/workers-types": "^4.20250320.0",
+		"@hono/node-server": "^1.13.8",
+		"@hono/zod-validator": "^0.4.3",
+		"@modelcontextprotocol/sdk": "^1.7.0",
+		"@types/node": "^22.13.10",
+		"agents": "^0.0.42",
+		"cron-schedule": "^5.0.4",
+		"esbuild": "^0.25.1",
+		"hono": "^4.7.5",
+		"mime": "^4.0.6",
+		"octokit": "^4.1.2",
+		"partyserver": "^0.0.65",
+		"tsx": "^4.19.3",
+		"workers-mcp": "0.1.0-3",
+		"zod": "^3.24.2"
+	},
+	"devDependencies": {
+		"concurrently": "^9.1.2",
+		"wrangler": "^4.9.1"
+	}
+}
