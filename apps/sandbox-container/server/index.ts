@@ -13,7 +13,7 @@ export { ContainerManager, ContainerMcpAgent }
 export type Env = {
 	CONTAINER_MCP_AGENT: DurableObjectNamespace<ContainerMcpAgent>
 	CONTAINER_MANAGER: DurableObjectNamespace<ContainerManager>
-	ENVIRONMENT: "dev" | "prod"
+	ENVIRONMENT: 'dev' | 'prod'
 }
 
 // TODO: add user specific props

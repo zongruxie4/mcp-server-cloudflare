@@ -1,14 +1,14 @@
 export const MAX_CONTAINERS = 8
 export async function startAndWaitForPort(
-  environment: "dev" | "prod",
+	environment: 'dev' | 'prod',
 	container: Container | undefined,
 	portToAwait: number,
 	maxTries = 10
 ): Promise<boolean> {
-  if (environment === "dev") {
-    console.log("Running in dev, assuming locally running container")
-    return true
-  }
+	if (environment === 'dev') {
+		console.log('Running in dev, assuming locally running container')
+		return true
+	}
 
 	if (!container) {
 		throw new Error('Error: ctx.container is undefined. Does this DO support containers?')
@@ -62,15 +62,17 @@ export async function startAndWaitForPort(
 }
 
 export async function proxyFetch(
-  environment: "dev" | "prod",
+	environment: 'dev' | 'prod',
 	container: Container | undefined,
 	request: Request,
 	portNumber: number
 ): Promise<Response> {
-  if (environment === "dev") {
-    const url = request.url.replace('https://', 'http://').replace("http://host", "http://localhost")
-    return fetch(url, request.clone() as Request)
-  }
+	if (environment === 'dev') {
+		const url = request.url
+			.replace('https://', 'http://')
+			.replace('http://host', 'http://localhost')
+		return fetch(url, request.clone() as Request)
+	}
 
 	if (!container) {
 		throw new Error('Error: ctx.container is undefined. Does this DO support containers?')

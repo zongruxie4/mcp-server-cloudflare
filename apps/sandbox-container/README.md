@@ -12,7 +12,7 @@ TODO: replace locally running server with the real docker container.
 
 1. Make sure the docker daemon is running
 
-2. Disable WARP and run 
+2. Disable WARP and run
 
 ```
 npx https://prerelease-registry.devprod.cloudflare.dev/workers-sdk/runs/14387504770/npm-package-wrangler-8740 deploy

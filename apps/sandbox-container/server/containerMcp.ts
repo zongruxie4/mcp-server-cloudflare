@@ -166,7 +166,11 @@ export class ContainerMcpAgent extends McpAgent<Env, Props> {
 		// start container
 		let startedContainer = false
 		await this.ctx.blockConcurrencyWhile(async () => {
-			startedContainer = await startAndWaitForPort(this.env.ENVIRONMENT, this.ctx.container, OPEN_CONTAINER_PORT)
+			startedContainer = await startAndWaitForPort(
+				this.env.ENVIRONMENT,
+				this.ctx.container,
+				OPEN_CONTAINER_PORT
+			)
 		})
 		if (!startedContainer) {
 			throw new Error('Failed to start container')

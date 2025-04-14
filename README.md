@@ -4,14 +4,14 @@ Model Context Protocol (MCP) is a [new, standardized protocol](https://modelcont
 
 This lets you use Claude Desktop, or any MCP Client, to use natural language to accomplish things on your Cloudflare account, e.g.:
 
-* `List all the Cloudflare workers on my <some-email>@gmail.com account.`
-* `Can you tell me about any potential issues on this particular worker '...'?`
+- `List all the Cloudflare workers on my <some-email>@gmail.com account.`
+- `Can you tell me about any potential issues on this particular worker '...'?`
 
 ## Access the remote MCP server from Claude Desktop
 
 Open Claude Desktop and navigate to Settings -> Developer -> Edit Config. This opens the configuration file that controls which MCP servers Claude can access.
 
-Replace the content with the following configuration. Once you restart Claude Desktop, a browser window will open showing your OAuth login page. Complete the authentication flow to grant Claude access to your MCP server. After you grant access, the tools will become available for you to use. 
+Replace the content with the following configuration. Once you restart Claude Desktop, a browser window will open showing your OAuth login page. Complete the authentication flow to grant Claude access to your MCP server. After you grant access, the tools will become available for you to use.
 
 ```
 {
@@ -44,10 +44,12 @@ Ensure your Cloudflare account has the necessary subscription level for the feat
 ## Features
 
 ### Workers Management
+
 - `worker_list`: List all Workers in your account
 - `worker_get_worker`: Get a Worker's script content
 
 ### Workers Logs
+
 - `worker_logs_by_worker_name`: Analyze recent logs for a Cloudflare Worker by worker name
 - `worker_logs_by_ray_id`: Analyze recent logs across all workers for a specific request by Cloudflare Ray ID
 - `worker_logs_keys`: Get available telemetry keys for a Cloudflare Worker
@@ -55,6 +57,7 @@ Ensure your Cloudflare account has the necessary subscription level for the feat
 ## Developing
 
 ### Apps
+
 - [workers-observability](apps/workers-observability/): The Workers Observability MCP server
 
 ### Packages
