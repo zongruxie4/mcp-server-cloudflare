@@ -30,12 +30,7 @@ const config = {
 	semi: false,
 	singleQuote: true,
 	printWidth: 100,
-	plugins: [
-		'@ianvs/prettier-plugin-sort-imports',
-		'prettier-plugin-packagejson',
-		'prettier-plugin-astro',
-		'prettier-plugin-tailwindcss',
-	],
+	plugins: ['@ianvs/prettier-plugin-sort-imports'],
 	importOrder: [...codeImports, ...typeImports],
 	importOrderTypeScriptVersion: '5.5.4',
 	overrides: [

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { MyMCP } from "../index";
 import { handleWorkersList, handleWorkerScriptDownload } from "@repo/mcp-common/src/api/workers"
+import { getCloudflareClient } from "@repo/mcp-common/src/cloudflare-api";
 
 /**
  * Registers the workers tools with the MCP server
@@ -31,8 +32,8 @@ export function registerWorkersTools(agent: MyMCP) {
 			}
 			try {
 				const results = await handleWorkersList({
+					client: getCloudflareClient(agent.props.accessToken),
 					accountId,
-					apiToken: agent.props.accessToken,
 				});
 				// Extract worker details and sort by created_on date (newest first)
 				const workers = results
@@ -92,9 +93,9 @@ export function registerWorkersTools(agent: MyMCP) {
 			try {
 				const { scriptName } = params;
 				const scriptContent = await handleWorkerScriptDownload({
+					client: getCloudflareClient(agent.props.accessToken),
 					scriptName,
 					accountId,
-					apiToken: agent.props.accessToken,
 				});
 				return {
 					content: [
