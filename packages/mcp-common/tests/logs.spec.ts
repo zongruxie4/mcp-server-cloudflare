@@ -1,9 +1,17 @@
 import { env, fetchMock } from 'cloudflare:test'
-import { afterEach, beforeAll, describe, expect, it } from 'vitest'
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 
 import { handleWorkerLogs, handleWorkerLogsKeys } from '../src/api/logs'
+import { cloudflareClientMockImplementation } from '../src/utils/cloudflare-mock'
 
 beforeAll(() => {
+	vi.mock('cloudflare', () => {
+		return {
+			Cloudflare: vi.fn().mockImplementation(() => {
+				return cloudflareClientMockImplementation()
+			}),
+		}
+	})
 	// Enable outbound request mocking...
 	fetchMock.activate()
 	// ...and throw errors if an outbound request isn't mocked
