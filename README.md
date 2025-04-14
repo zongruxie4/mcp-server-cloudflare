@@ -1,12 +1,11 @@
-# Cloudflare MCP Server Monorepo
+# Cloudflare MCP Server
 
 Model Context Protocol (MCP) is a [new, standardized protocol](https://modelcontextprotocol.io/introduction) for managing context between large language models (LLMs) and external systems. In this repository, we provide an installer as well as an MCP Server for [Cloudflare's API](https://api.cloudflare.com).
 
 This lets you use Claude Desktop, or any MCP Client, to use natural language to accomplish things on your Cloudflare account, e.g.:
 
-* `Please deploy me a new Worker with an example durable object.`
-* `Can you tell me about the data in my D1 database named '...'?`
-* `Can you copy all the entries from my KV namespace '...' into my R2 bucket '...'?`
+* `List all the Cloudflare workers on my <some-email>@gmail.com account.`
+* `Can you tell me about any potential issues on this particular worker '...'?`
 
 ## Access the remote MCP server from Claude Desktop
 
@@ -27,6 +26,12 @@ Replace the content with the following configuration. Once you restart Claude De
   }
 }
 ```
+
+## Need access to more Cloudflare tools?
+
+We're gradually moving over functionality to this remote MCP server repo. In the meantime please take a look at the local only mcp-server-cloudflare package which currently has more tools available.
+
+Visit <https://www.npmjs.com/package/@cloudflare/mcp-server-cloudflare>
 
 ## Paid Features
 
@@ -83,10 +88,6 @@ To run tests in watch mode (useful during development):
 ```bash
 pnpm test:watch
 ```
-
-## Looking for the deprecated local only cloudflare-mcp-server?
-
-Visit <https://www.npmjs.com/package/@cloudflare/mcp-server-cloudflare>
 
 ## Contributing
 
