@@ -1,6 +1,6 @@
 import { env, fetchMock } from "cloudflare:test";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
-import { handleWorkerLogs, handleWorkerLogsKeys } from "./logs";
+import { handleWorkerLogs, handleWorkerLogsKeys } from "../src/api/logs";
 
 beforeAll(() => {
 	// Enable outbound request mocking...
