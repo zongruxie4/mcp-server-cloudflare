@@ -10,7 +10,8 @@
 		"build": "docker build .",
 		"start": "wrangler dev",
 		"start:container": "tsx container/index.ts",
-		"postinstall": "mkdir -p workdir"
+		"postinstall": "mkdir -p workdir",
+		"types": "wrangler types"
 	},
 	"dependencies": {
 		"@cloudflare/workers-oauth-provider": "0.0.2",

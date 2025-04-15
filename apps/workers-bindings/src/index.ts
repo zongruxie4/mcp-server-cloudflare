@@ -8,11 +8,12 @@ import {
 	handleTokenExchangeCallback,
 } from '@repo/mcp-common/src/cloudflare-oauth-handler'
 import { registerAccountTools } from '@repo/mcp-common/src/tools/account'
+import { registerKVTools } from '@repo/mcp-common/src/tools/kv_namespace'
 import { registerWorkersTools } from '@repo/mcp-common/src/tools/worker'
 
-import { registerLogsTools } from './tools/logs'
-
 import type { AccountSchema, UserSchema } from '@repo/mcp-common/src/cloudflare-oauth-handler'
+
+export type WorkersBindingsMCPState = { activeAccountId: string | null }
 
 // Context from the auth process, encrypted & stored in the auth token
 // and provided to the DurableMCP as this.props
@@ -22,28 +23,21 @@ export type Props = {
 	accounts: AccountSchema['result']
 }
 
-export type State = { activeAccountId: string | null }
-
-export class MyMCP extends McpAgent<Env, State, Props> {
+export class WorkersBindingsMCP extends McpAgent<Env, WorkersBindingsMCPState, Props> {
 	server = new McpServer({
-		name: 'Remote MCP Server with Workers Observability',
+		name: 'Demo',
 		version: '1.0.0',
 	})
 
-	initialState: State = {
+	initialState: WorkersBindingsMCPState = {
 		activeAccountId: null,
 	}
 
 	async init() {
 		registerAccountTools(this)
-
-		// Register Cloudflare Workers tools
+		registerKVTools(this)
 		registerWorkersTools(this)
-
-		// Register Cloudflare Workers logs tools
-		registerLogsTools(this)
 	}
-
 	getActiveAccountId() {
 		// TODO: Figure out why this fail sometimes, and why we need to wrap this in a try catch
 		try {
@@ -66,10 +60,11 @@ export class MyMCP extends McpAgent<Env, State, Props> {
 	}
 }
 
+// Export the OAuth handler as the default
 export default new OAuthProvider({
-	apiRoute: '/workers/observability/sse',
+	apiRoute: '/workers/bindings/sse',
 	// @ts-ignore
-	apiHandler: MyMCP.mount('/workers/observability/sse'),
+	apiHandler: WorkersBindingsMCP.mount('/workers/bindings/sse'),
 	// @ts-ignore
 	defaultHandler: CloudflareAuthHandler,
 	authorizeEndpoint: '/oauth/authorize',

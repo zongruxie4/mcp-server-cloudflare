@@ -1,5 +1,4 @@
 import { zValidator } from '@hono/zod-validator'
-import { env } from 'cloudflare:workers'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
@@ -18,10 +17,14 @@ import type {
 	TokenExchangeCallbackResult,
 } from '@cloudflare/workers-oauth-provider'
 import type { Context } from 'hono'
-import type { Props } from '../../../apps/workers-observability/src/index'
-import type { Env } from '../../../apps/workers-observability/worker-configuration'
 
-type AuthContext = { Bindings: Env & { OAUTH_PROVIDER: OAuthHelpers } }
+type AuthContext = {
+	Bindings: {
+		OAUTH_PROVIDER: OAuthHelpers
+		CLOUDFLARE_CLIENT_ID: string
+		CLOUDFLARE_CLIENT_SECRET: string
+	}
+}
 const app = new Hono<AuthContext>()
 
 const AuthQuery = z.object({
@@ -96,7 +99,9 @@ async function getTokenAndUser(
 }
 
 export async function handleTokenExchangeCallback(
-	options: TokenExchangeCallbackOptions
+	options: TokenExchangeCallbackOptions,
+	clientId: string,
+	clientSecret: string
 ): Promise<TokenExchangeCallbackResult | undefined> {
 	// options.props contains the current props
 	if (options.grantType === 'refresh_token') {
@@ -106,8 +111,8 @@ export async function handleTokenExchangeCallback(
 			refresh_token: refreshToken,
 			expires_in,
 		} = await refreshAuthToken({
-			client_id: (env as Env).CLOUDFLARE_CLIENT_ID,
-			client_secret: (env as Env).CLOUDFLARE_CLIENT_SECRET,
+			client_id: clientId,
+			client_secret: clientSecret,
 			refresh_token: options.props.refreshToken,
 		})
 
@@ -205,7 +210,7 @@ app.get('/oauth/callback', zValidator('query', AuthQuery), async (c) => {
 				accounts,
 				accessToken,
 				refreshToken,
-			} as Props,
+			},
 		})
 
 		return Response.redirect(redirectTo, 302)

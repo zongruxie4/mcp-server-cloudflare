@@ -5,7 +5,7 @@
 		"jsx": "react-jsx",
 		"module": "ESNext",
 		"moduleResolution": "bundler",
-		"types": ["@cloudflare/workers-types/2023-07-01"],
+		"types": ["./worker-configuration.d.ts", "@cloudflare/workers-types/2023-07-01"],
 		"noEmit": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
