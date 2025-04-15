@@ -9,7 +9,8 @@
 		"dev": "concurrently \"tsx container/index.ts\" \"wrangler dev --var \"ENVIRONMENT:dev\"\"",
 		"build": "docker build .",
 		"start": "wrangler dev",
-		"start:container": "tsx container/index.ts"
+		"start:container": "tsx container/index.ts",
+		"postinstall": "mkdir workdir"
 	},
 	"dependencies": {
 		"@cloudflare/workers-types": "^4.20250320.0",
