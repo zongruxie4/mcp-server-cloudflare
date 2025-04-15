@@ -35,11 +35,7 @@ Visit <https://www.npmjs.com/package/@cloudflare/mcp-server-cloudflare>
 
 ## Paid Features
 
-Some features in this MCP server require a paid Cloudflare Workers plan:
-
-- **Observability**: The prefixed `worker_logs_` tools require a paid Workers plan to access these metrics
-
-Ensure your Cloudflare account has the necessary subscription level for the features you intend to use.
+Some features may require a paid Cloudflare Workers plan. Ensure your Cloudflare account has the necessary subscription level for the features you intend to use.
 
 ## Features
 
