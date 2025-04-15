@@ -1,8 +1,8 @@
 import { env, fetchMock } from 'cloudflare:test'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 
-import { handleWorkerLogs, handleWorkerLogsKeys } from '../src/api/logs'
-import { cloudflareClientMockImplementation } from '../src/utils/cloudflare-mock'
+import { handleWorkerLogs, handleWorkerLogsKeys } from '../src/api/workers-logs'
+import { cloudflareClientMockImplementation } from './utils/cloudflare-mock'
 
 beforeAll(() => {
 	vi.mock('cloudflare', () => {
@@ -122,6 +122,12 @@ describe('Logs API', () => {
 				result: {
 					events: {
 						events: mockEvents,
+						count: 3,
+					},
+					statistics: {
+						elapsed: 10,
+						rows_read: 6000,
+						bytes_read: 30000000,
 					},
 				},
 				errors: [],
@@ -152,29 +158,29 @@ describe('Logs API', () => {
 			expect(result).toHaveProperty('to')
 			expect(result.from).toBeLessThan(result.to)
 
-			// Verify that we have relevant logs that match our mock data
-			expect(result.relevantLogs).toHaveLength(3)
+			expect(result.logs?.events?.count).toBe(3)
 
-			const getLog = result.relevantLogs[0]
-			expect(getLog.method).toBe(mockEvents[0].$workers.event.request.method)
-			expect(getLog.path).toBe(mockEvents[0].$workers.event.request.path)
-			expect(getLog.status).toBe(mockEvents[0].$workers.event.response?.status)
-			expect(getLog.outcome).toBe(mockEvents[0].$workers.outcome)
-			expect(getLog.rayId).toBe(mockEvents[0].$workers.event.rayId)
-			expect(getLog.duration).toBeGreaterThan(0)
+			const events = result.logs?.events?.events ?? []
+			const getLog = events[0]
+			expect(getLog.$workers?.event?.request).toStrictEqual(mockEvents[0].$workers.event.request)
+			expect(getLog.$workers?.outcome).toBe(mockEvents[0].$workers.outcome)
+			expect(getLog.$workers?.event?.rayId).toBe(mockEvents[0].$workers.event.rayId)
+			expect(getLog.$workers?.cpuTimeMs).toBeGreaterThan(0)
+			expect(getLog.$workers?.wallTimeMs).toBeGreaterThan(0)
 
-			const postLog = result.relevantLogs[1]
-			expect(postLog.method).toBe(mockEvents[1].$workers.event.request.method)
-			expect(postLog.path).toBe(mockEvents[1].$workers.event.request.path)
-			expect(postLog.status).toBe(mockEvents[1].$workers.event.response?.status)
-			expect(postLog.outcome).toBe(mockEvents[1].$workers.outcome)
-			expect(postLog.rayId).toBe(mockEvents[1].$workers.event.rayId)
+			const postLog = events[1]
+			expect(postLog.$workers?.event?.request).toStrictEqual(mockEvents[1].$workers.event.request)
+			expect(postLog.$workers?.outcome).toBe(mockEvents[1].$workers.outcome)
+			expect(postLog.$workers?.event?.rayId).toBe(mockEvents[1].$workers.event.rayId)
+			expect(postLog.$workers?.cpuTimeMs).toBeGreaterThan(0)
+			expect(postLog.$workers?.wallTimeMs).toBeGreaterThan(0)
 
-			const errorLog = result.relevantLogs[2]
-			expect(errorLog.method).toBe(mockEvents[2].$workers.event.request.method)
-			expect(errorLog.path).toBe(mockEvents[2].$workers.event.request.path)
-			expect(errorLog.outcome).toBe(mockEvents[2].$workers.outcome)
-			expect(errorLog.rayId).toBe(mockEvents[2].$workers.event.rayId)
+			const errorLog = events[2]
+			expect(errorLog.$workers?.event?.request).toStrictEqual(mockEvents[2].$workers.event.request)
+			expect(errorLog.$workers?.outcome).toBe(mockEvents[2].$workers.outcome)
+			expect(errorLog.$workers?.event?.rayId).toBe(mockEvents[2].$workers.event.rayId)
+			expect(errorLog.$workers?.cpuTimeMs).toBeGreaterThan(0)
+			expect(errorLog.$workers?.wallTimeMs).toBeGreaterThan(0)
 		})
 
 		it('should handle empty logs', async () => {
@@ -185,6 +191,12 @@ describe('Logs API', () => {
 				result: {
 					events: {
 						events: [],
+						count: 0,
+					},
+					statistics: {
+						elapsed: 10,
+						rows_read: 6000,
+						bytes_read: 30000000,
 					},
 				},
 				errors: [],
@@ -210,7 +222,7 @@ describe('Logs API', () => {
 				shouldFilterErrors: false,
 			})
 
-			expect(result.relevantLogs.length).toBe(0)
+			expect(result.logs?.events?.count).toBe(0)
 		})
 
 		it('should handle API errors', async () => {
@@ -322,6 +334,12 @@ describe('Logs API', () => {
 				result: {
 					events: {
 						events: mockEvents.filter((event) => event.$workers.outcome === 'error'),
+						count: 3,
+					},
+					statistics: {
+						elapsed: 10,
+						rows_read: 6000,
+						bytes_read: 30000000,
 					},
 				},
 				errors: [],
@@ -349,18 +367,23 @@ describe('Logs API', () => {
 			})
 
 			// Check results - we should only get error logs
-			expect(result.relevantLogs.filter((log) => log.outcome === 'error').length).toBe(2)
-			expect(result.relevantLogs.length).toBe(2)
+			expect(
+				result.logs?.events?.events?.filter((event) => event.$workers?.outcome == 'error').length
+			).toBe(2)
+			expect(result.logs?.events?.count).toBe(3)
 
-			const firstErrorLog = result.relevantLogs.find((log) => log.error === 'Invalid request data')
+			const firstErrorLog = result.logs?.events?.events?.find(
+				(event) => event.$metadata?.error === 'Invalid request data'
+			)
+			console.log(firstErrorLog)
 			expect(firstErrorLog).toBeDefined()
-			expect(firstErrorLog?.method).toBe('POST')
-			expect(firstErrorLog?.rayId).toBe('ray456def789ghi')
+			expect(firstErrorLog?.$workers?.event?.rayId).toBe('ray456def789ghi')
 
-			const secondErrorLog = result.relevantLogs.find((log) => log.error === 'Resource not found')
+			const secondErrorLog = result.logs?.events?.events?.find(
+				(event) => event.$metadata?.error === 'Resource not found'
+			)
 			expect(secondErrorLog).toBeDefined()
-			expect(secondErrorLog?.method).toBe('PUT')
-			expect(secondErrorLog?.rayId).toBe('ray789ghi012jkl')
+			expect(secondErrorLog?.$workers?.event?.rayId).toBe('ray789ghi012jkl')
 		})
 	})
 
@@ -375,17 +398,17 @@ describe('Logs API', () => {
 					{
 						key: '$workers.outcome',
 						type: 'string',
-						lastSeen: Date.now() - 1000000,
+						lastSeenAt: Date.now() - 1000000,
 					},
 					{
 						key: '$workers.wallTimeMs',
 						type: 'number',
-						lastSeen: Date.now() - 2000000,
+						lastSeenAt: Date.now() - 2000000,
 					},
 					{
 						key: '$workers.event.error',
 						type: 'boolean',
-						lastSeen: Date.now() - 3000000,
+						lastSeenAt: Date.now() - 3000000,
 					},
 				],
 				errors: [],
@@ -400,7 +423,7 @@ describe('Logs API', () => {
 				})
 				.reply(200, mockKeysResponse)
 
-			const minutesAgo = 1440
+			const minutesAgo = 10080
 			const result = await handleWorkerLogsKeys(
 				scriptName,
 				minutesAgo,
@@ -430,7 +453,7 @@ describe('Logs API', () => {
 				})
 				.reply(500, 'Server error')
 
-			const minutesAgo = 1440
+			const minutesAgo = 10080
 			await expect(
 				handleWorkerLogsKeys(
 					scriptName,

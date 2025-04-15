@@ -23,7 +23,7 @@
 		"check:turbo": "run-turbo check",
 		"test:ci": "run-vitest-ci",
 		"test": "vitest run",
-		"lint": "prettier . --write",
+		"fix:format": "prettier . --write",
 		"test:watch": "vitest"
 	},
 	"devDependencies": {
