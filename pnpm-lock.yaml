@@ -149,9 +149,6 @@ importers:
       vitest:
         specifier: 3.0.9
         version: 3.0.9(@types/node@22.14.1)(@vitest/ui@3.0.9)(lightningcss@1.29.2)
-      workers-mcp:
-        specifier: ^0.1.0-3
-        version: 0.1.0-3
       wrangler:
         specifier: 4.10.0
         version: 4.10.0(@cloudflare/workers-types@4.20250410.0)

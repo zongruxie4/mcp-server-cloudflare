@@ -1,6 +1,7 @@
 import OAuthProvider from '@cloudflare/workers-oauth-provider'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { McpAgent } from 'agents/mcp'
+import { env } from 'cloudflare:workers'
 
 import {
 	CloudflareAuthHandler,
@@ -68,7 +69,8 @@ export default new OAuthProvider({
 	defaultHandler: CloudflareAuthHandler,
 	authorizeEndpoint: '/oauth/authorize',
 	tokenEndpoint: '/token',
-	tokenExchangeCallback: handleTokenExchangeCallback,
+	tokenExchangeCallback: (options) =>
+		handleTokenExchangeCallback(options, env.CLOUDFLARE_CLIENT_ID, env.CLOUDFLARE_CLIENT_SECRET),
 	// Cloudflare access token TTL
 	accessTokenTTL: 3600,
 	clientRegistrationEndpoint: '/register',

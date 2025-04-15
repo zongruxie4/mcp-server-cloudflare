@@ -1,6 +1,7 @@
 import OAuthProvider from '@cloudflare/workers-oauth-provider'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { McpAgent } from 'agents/mcp'
+import { env } from 'cloudflare:workers'
 
 import {
 	CloudflareAuthHandler,
@@ -12,7 +13,6 @@ import { registerWorkersTools } from '@repo/mcp-common/src/tools/worker'
 import { registerLogsTools } from './tools/logs'
 
 import type { AccountSchema, UserSchema } from '@repo/mcp-common/src/cloudflare-oauth-handler'
-import type { Env } from '../worker-configuration'
 
 // Context from the auth process, encrypted & stored in the auth token
 // and provided to the DurableMCP as this.props
@@ -29,9 +29,6 @@ export class MyMCP extends McpAgent<Env, State, Props> {
 		name: 'Remote MCP Server with Workers Observability',
 		version: '1.0.0',
 	})
-	// TOOO: Why does this type need to be declared again on MyMCP?
-	// @ts-ignore
-	env!: Env
 
 	initialState: State = {
 		activeAccountId: null,
@@ -77,7 +74,8 @@ export default new OAuthProvider({
 	defaultHandler: CloudflareAuthHandler,
 	authorizeEndpoint: '/oauth/authorize',
 	tokenEndpoint: '/token',
-	tokenExchangeCallback: handleTokenExchangeCallback,
+	tokenExchangeCallback: (options) =>
+		handleTokenExchangeCallback(options, env.CLOUDFLARE_CLIENT_ID, env.CLOUDFLARE_CLIENT_SECRET),
 	// Cloudflare access token TTL
 	accessTokenTTL: 3600,
 	clientRegistrationEndpoint: '/register',
