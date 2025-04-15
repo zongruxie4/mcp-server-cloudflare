@@ -18,6 +18,9 @@
 	"sideEffects": false,
 	"scripts": {
 		"changeset:new": "run-changeset-new",
+		"check:deps": "pnpm exec syncpack lint",
+		"check:format": "prettier . --check --cache --ignore-unknown",
+		"check:turbo": "run-turbo check",
 		"test:ci": "run-vitest-ci",
 		"test": "vitest run",
 		"lint": "prettier . --write",
@@ -32,6 +35,7 @@
 		"@vitest/ui": "3.0.9",
 		"prettier": "3.5.3",
 		"syncpack": "13.0.3",
+		"turbo": "^2.5.0",
 		"typescript": "5.5.4",
 		"vitest": "3.0.9"
 	},

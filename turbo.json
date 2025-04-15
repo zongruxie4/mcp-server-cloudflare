@@ -1,0 +1,16 @@
+{
+	"$schema": "https://turbo.build/schema.json",
+	"tasks": {
+		"check": {
+			"dependsOn": ["^check:types", "^check:lint", "check:types", "check:lint"]
+		},
+		"check:types": {
+			"dependsOn": ["^check:types"]
+		},
+		"check:lint": {
+			"dependsOn": ["^check:lint"]
+		},
+		"//#check:format": {},
+		"//#check:deps": {}
+	}
+}
