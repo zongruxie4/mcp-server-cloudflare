@@ -1,9 +1,11 @@
-import { Hono } from 'hono'
-import { Octokit } from 'octokit'
-import OAuthProvider, {
-	AuthRequest,
-	OAuthHelpers,
-} from 'workers-mcp/vendor/workers-oauth-provider/oauth-provider.js'
+import OAuthProvider from '@cloudflare/workers-oauth-provider'
+
+import {
+	AccountSchema,
+	CloudflareAuthHandler,
+	handleTokenExchangeCallback,
+	UserSchema,
+} from '@repo/mcp-common/src/cloudflare-oauth-handler'
 
 import { ContainerManager } from './containerManager'
 import { ContainerMcpAgent } from './containerMcp'
@@ -16,9 +18,24 @@ export type Env = {
 	ENVIRONMENT: 'dev' | 'prod'
 }
 
-// TODO: add user specific props
-export type Props = {}
+// Context from the auth process, encrypted & stored in the auth token
+// and provided to the DurableMCP as this.props
+export type Props = {
+	accessToken: string
+	user: UserSchema['result']
+	accounts: AccountSchema['result']
+}
 
-const app = new Hono<{ Bindings: Env }>()
-
-export default ContainerMcpAgent.mount('/sse', { binding: 'CONTAINER_MCP_AGENT' })
+export default new OAuthProvider({
+	apiRoute: '/workers/sandbox/sse',
+	// @ts-ignore
+	apiHandler: ContainerMcpAgent.mount('/workers/sandbox/sse', { binding: 'CONTAINER_MCP_AGENT' }),
+	// @ts-ignore
+	defaultHandler: CloudflareAuthHandler,
+	authorizeEndpoint: '/oauth/authorize',
+	tokenEndpoint: '/token',
+	tokenExchangeCallback: handleTokenExchangeCallback,
+	// Cloudflare access token TTL
+	accessTokenTTL: 3600,
+	clientRegistrationEndpoint: '/register',
+})
