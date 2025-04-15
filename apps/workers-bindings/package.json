@@ -3,26 +3,30 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
+		"check:lint": "run-eslint-workers",
+		"check:types": "run-tsc",
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev",
-		"format": "biome format --write",
-		"lint:fix": "biome lint --fix",
 		"start": "wrangler dev",
-		"types": "wrangler types"
+		"types": "wrangler types",
+		"test": "vitest"
 	},
 	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "0.8.14",
+		"@cloudflare/workers-types": "4.20250410.0",
 		"@types/node": "22.14.1",
 		"marked": "15.0.7",
 		"typescript": "5.5.4",
+		"vitest": "3.0.9",
 		"workers-mcp": "^0.1.0-3",
 		"wrangler": "4.10.0"
 	},
 	"dependencies": {
 		"@cloudflare/workers-oauth-provider": "0.0.2",
 		"@modelcontextprotocol/sdk": "1.8.0",
+		"@repo/mcp-common": "workspace:*",
 		"agents": "0.0.49",
 		"hono": "4.7.6",
-		"zod": "3.24.2",
-		"@repo/mcp-common": "workspace:*"
+		"zod": "3.24.2"
 	}
 }

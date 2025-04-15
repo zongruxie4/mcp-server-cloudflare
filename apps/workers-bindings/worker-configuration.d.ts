@@ -3,6 +3,7 @@
 declare namespace Cloudflare {
 	interface Env {
 		OAUTH_KV: KVNamespace;
+        // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 		MCP_OBJECT: DurableObjectNamespace<import("./src/index").WorkersBindingsMCP>;
 		ASSETS: Fetcher;
 	}
