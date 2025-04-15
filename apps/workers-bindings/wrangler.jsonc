@@ -10,9 +10,7 @@
 	"compatibility_flags": ["nodejs_compat"],
 	"migrations": [
 		{
-			"new_sqlite_classes": [
-				"WorkersBindingsMCP"
-			],
+			"new_sqlite_classes": ["WorkersBindingsMCP"],
 			"tag": "v1"
 		}
 	],
@@ -33,9 +31,8 @@
 	"observability": {
 		"enabled": true
 	},
-	"assets": {
-		"directory": "./static/",
-		"binding": "ASSETS"
+	"dev": {
+		"port": 8976
 	}
 	/**
 	 * Smart Placement

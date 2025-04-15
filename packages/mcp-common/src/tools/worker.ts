@@ -1,9 +1,8 @@
 import { z } from 'zod'
 
-import { handleWorkerScriptDownload, handleWorkersList } from '@repo/mcp-common/src/api/workers'
-import { getCloudflareClient } from '@repo/mcp-common/src/cloudflare-api'
-
-import type { MyMCP } from '../index'
+import { handleWorkerScriptDownload, handleWorkersList } from '../api/workers'
+import { getCloudflareClient } from '../cloudflare-api'
+import { type CloudflareMcpAgent } from '../types/cloudflare-mcp-agent'
 
 /**
  * Registers the workers tools with the MCP server
@@ -14,7 +13,7 @@ import type { MyMCP } from '../index'
 // Define the scriptName parameter schema
 const workerNameParam = z.string().describe('The name of the worker script to retrieve')
 
-export function registerWorkersTools(agent: MyMCP) {
+export function registerWorkersTools(agent: CloudflareMcpAgent) {
 	// Tool to list all workers
 	agent.server.tool('workers_list', 'List all Workers in your Cloudflare account', {}, async () => {
 		const accountId = agent.getActiveAccountId()

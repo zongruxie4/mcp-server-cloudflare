@@ -6,10 +6,10 @@ import {
 	CloudflareAuthHandler,
 	handleTokenExchangeCallback,
 } from '@repo/mcp-common/src/cloudflare-oauth-handler'
+import { registerAccountTools } from '@repo/mcp-common/src/tools/account'
+import { registerWorkersTools } from '@repo/mcp-common/src/tools/worker'
 
-import { registerAccountTools } from './tools/account'
 import { registerLogsTools } from './tools/logs'
-import { registerWorkersTools } from './tools/workers'
 
 import type { AccountSchema, UserSchema } from '@repo/mcp-common/src/cloudflare-oauth-handler'
 import type { Env } from '../worker-configuration'

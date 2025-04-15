@@ -1,11 +1,10 @@
 import { z } from 'zod'
 
-import { handleAccountsList } from '@repo/mcp-common/src/api/account'
-import { getCloudflareClient } from '@repo/mcp-common/src/cloudflare-api'
+import { handleAccountsList } from '../api/account'
+import { getCloudflareClient } from '../cloudflare-api'
+import { type CloudflareMcpAgent } from '../types/cloudflare-mcp-agent'
 
-import type { MyMCP } from '../index'
-
-export function registerAccountTools(agent: MyMCP) {
+export function registerAccountTools(agent: CloudflareMcpAgent) {
 	// Tool to list all accounts
 	agent.server.tool(
 		'accounts_list',
