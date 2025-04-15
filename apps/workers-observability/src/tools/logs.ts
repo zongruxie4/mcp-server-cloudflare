@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { handleWorkerLogs, handleWorkerLogsKeys } from '@repo/mcp-common/src/api/logs'
+import { handleWorkerLogs, handleWorkerLogsKeys } from '@repo/mcp-common/src/api/workers-logs'
 
 import type { MyMCP } from '../index'
 
@@ -16,9 +16,9 @@ const limitParam = z
 const minutesAgoParam = z
 	.number()
 	.min(1)
-	.max(1440)
+	.max(10080)
 	.default(30)
-	.describe('Minutes in the past to look for logs (1-1440, default 30)')
+	.describe('Minutes in the past to look for logs (1-10080, default 30)')
 const rayIdParam = z.string().optional().describe('Filter logs by specific Cloudflare Ray ID')
 
 /**
@@ -53,7 +53,7 @@ export function registerLogsTools(agent: MyMCP) {
 			}
 			try {
 				const { scriptName, shouldFilterErrors, limitParam, minutesAgoParam, rayId } = params
-				const { relevantLogs, from, to } = await handleWorkerLogs({
+				const { logs, from, to } = await handleWorkerLogs({
 					scriptName,
 					limit: limitParam,
 					minutesAgo: minutesAgoParam,
@@ -67,9 +67,8 @@ export function registerLogsTools(agent: MyMCP) {
 						{
 							type: 'text',
 							text: JSON.stringify({
-								logs: relevantLogs,
+								logs,
 								stats: {
-									total: relevantLogs.length,
 									timeRange: {
 										from,
 										to,
@@ -118,7 +117,7 @@ export function registerLogsTools(agent: MyMCP) {
 			}
 			try {
 				const { rayId, shouldFilterErrors, limitParam, minutesAgoParam } = params
-				const { relevantLogs, from, to } = await handleWorkerLogs({
+				const { logs, from, to } = await handleWorkerLogs({
 					limit: limitParam,
 					minutesAgo: minutesAgoParam,
 					accountId,
@@ -131,9 +130,8 @@ export function registerLogsTools(agent: MyMCP) {
 						{
 							type: 'text',
 							text: JSON.stringify({
-								logs: relevantLogs,
+								logs,
 								stats: {
-									total: relevantLogs.length,
 									timeRange: {
 										from,
 										to,
@@ -192,7 +190,7 @@ export function registerLogsTools(agent: MyMCP) {
 								keys: keys.map((key) => ({
 									key: key.key,
 									type: key.type,
-									lastSeen: key.lastSeen ? new Date(key.lastSeen).toISOString() : null,
+									lastSeenAt: key.lastSeenAt ? new Date(key.lastSeenAt).toISOString() : null,
 								})),
 								stats: {
 									total: keys.length,
