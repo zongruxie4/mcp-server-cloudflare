@@ -16,9 +16,9 @@ export { ContainerManager, ContainerMcpAgent }
 export type Env = {
 	CONTAINER_MCP_AGENT: DurableObjectNamespace<ContainerMcpAgent>
 	CONTAINER_MANAGER: DurableObjectNamespace<ContainerManager>
-	ENVIRONMENT: 'dev' | 'prod',
-	CLOUDFLARE_CLIENT_ID: string,
-	CLOUDFLARE_CLIENT_SECRET: string,
+	ENVIRONMENT: 'dev' | 'prod'
+	CLOUDFLARE_CLIENT_ID: string
+	CLOUDFLARE_CLIENT_SECRET: string
 }
 
 // Context from the auth process, encrypted & stored in the auth token

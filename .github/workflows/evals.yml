@@ -1,4 +1,4 @@
-name: Test and check
+name: Evals
 on:
   push:
 
@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        node-version: [20, 22]
+        node-version: [22]
     steps:
       - uses: actions/checkout@v4
       - name: Install pnpm
