@@ -7,7 +7,10 @@ import { Hono } from 'hono'
 import { streamText } from 'hono/streaming'
 import mime from 'mime'
 
-import { ExecParams, FileList, FilesWrite } from '../shared/schema.ts'
+import { ExecParams, FilesWrite } from '../shared/schema.ts'
+import { get_file_name_from_path } from './fileUtils.ts'
+
+import type { FileList } from '../shared/schema.ts'
 
 process.chdir('workdir')
 
@@ -60,8 +63,7 @@ app.get('/files/ls', async (c) => {
  * Get the contents of a file or directory
  */
 app.get('/files/contents/*', async (c) => {
-	let reqPath = c.req.path.replace('/files/contents', '')
-	reqPath = reqPath.endsWith('/') ? reqPath.substring(0, reqPath.length - 1) : reqPath
+	const reqPath = await get_file_name_from_path(c.req.path)
 	try {
 		const mimeType = mime.getType(reqPath)
 		const headers = mimeType ? { 'Content-Type': mimeType } : undefined
@@ -105,12 +107,35 @@ app.get('/files/contents/*', async (c) => {
  */
 app.post('/files/contents', zValidator('json', FilesWrite), async (c) => {
 	const file = c.req.valid('json')
-	const reqPath = file.path.endsWith('/') ? file.path.substring(0, file.path.length - 1) : file.path
+	const reqPath = await get_file_name_from_path(file.path)
+
 	try {
 		await fs.writeFile(reqPath, file.text)
 		return c.newResponse(null, 200)
 	} catch (e) {
 		return c.newResponse(`Error: ${e}`, 400)
+	}
+})
+
+/**
+ * DELETE /files/contents/{filepath}
+ *
+ * Delete a file or directory
+ */
+app.delete('/files/contents/*', async (c) => {
+	const reqPath = await get_file_name_from_path(c.req.path)
+
+	try {
+		await fs.rm(path.join(process.cwd(), reqPath), { recursive: true })
+		return c.newResponse('ok', 200)
+	} catch (e: any) {
+		if (e.code) {
+			if (e.code === 'ENOENT') {
+				return c.notFound()
+			}
+		}
+
+		throw e
 	}
 })
 

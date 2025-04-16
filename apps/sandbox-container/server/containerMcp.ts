@@ -3,12 +3,14 @@ import { McpAgent } from 'agents/mcp'
 import { z } from 'zod'
 
 import { OPEN_CONTAINER_PORT } from '../shared/consts'
-import { ExecParams, FileList, FilesWrite } from '../shared/schema'
+import { ExecParams, FilePathParam, FilesWrite } from '../shared/schema'
 import { MAX_CONTAINERS, proxyFetch, startAndWaitForPort } from './containerHelpers'
 import { getContainerManager } from './containerManager'
 import { BASE_INSTRUCTIONS } from './prompts'
 import { fileToBase64 } from './utils'
-import { Env, Props } from '.'
+
+import type { FileList } from '../shared/schema'
+import type { Env, Props } from '.'
 
 export class ContainerMcpAgent extends McpAgent<Env, Props> {
 	server = new McpServer(
@@ -67,6 +69,17 @@ export class ContainerMcpAgent extends McpAgent<Env, Props> {
 			async ({ args }) => {
 				return {
 					content: [{ type: 'text', text: await this.container_exec(args) }],
+				}
+			}
+		)
+		this.server.tool(
+			'container_file_delete',
+			'Delete file and its contents',
+			{ args: FilePathParam },
+			async ({ args }) => {
+				const deleted = await this.container_file_delete(args)
+				return {
+					content: [{ type: 'text', text: `File deleted: ${deleted}.` }],
 				}
 			}
 		)
@@ -229,11 +242,20 @@ export class ContainerMcpAgent extends McpAgent<Env, Props> {
 		return json
 	}
 
+	async container_file_delete(filePath: string): Promise<boolean> {
+		const res = await proxyFetch(
+			this.env.ENVIRONMENT,
+			this.ctx.container,
+			new Request(`http://host:${OPEN_CONTAINER_PORT}/files/contents/${filePath}`, {
+				method: 'DELETE',
+			}),
+			OPEN_CONTAINER_PORT
+		)
+		return res.ok
+	}
 	async container_files_read(
 		filePath: string
 	): Promise<{ blob: Blob; mimeType: string | undefined }> {
-		console.log('reading')
-		console.log(filePath)
 		const res = await proxyFetch(
 			this.env.ENVIRONMENT,
 			this.ctx.container,
@@ -269,7 +291,6 @@ export class ContainerMcpAgent extends McpAgent<Env, Props> {
 		if (!res || !res.ok) {
 			throw new Error(`Request to container failed: ${await res.text()}`)
 		}
-		const txt = await res.text()
 		return `Wrote file: ${file.path}`
 	}
 }
