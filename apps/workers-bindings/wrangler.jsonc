@@ -36,39 +36,53 @@
 	},
 	"vars": {
 		"ENVIRONMENT": "development"
+	},
+	"workers_dev": false,
+	"preview_urls": false,
+	"env": {
+		"staging": {
+			"name": "mcp-cloudflare-workers-bindings-staging",
+			"account_id": "8995c0f49cdcf57eb54d2c1e52b7d2f3",
+			"routes": [{ "pattern": "bindings-staging.mcp.cloudflare.com", "custom_domain": true }],
+			"durable_objects": {
+				"bindings": [
+					{
+						"class_name": "WorkersBindingsMCP",
+						"name": "MCP_OBJECT"
+					}
+				]
+			},
+			"kv_namespaces": [
+				{
+					"binding": "OAUTH_KV",
+					"id": "18e839155d00407095d793dcf7e78f25"
+				}
+			],
+			"vars": {
+				"ENVIRONMENT": "staging"
+			}
+		},
+		"production": {
+			"name": "mcp-cloudflare-workers-bindings-production",
+			"account_id": "8995c0f49cdcf57eb54d2c1e52b7d2f3",
+			"routes": [{ "pattern": "bindings.mcp.cloudflare.com", "custom_domain": true }],
+			"durable_objects": {
+				"bindings": [
+					{
+						"class_name": "WorkersBindingsMCP",
+						"name": "MCP_OBJECT"
+					}
+				]
+			},
+			"kv_namespaces": [
+				{
+					"binding": "OAUTH_KV",
+					"id": "f9782295993747df90c29c45ca89edb1"
+				}
+			],
+			"vars": {
+				"ENVIRONMENT": "production"
+			}
+		}
 	}
-	/**
-	 * Smart Placement
-	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
-	 */
-	// "placement": { "mode": "smart" },
-
-	/**
-	 * Bindings
-	 * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
-	 * databases, object storage, AI inference, real-time communication and more.
-	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
-	 */
-
-	/**
-	 * Environment Variables
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
-	 */
-	// "vars": { "MY_VARIABLE": "production_value" },
-	/**
-	 * Note: Use secrets to store sensitive data.
-	 * https://developers.cloudflare.com/workers/configuration/secrets/
-	 */
-
-	/**
-	 * Static Assets
-	 * https://developers.cloudflare.com/workers/static-assets/binding/
-	 */
-	// "assets": { "directory": "./public/", "binding": "ASSETS" },
-
-	/**
-	 * Service Bindings (communicate between multiple Workers)
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
-	 */
-	// "services": [{ "binding": "MY_SERVICE", "service": "my-service" }]
 }
