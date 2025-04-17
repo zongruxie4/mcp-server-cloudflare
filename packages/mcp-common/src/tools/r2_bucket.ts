@@ -328,7 +328,11 @@ export function registerR2BucketTools(agent: CloudflareMcpAgent) {
 	agent.server.tool(
 		'r2_bucket_domains_get',
 		'Get details about a specific domain for an R2 bucket',
-		{ name: BucketNameSchema, domain: CustomDomainNameSchema, params: CustomDomainGetParamsSchema.optional() },
+		{
+			name: BucketNameSchema,
+			domain: CustomDomainNameSchema,
+			params: CustomDomainGetParamsSchema.optional(),
+		},
 		async ({ name, domain, params }) => {
 			const account_id = agent.getActiveAccountId()
 			if (!account_id) {
@@ -516,7 +520,11 @@ export function registerR2BucketTools(agent: CloudflareMcpAgent) {
 	agent.server.tool(
 		'r2_bucket_event_notifications_update',
 		'Update event notifications for an R2 bucket',
-		{ name: BucketNameSchema, queueId: QueueIdSchema, params: EventNotificationUpdateParamsSchema.optional() },
+		{
+			name: BucketNameSchema,
+			queueId: QueueIdSchema,
+			params: EventNotificationUpdateParamsSchema.optional(),
+		},
 		async ({ name, queueId, params }) => {
 			const account_id = agent.getActiveAccountId()
 			if (!account_id) {
@@ -552,7 +560,11 @@ export function registerR2BucketTools(agent: CloudflareMcpAgent) {
 	agent.server.tool(
 		'r2_bucket_event_notifications_delete',
 		'Delete event notifications for an R2 bucket',
-		{ name: BucketNameSchema, queueId: QueueIdSchema, params: EventNotificationDeleteParamsSchema.optional() },
+		{
+			name: BucketNameSchema,
+			queueId: QueueIdSchema,
+			params: EventNotificationDeleteParamsSchema.optional(),
+		},
 		async ({ name, queueId, params }) => {
 			const account_id = agent.getActiveAccountId()
 			if (!account_id) {
