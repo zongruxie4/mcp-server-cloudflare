@@ -1,18 +1,15 @@
 import { type CallToolResult } from '@modelcontextprotocol/sdk/types.js'
 import { z } from 'zod'
 
-import {
-	handleKVNamespaceCreate,
-	handleKVNamespaceDelete,
-	handleKVNamespaceGet,
-	handleKVNamespacesList,
-	handleKVNamespaceUpdate,
-} from '../api/kv'
 import { getCloudflareClient } from '../cloudflare-api'
 import { type CloudflareMcpAgent } from '../types/cloudflare-mcp-agent'
+import {
+	KvNamespaceIdSchema,
+	KvNamespacesListParamsSchema,
+	KvNamespaceTitleSchema,
+} from '../types/kv_namespace'
 
-const kvNamespaceTitle = z.string().describe('The title of the kv namespace')
-const kvNamespaceId = z.string().describe('The id of the kv namespace')
+// Define the standard response for missing account ID
 const MISSING_ACCOUNT_ID_RESPONSE = {
 	content: [
 		{
@@ -23,20 +20,26 @@ const MISSING_ACCOUNT_ID_RESPONSE = {
 } satisfies CallToolResult
 
 export function registerKVTools(agent: CloudflareMcpAgent) {
+	/**
+	 * Tool to list KV namespaces.
+	 */
 	agent.server.tool(
 		'kv_namespaces_list',
 		'List all of the kv namespaces in your Cloudflare account',
-		{},
-		async () => {
+		{ params: KvNamespacesListParamsSchema.optional() },
+		async ({ params }) => {
 			const account_id = agent.getActiveAccountId()
 			if (!account_id) {
 				return MISSING_ACCOUNT_ID_RESPONSE
 			}
 			try {
-				const namespaces = await handleKVNamespacesList({
-					client: getCloudflareClient(agent.props.accessToken),
+				const client = getCloudflareClient(agent.props.accessToken)
+				const response = await client.kv.namespaces.list({
 					account_id,
+					...params,
 				})
+
+				const namespaces = response.result ?? []
 
 				return {
 					content: [
@@ -54,7 +57,7 @@ export function registerKVTools(agent: CloudflareMcpAgent) {
 					content: [
 						{
 							type: 'text',
-							text: `Error listing KV namespaces: ${error instanceof Error && error.message}`,
+							text: `Error listing KV namespaces: ${error instanceof Error ? error.message : String(error)}`,
 						},
 					],
 				}
@@ -62,21 +65,23 @@ export function registerKVTools(agent: CloudflareMcpAgent) {
 		}
 	)
 
+	/**
+	 * Tool to create a KV namespace.
+	 */
 	agent.server.tool(
 		'kv_namespace_create',
 		'Create a new kv namespace in your Cloudflare account',
-		{ title: kvNamespaceTitle },
+		{
+			title: KvNamespaceTitleSchema,
+		},
 		async ({ title }) => {
 			const account_id = agent.getActiveAccountId()
 			if (!account_id) {
 				return MISSING_ACCOUNT_ID_RESPONSE
 			}
 			try {
-				const namespace = await handleKVNamespaceCreate({
-					client: getCloudflareClient(agent.props.accessToken),
-					account_id,
-					title: title,
-				})
+				const client = getCloudflareClient(agent.props.accessToken)
+				const namespace = await client.kv.namespaces.create({ account_id, title })
 				return {
 					content: [
 						{
@@ -90,7 +95,7 @@ export function registerKVTools(agent: CloudflareMcpAgent) {
 					content: [
 						{
 							type: 'text',
-							text: `Error creating KV namespace: ${error instanceof Error && error.message}`,
+							text: `Error creating KV namespace: ${error instanceof Error ? error.message : String(error)}`,
 						},
 					],
 				}
@@ -98,26 +103,28 @@ export function registerKVTools(agent: CloudflareMcpAgent) {
 		}
 	)
 
+	/**
+	 * Tool to delete a KV namespace.
+	 */
 	agent.server.tool(
 		'kv_namespace_delete',
 		'Delete a kv namespace in your Cloudflare account',
-		{ namespace_id: kvNamespaceId },
+		{
+			namespace_id: KvNamespaceIdSchema,
+		},
 		async ({ namespace_id }) => {
 			const account_id = agent.getActiveAccountId()
 			if (!account_id) {
 				return MISSING_ACCOUNT_ID_RESPONSE
 			}
 			try {
-				const namespace = await handleKVNamespaceDelete({
-					client: getCloudflareClient(agent.props.accessToken),
-					account_id,
-					namespace_id,
-				})
+				const client = getCloudflareClient(agent.props.accessToken)
+				const result = await client.kv.namespaces.delete(namespace_id, { account_id })
 				return {
 					content: [
 						{
 							type: 'text',
-							text: JSON.stringify(namespace),
+							text: JSON.stringify(result ?? { success: true }),
 						},
 					],
 				}
@@ -126,7 +133,7 @@ export function registerKVTools(agent: CloudflareMcpAgent) {
 					content: [
 						{
 							type: 'text',
-							text: `Error deleting KV namespace: ${error instanceof Error && error.message}`,
+							text: `Error deleting KV namespace: ${error instanceof Error ? error.message : String(error)}`,
 						},
 					],
 				}
@@ -134,21 +141,23 @@ export function registerKVTools(agent: CloudflareMcpAgent) {
 		}
 	)
 
+	/**
+	 * Tool to get details of a specific KV namespace.
+	 */
 	agent.server.tool(
 		'kv_namespace_get',
-		'Get a kv namespace in your Cloudflare account',
-		{ namespace_id: kvNamespaceId },
+		'Get details of a kv namespace in your Cloudflare account',
+		{
+			namespace_id: KvNamespaceIdSchema,
+		},
 		async ({ namespace_id }) => {
 			const account_id = agent.getActiveAccountId()
 			if (!account_id) {
 				return MISSING_ACCOUNT_ID_RESPONSE
 			}
 			try {
-				const namespace = await handleKVNamespaceGet({
-					client: getCloudflareClient(agent.props.accessToken),
-					account_id,
-					namespace_id,
-				})
+				const client = getCloudflareClient(agent.props.accessToken)
+				const namespace = await client.kv.namespaces.get(namespace_id, { account_id })
 				return {
 					content: [
 						{
@@ -162,7 +171,7 @@ export function registerKVTools(agent: CloudflareMcpAgent) {
 					content: [
 						{
 							type: 'text',
-							text: `Error getting KV namespace: ${error instanceof Error && error.message}`,
+							text: `Error getting KV namespace: ${error instanceof Error ? error.message : String(error)}`,
 						},
 					],
 				}
@@ -170,12 +179,15 @@ export function registerKVTools(agent: CloudflareMcpAgent) {
 		}
 	)
 
+	/**
+	 * Tool to update the title of a KV namespace.
+	 */
 	agent.server.tool(
 		'kv_namespace_update',
-		'Update a kv namespace in your Cloudflare account',
+		'Update the title of a kv namespace in your Cloudflare account',
 		{
-			namespace_id: kvNamespaceId,
-			title: kvNamespaceTitle,
+			namespace_id: KvNamespaceIdSchema,
+			title: KvNamespaceTitleSchema,
 		},
 		async ({ namespace_id, title }) => {
 			const account_id = agent.getActiveAccountId()
@@ -183,17 +195,16 @@ export function registerKVTools(agent: CloudflareMcpAgent) {
 				return MISSING_ACCOUNT_ID_RESPONSE
 			}
 			try {
-				const namespaceUpdateResponse = await handleKVNamespaceUpdate({
-					client: getCloudflareClient(agent.props.accessToken),
+				const client = getCloudflareClient(agent.props.accessToken)
+				const result = await client.kv.namespaces.update(namespace_id, {
 					account_id,
-					namespace_id,
 					title,
 				})
 				return {
 					content: [
 						{
 							type: 'text',
-							text: JSON.stringify(namespaceUpdateResponse),
+							text: JSON.stringify(result ?? { success: true }),
 						},
 					],
 				}
@@ -202,7 +213,7 @@ export function registerKVTools(agent: CloudflareMcpAgent) {
 					content: [
 						{
 							type: 'text',
-							text: `Error updating KV namespace: ${error instanceof Error && error.message}`,
+							text: `Error updating KV namespace: ${error instanceof Error ? error.message : String(error)}`,
 						},
 					],
 				}
