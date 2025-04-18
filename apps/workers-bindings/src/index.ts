@@ -9,6 +9,7 @@ import {
 } from '@repo/mcp-common/src/cloudflare-oauth-handler'
 import { registerAccountTools } from '@repo/mcp-common/src/tools/account'
 import { registerKVTools } from '@repo/mcp-common/src/tools/kv_namespace'
+import { registerR2BucketTools } from '@repo/mcp-common/src/tools/r2_bucket'
 import { registerWorkersTools } from '@repo/mcp-common/src/tools/worker'
 
 import type { AccountSchema, UserSchema } from '@repo/mcp-common/src/cloudflare-oauth-handler'
@@ -37,6 +38,7 @@ export class WorkersBindingsMCP extends McpAgent<Env, WorkersBindingsMCPState, P
 		registerAccountTools(this)
 		registerKVTools(this)
 		registerWorkersTools(this)
+		registerR2BucketTools(this)
 	}
 	getActiveAccountId() {
 		// TODO: Figure out why this fail sometimes, and why we need to wrap this in a try catch
