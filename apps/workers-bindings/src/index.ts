@@ -8,6 +8,7 @@ import {
 	handleTokenExchangeCallback,
 } from '@repo/mcp-common/src/cloudflare-oauth-handler'
 import { registerAccountTools } from '@repo/mcp-common/src/tools/account'
+import { registerD1Tools } from '@repo/mcp-common/src/tools/d1'
 import { registerKVTools } from '@repo/mcp-common/src/tools/kv_namespace'
 import { registerR2BucketTools } from '@repo/mcp-common/src/tools/r2_bucket'
 import { registerWorkersTools } from '@repo/mcp-common/src/tools/worker'
@@ -39,6 +40,7 @@ export class WorkersBindingsMCP extends McpAgent<Env, WorkersBindingsMCPState, P
 		registerKVTools(this)
 		registerWorkersTools(this)
 		registerR2BucketTools(this)
+		registerD1Tools(this)
 	}
 	getActiveAccountId() {
 		// TODO: Figure out why this fail sometimes, and why we need to wrap this in a try catch
@@ -68,6 +70,7 @@ const BindingsScopes = {
 	'workers:write':
 		'See and change Cloudflare Workers data such as zones, KV storage, namespaces, scripts, and routes.',
 	'workers_observability:read': 'See observability logs for your account',
+	'd1:write': 'Create, read, and write to D1 databases',
 	offline_access: 'Grants refresh tokens for long-lived access.',
 } as const
 

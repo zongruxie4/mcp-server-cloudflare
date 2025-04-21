@@ -37,6 +37,31 @@ export const BucketNameSchema: z.ZodType<BucketCreateParams['name']> = z
 	.string()
 	.describe('The name of the r2 bucket')
 
+export const BucketListCursorParam = z
+	.string()
+	.nullable()
+	.optional()
+	.describe(
+		'Query param: Pagination cursor received during the last List Buckets call. R2 buckets are paginated using cursors instead of page numbers.'
+	)
+export const BucketListDirectionParam = z
+	.enum(['asc', 'desc'])
+	.nullable()
+	.optional()
+	.describe('Direction to order buckets')
+export const BucketListNameContainsParam = z
+	.string()
+	.nullable()
+	.optional()
+	.describe(
+		'Bucket names to filter by. Only buckets with this phrase in their name will be returned.'
+	)
+export const BucketListStartAfterParam = z
+	.string()
+	.nullable()
+	.optional()
+	.describe('Bucket name to start searching after. Buckets are ordered lexicographically.')
+
 export const AllowedMethodsEnum: z.ZodType<CORSUpdateParams.Rule['allowed']['methods']> = z.array(
 	z.union([
 		z.literal('GET'),
