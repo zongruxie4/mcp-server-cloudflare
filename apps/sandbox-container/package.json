@@ -13,8 +13,9 @@
 		"postinstall": "mkdir -p workdir",
 		"test": "vitest",
 		"types": "wrangler types",
-		"eval:dev": "concurrently \"npm run dev\" \"vitest --config vitest.config.evals.ts\"",
-		"eval": "concurrently \"npm run dev\" \"vitest run --config vitest.config.evals.ts\""
+		"eval:dev": "start-server-and-test --expect 404 eval:server http://localhost:8976 'vitest --config vitest.config.evals.ts'",
+		"eval:server": "concurrently \"tsx container/index.ts\" \"wrangler dev --var \"ENVIRONMENT:test\"\"",
+		"eval:ci": "start-server-and-test --expect 404 eval:server http://localhost:8976 'vitest run --config vitest.config.evals.ts'"
 	},
 	"dependencies": {
 		"@cloudflare/workers-oauth-provider": "0.0.2",
@@ -40,11 +41,12 @@
 		"zod": "^3.24.2"
 	},
 	"devDependencies": {
-		"@types/mock-fs": "^4.13.4",
-		"mock-fs": "^5.5.0",
 		"@cloudflare/vitest-pool-workers": "0.8.14",
+		"@types/mock-fs": "^4.13.4",
 		"ai": "^4.3.6",
 		"concurrently": "^9.1.2",
+		"mock-fs": "^5.5.0",
+		"start-server-and-test": "^2.0.11",
 		"wrangler": "^4.9.1"
 	}
 }

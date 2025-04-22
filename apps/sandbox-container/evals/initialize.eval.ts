@@ -1,11 +1,9 @@
-import { MCPClientManager } from 'agents/mcp/client'
-import { generateText, tool, ToolExecutionOptions, ToolSet } from 'ai'
 import { describeEval } from 'vitest-evals'
 
 import { checkFactuality } from '@repo/eval-tools/src/scorers'
 import { eachModel } from '@repo/eval-tools/src/test-models'
 
-import { runTask } from './utils'
+import { initializeClient, runTask } from './utils'
 
 eachModel('$modelName', ({ model }) => {
 	describeEval('Runs container initialize', {
@@ -17,7 +15,8 @@ eachModel('$modelName', ({ model }) => {
 			},
 		],
 		task: async (input) => {
-			return await runTask(model, input)
+			const client = await initializeClient()
+			return await runTask(client, model, input)
 		},
 		scorers: [checkFactuality],
 		threshold: 1,

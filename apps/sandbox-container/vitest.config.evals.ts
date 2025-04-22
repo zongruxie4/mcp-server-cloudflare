@@ -7,6 +7,11 @@ export default defineWorkersConfig({
 			workers: {
 				isolatedStorage: true,
 				wrangler: { configPath: './wrangler.jsonc' },
+				miniflare: {
+					bindings: {
+						ENVIRONMENT: 'test',
+					},
+				},
 			},
 		},
 	},

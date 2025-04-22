@@ -25,7 +25,7 @@
 		"test": "vitest run",
 		"fix:format": "prettier . --write",
 		"test:watch": "vitest",
-		"eval": "run-turbo eval"
+		"eval:ci": "run-turbo eval:ci"
 	},
 	"devDependencies": {
 		"@changesets/cli": "2.28.1",

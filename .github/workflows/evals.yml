@@ -3,7 +3,7 @@ on:
   push:
 
 jobs:
-  test:
+  eval:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -22,7 +22,10 @@ jobs:
       - name: Create .dev.vars file
         run: |
           echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > ./apps/sandbox-container/.dev.vars
+      - name: Verify .dev.vars file
+        run: |
+          du -h ./apps/sandbox-container/.dev.vars
       - name: Install dependencies
         run: pnpm install
       - name: Run evals
-        run: pnpm eval
+        run: pnpm eval:ci
