@@ -1,23 +1,13 @@
-import { type CallToolResult } from '@modelcontextprotocol/sdk/types.js'
 import { z } from 'zod'
 
 import { getCloudflareClient } from '../cloudflare-api'
+import { MISSING_ACCOUNT_ID_RESPONSE } from '../constants'
 import { type CloudflareMcpAgent } from '../types/cloudflare-mcp-agent'
 import {
 	KvNamespaceIdSchema,
 	KvNamespacesListParamsSchema,
 	KvNamespaceTitleSchema,
 } from '../types/kv_namespace'
-
-// Define the standard response for missing account ID
-const MISSING_ACCOUNT_ID_RESPONSE = {
-	content: [
-		{
-			type: 'text',
-			text: 'No currently active accountId. Try listing your accounts (accounts_list) and then setting an active account (set_active_account)',
-		},
-	],
-} satisfies CallToolResult
 
 export function registerKVTools(agent: CloudflareMcpAgent) {
 	/**
