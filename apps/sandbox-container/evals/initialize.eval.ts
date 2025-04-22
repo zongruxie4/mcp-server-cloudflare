@@ -16,7 +16,8 @@ eachModel('$modelName', ({ model }) => {
 		],
 		task: async (input) => {
 			const client = await initializeClient()
-			return await runTask(client, model, input)
+			const { promptOutput } = await runTask(client, model, input)
+			return promptOutput
 		},
 		scorers: [checkFactuality],
 		threshold: 1,
