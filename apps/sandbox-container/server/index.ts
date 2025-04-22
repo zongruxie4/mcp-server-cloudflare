@@ -1,4 +1,5 @@
 import OAuthProvider from '@cloudflare/workers-oauth-provider'
+import { McpAgent } from 'agents/mcp'
 import { env } from 'cloudflare:workers'
 
 import {
@@ -16,7 +17,7 @@ export { ContainerManager, ContainerMcpAgent }
 export type Env = {
 	CONTAINER_MCP_AGENT: DurableObjectNamespace<ContainerMcpAgent>
 	CONTAINER_MANAGER: DurableObjectNamespace<ContainerManager>
-	ENVIRONMENT: 'dev' | 'prod'
+	ENVIRONMENT: 'dev' | 'prod' | 'test'
 	CLOUDFLARE_CLIENT_ID: string
 	CLOUDFLARE_CLIENT_SECRET: string
 }
@@ -38,17 +39,36 @@ const ContainerScopes = {
 	offline_access: 'Grants refresh tokens for long-lived access.',
 } as const
 
-export default new OAuthProvider({
-	apiRoute: '/sse',
-	// @ts-ignore
-	apiHandler: ContainerMcpAgent.mount('/sse', { binding: 'CONTAINER_MCP_AGENT' }),
-	// @ts-ignore
-	defaultHandler: createAuthHandlers({ scopes: ContainerScopes }),
-	authorizeEndpoint: '/oauth/authorize',
-	tokenEndpoint: '/token',
-	tokenExchangeCallback: (options) =>
-		handleTokenExchangeCallback(options, env.CLOUDFLARE_CLIENT_ID, env.CLOUDFLARE_CLIENT_SECRET),
-	// Cloudflare access token TTL
-	accessTokenTTL: 3600,
-	clientRegistrationEndpoint: '/register',
-})
+export default {
+	fetch: (req: Request, env: Env, ctx: ExecutionContext) => {
+		if (env.ENVIRONMENT === 'test') {
+			ctx.props = {}
+			return ContainerMcpAgent.mount('/sse', { binding: 'CONTAINER_MCP_AGENT' }).fetch(
+				req,
+				env as Record<string, DurableObjectNamespace<McpAgent> | any>,
+				ctx
+			)
+		}
+
+		return new OAuthProvider({
+			apiRoute: '/sse',
+			// @ts-ignore
+			apiHandler: ContainerMcpAgent.mount('/sse', { binding: 'CONTAINER_MCP_AGENT' }),
+			// @ts-ignore
+			defaultHandler: createAuthHandlers({ scopes: ContainerScopes }),
+			authorizeEndpoint: '/oauth/authorize',
+			tokenEndpoint: '/token',
+			tokenExchangeCallback: (options) =>
+				handleTokenExchangeCallback(
+					options,
+					env.CLOUDFLARE_CLIENT_ID,
+					env.CLOUDFLARE_CLIENT_SECRET
+				),
+			// Cloudflare access token TTL
+			accessTokenTTL: 3600,
+			clientRegistrationEndpoint: '/register',
+		}).fetch(req, env, ctx)
+	},
+} /*
+	
+*/

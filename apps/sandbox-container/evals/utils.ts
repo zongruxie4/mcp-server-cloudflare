@@ -1,22 +1,42 @@
 import { jsonSchemaToZod } from '@n8n/json-schema-to-zod'
 import { MCPClientManager } from 'agents/mcp/client'
 import { LanguageModelV1, streamText, tool, ToolSet } from 'ai'
+import { z } from 'zod'
 
 import type { JsonSchemaObject } from '@n8n/json-schema-to-zod'
 
-export async function runTask(model: LanguageModelV1, input: string) {
+export async function initializeClient(): Promise<MCPClientManager> {
 	const clientManager = new MCPClientManager('test-client', '0.0.0')
-	await clientManager.connect('http://localhost:8787/sse')
+	await clientManager.connect('http://localhost:8976/sse')
+	return clientManager
+}
 
+export async function runTask(
+	clientManager: MCPClientManager,
+	model: LanguageModelV1,
+	input: string
+) {
 	const tools = clientManager.listTools()
 	const toolSet: ToolSet = tools.reduce((acc, v) => {
 		acc[v.name] = tool({
 			parameters: jsonSchemaToZod(v.inputSchema as JsonSchemaObject),
 			description: v.description,
 			execute: async (args, opts) => {
-				const res = await clientManager.callTool(v, args, { signal: opts.abortSignal })
-				console.log(res.toolResult)
-				return res.content
+				try {
+					const res = await clientManager.callTool(
+						{
+							...v,
+							arguments: { ...args },
+						},
+						z.any() as any,
+						{ signal: opts.abortSignal }
+					)
+					return res.content
+				} catch (e) {
+					console.log('Error calling tool')
+					console.log(e)
+					return e
+				}
 			},
 		})
 		return acc

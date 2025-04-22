@@ -1,11 +1,11 @@
 export const MAX_CONTAINERS = 8
 export async function startAndWaitForPort(
-	environment: 'dev' | 'prod',
+	environment: 'dev' | 'prod' | 'test',
 	container: Container | undefined,
 	portToAwait: number,
 	maxTries = 10
 ): Promise<boolean> {
-	if (environment === 'dev') {
+	if (environment === 'dev' || environment === 'test') {
 		console.log('Running in dev, assuming locally running container')
 		return true
 	}
@@ -62,12 +62,12 @@ export async function startAndWaitForPort(
 }
 
 export async function proxyFetch(
-	environment: 'dev' | 'prod',
+	environment: 'dev' | 'prod' | 'test',
 	container: Container | undefined,
 	request: Request,
 	portNumber: number
 ): Promise<Response> {
-	if (environment === 'dev') {
+	if (environment === 'dev' || environment === 'test') {
 		const url = request.url
 			.replace('https://', 'http://')
 			.replace('http://host', 'http://localhost')
