@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { McpAgent } from 'agents/mcp'
+
 import { registerDocsTools } from './tools/docs'
 
 // The docs MCP server isn't stateful, so we don't have state/props
@@ -13,7 +14,10 @@ export class CloudflareDocumentationMCP extends McpAgent<Env, State, Props> {
 		version: '1.0.0',
 	})
 
-	constructor(public ctx: DurableObjectState, public env: Env) {
+	constructor(
+		public ctx: DurableObjectState,
+		public env: Env
+	) {
 		super(ctx, env)
 	}
 

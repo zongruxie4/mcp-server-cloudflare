@@ -30,7 +30,7 @@
 	},
 	"vars": {
 		"ENVIRONMENT": "development",
-		"AUTORAG_NAME": "cloudflare-docs-autorag",
+		"AUTORAG_NAME": "cloudflare-docs-autorag"
 	},
 	"dev": {
 		"port": 8976
@@ -52,7 +52,7 @@
 			},
 			"vars": {
 				"ENVIRONMENT": "staging",
-				"AUTORAG_NAME": "cloudflare-docs-autorag",
+				"AUTORAG_NAME": "cloudflare-docs-autorag"
 			},
 
 			"ai": {
@@ -73,7 +73,7 @@
 			},
 			"vars": {
 				"ENVIRONMENT": "production",
-				"AUTORAG_NAME": "cloudflare-docs-autorag",
+				"AUTORAG_NAME": "cloudflare-docs-autorag"
 			},
 			"ai": {
 				"binding": "AI"
