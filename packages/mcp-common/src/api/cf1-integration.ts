@@ -5,267 +5,188 @@ import {
 	AssetsResponse,
 	IntegrationResponse,
 	IntegrationsResponse,
+} from '../schemas/cf1-integrations'
+import { V4Schema } from '../v4-api'
+
+import type { z } from 'zod'
+import type {
 	zReturnedAssetCategoriesResult,
 	zReturnedAssetsResult,
 	zReturnedIntegrationResult,
 	zReturnedIntegrationsResult,
 } from '../schemas/cf1-integrations'
-import { V4Schema } from '../v4-api'
 
-/**
- * Fetches integration by ID for a specified Cloudflare One Integration
- * @param intgerationIdParam ID of the CF1 Integration to get
- * @param accountId Cloudflare account ID
- * @param apiToken Cloudflare API token
- * @returns The integration result or null
- */
-export async function handleIntegrationById({
-	accountId,
-	apiToken,
-	integrationIdParam,
-}: {
+interface BaseParams {
 	accountId: string
 	apiToken: string
-	integrationIdParam: string
-}): Promise<{ integration: zReturnedIntegrationResult | null }> {
-	const data = await fetchCloudflareApi({
-		endpoint: `/casb/integrations/${integrationIdParam}`,
-		accountId,
-		apiToken,
-		responseSchema: V4Schema(IntegrationResponse),
-		options: {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		},
-	})
-
-	return { integration: data.result }
 }
 
-/**
- * Fetches all integrations in a given CF1 Account.
- * @param accountId Cloudflare account ID
- * @param apiToken Cloudflare API token
- * @returns The logs analysis result with filtered relevant information
- */
-export async function handleIntegrations({
-	accountId,
-	apiToken,
-}: {
-	accountId: string
-	apiToken: string
-}): Promise<{ integrations: zReturnedIntegrationsResult | null }> {
-	const data = await fetchCloudflareApi({
-		endpoint: `/casb/integrations`,
-		accountId,
-		apiToken,
-		responseSchema: V4Schema(IntegrationsResponse),
-		options: {
-			method: 'GET',
-			headers: { 'Content-Type': 'application/json' },
-		},
-	})
-
-	return { integrations: data.result }
+interface PaginationParams {
+	page?: number
+	pageSize?: number
 }
 
-export async function handleAssetCategories({
-	accountId,
-	apiToken,
+type IntegrationParams = BaseParams & { integrationIdParam: string }
+type AssetCategoryParams = BaseParams & { type?: string; vendor?: string }
+type AssetSearchParams = BaseParams & { searchTerm: string } & PaginationParams
+type AssetByIdParams = BaseParams & { assetId: string }
+type AssetByCategoryParams = BaseParams & { categoryId: string } & PaginationParams
+type AssetByIntegrationParams = BaseParams & { integrationId: string } & PaginationParams
 
-	type,
-	vendor,
-}: {
-	accountId: string
-	apiToken: string
-
-	type?: string
-	vendor?: string
-}): Promise<{ categories: zReturnedAssetCategoriesResult | null }> {
-	const params = new URLSearchParams()
-	if (vendor) params.append('vendor', vendor)
-	if (type) params.append('type', type)
-
-	console.log('\n\n\n', params, '\n\n\n')
-
-	const data = await fetchCloudflareApi({
-		endpoint: `/casb/asset_categories?${params.toString()}`,
-		accountId,
-		apiToken,
-		responseSchema: V4Schema(AssetCategoriesResponse),
-		options: {
-			method: 'GET',
-			headers: { 'Content-Type': 'application/json' },
-		},
-	})
-
-	return { categories: data.result }
+const buildParams = (baseParams: Record<string, string>, pagination?: PaginationParams) => {
+	const params = new URLSearchParams(baseParams)
+	if (pagination?.page) params.append('page', String(pagination.page))
+	if (pagination?.pageSize) params.append('page_size', String(pagination.pageSize))
+	return params
 }
 
-// Base handler for asset-related operations
-async function handleAssetRequest({
-	accountId,
-	apiToken,
+const buildIntegrationEndpoint = (integrationId: string) => `/casb/integrations/${integrationId}`
+const buildAssetEndpoint = (assetId?: string) =>
+	assetId ? `/casb/assets/${assetId}` : '/casb/assets'
+const buildAssetCategoryEndpoint = () => '/casb/asset_categories'
+
+const makeApiCall = async <T>({
 	endpoint,
+	accountId,
+	apiToken,
+	responseSchema,
 	params,
 }: {
-	accountId: string
-	apiToken: string
 	endpoint: string
+	accountId: string
+	apiToken: string
+	responseSchema: z.ZodType<any>
 	params?: URLSearchParams
-}): Promise<{ assets: zReturnedAssetsResult }> {
-	const fullEndpoint = `/casb${endpoint}?${params?.toString()}`
-	console.log('ENDPOINT: ', fullEndpoint)
-	const data = await fetchCloudflareApi({
-		endpoint: fullEndpoint,
-		accountId,
-		apiToken,
-		responseSchema: V4Schema(AssetsResponse),
-		options: {
-			method: 'GET',
-			headers: { 'Content-Type': 'application/json' },
-		},
-	})
-
-	console.log('ASSETS DATA: ', data)
-
-	return { assets: data?.result || [] }
+}): Promise<T> => {
+	try {
+		const fullEndpoint = params ? `${endpoint}?${params.toString()}` : endpoint
+		const data = await fetchCloudflareApi({
+			endpoint: fullEndpoint,
+			accountId,
+			apiToken,
+			responseSchema,
+			options: {
+				method: 'GET',
+				headers: { 'Content-Type': 'application/json' },
+			},
+		})
+		return data.result as T
+	} catch (error) {
+		console.error(`API call failed for ${endpoint}:`, error)
+		throw error
+	}
 }
 
-// Get all assets with optional pagination and filters
-export async function handleAssets({
-	accountId,
-	apiToken,
-	page,
-	pageSize,
-}: {
-	accountId: string
-	apiToken: string
-	page?: number
-	pageSize?: number
-}) {
-	const params = new URLSearchParams()
-	if (page) params.append('page', String(page))
-	if (pageSize) params.append('page_size', String(pageSize))
-
-	const { assets } = await handleAssetRequest({
-		accountId,
-		apiToken,
-		endpoint: '/assets',
-		params,
+// Resource-specific API call handlers
+const makeIntegrationCall = <T>(params: IntegrationParams, responseSchema: z.ZodType<any>) =>
+	makeApiCall<T>({
+		endpoint: buildIntegrationEndpoint(params.integrationIdParam),
+		accountId: params.accountId,
+		apiToken: params.apiToken,
+		responseSchema,
 	})
 
+const makeAssetCall = <T>(
+	params: BaseParams & PaginationParams,
+	responseSchema: z.ZodType<any>,
+	assetId?: string,
+	additionalParams?: Record<string, string>
+) =>
+	makeApiCall<T>({
+		endpoint: buildAssetEndpoint(assetId),
+		accountId: params.accountId,
+		apiToken: params.apiToken,
+		responseSchema,
+		params: buildParams(additionalParams || {}, params),
+	})
+
+const makeAssetCategoryCall = <T>(params: AssetCategoryParams, responseSchema: z.ZodType<any>) =>
+	makeApiCall<T>({
+		endpoint: buildAssetCategoryEndpoint(),
+		accountId: params.accountId,
+		apiToken: params.apiToken,
+		responseSchema,
+		params: buildParams({
+			...(params.vendor && { vendor: params.vendor }),
+			...(params.type && { type: params.type }),
+		}),
+	})
+
+// Integration handlers
+export async function handleIntegrationById(
+	params: IntegrationParams
+): Promise<{ integration: zReturnedIntegrationResult | null }> {
+	const integration = await makeIntegrationCall<zReturnedIntegrationResult>(
+		params,
+		V4Schema(IntegrationResponse)
+	)
+	return { integration }
+}
+
+export async function handleIntegrations(
+	params: BaseParams
+): Promise<{ integrations: zReturnedIntegrationsResult | null }> {
+	const integrations = await makeApiCall<zReturnedIntegrationsResult>({
+		endpoint: '/casb/integrations',
+		accountId: params.accountId,
+		apiToken: params.apiToken,
+		responseSchema: V4Schema(IntegrationsResponse),
+	})
+	return { integrations }
+}
+
+// Asset category handlers
+export async function handleAssetCategories(
+	params: AssetCategoryParams
+): Promise<{ categories: zReturnedAssetCategoriesResult | null }> {
+	const categories = await makeAssetCategoryCall<zReturnedAssetCategoriesResult>(
+		params,
+		V4Schema(AssetCategoriesResponse)
+	)
+	return { categories }
+}
+
+// Asset handlers
+export async function handleAssets(params: BaseParams & PaginationParams) {
+	const assets = await makeAssetCall<zReturnedAssetsResult>(params, V4Schema(AssetsResponse))
 	return { assets }
 }
 
-// Get assets by integration ID
-export async function handleAssetsByIntegrationId({
-	accountId,
-	apiToken,
-	integrationId,
-	page,
-	pageSize,
-}: {
-	accountId: string
-	apiToken: string
-	integrationId: string
-	page?: number
-	pageSize?: number
-}) {
-	const params = new URLSearchParams({ integration_id: integrationId })
-	if (page) params.append('page', String(page))
-	if (pageSize) params.append('page_size', String(pageSize))
-
-	const { assets } = await handleAssetRequest({
-		accountId,
-		apiToken,
-		endpoint: '/assets',
+export async function handleAssetsByIntegrationId(params: AssetByIntegrationParams) {
+	const assets = await makeAssetCall<zReturnedAssetsResult>(
 		params,
-	})
-
+		V4Schema(AssetsResponse),
+		undefined,
+		{ integration_id: params.integrationId }
+	)
 	return { assets }
 }
 
-// Get single asset by ID
-export async function handleAssetById({
-	accountId,
-	apiToken,
-	assetId,
-}: {
-	accountId: string
-	apiToken: string
-	assetId: string
-}) {
-	const data = await fetchCloudflareApi({
-		endpoint: `/casb/assets/${assetId}`,
-		accountId,
-		apiToken,
-		responseSchema: V4Schema(AssetDetail),
-		options: {
-			method: 'GET',
-			headers: { 'Content-Type': 'application/json' },
-		},
-	})
-
-	console.log('RAW DATA: ', data)
-
-	return { asset: data.result }
+export async function handleAssetById(params: AssetByIdParams) {
+	const asset = await makeAssetCall<zReturnedAssetsResult>(
+		params,
+		V4Schema(AssetDetail),
+		params.assetId
+	)
+	return { asset }
 }
 
-// Get assets by category ID
-export async function handleAssetsByAssetCategoryId({
-	accountId,
-	apiToken,
-	categoryId,
-	page,
-	pageSize,
-}: {
-	accountId: string
-	apiToken: string
-	categoryId: string
-	page?: number
-	pageSize?: number
-}) {
-	const params = new URLSearchParams({ category_id: categoryId })
-	if (page) params.append('page', String(page))
-	if (pageSize) params.append('page_size', String(pageSize))
-
-	const { assets } = await handleAssetRequest({
-		accountId,
-		apiToken,
-		endpoint: '/assets',
+export async function handleAssetsByAssetCategoryId(params: AssetByCategoryParams) {
+	const assets = await makeAssetCall<zReturnedAssetsResult>(
 		params,
-	})
-
+		V4Schema(AssetsResponse),
+		undefined,
+		{ category_id: params.categoryId }
+	)
 	return { assets }
 }
 
-// Search assets
-export async function handleAssetsSearch({
-	accountId,
-	apiToken,
-	searchTerm,
-	page,
-	pageSize,
-}: {
-	accountId: string
-	apiToken: string
-	searchTerm: string
-	page?: number
-	pageSize?: number
-}) {
-	const params = new URLSearchParams({ search: searchTerm })
-	if (page) params.append('page', String(page))
-	if (pageSize) params.append('page_size', String(pageSize))
-
-	const { assets } = await handleAssetRequest({
-		accountId,
-		apiToken,
-		endpoint: '/assets',
+export async function handleAssetsSearch(params: AssetSearchParams) {
+	const assets = await makeAssetCall<zReturnedAssetsResult>(
 		params,
-	})
-
+		V4Schema(AssetsResponse),
+		undefined,
+		{ search: params.searchTerm }
+	)
 	return { assets }
 }

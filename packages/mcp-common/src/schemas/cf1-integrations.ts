@@ -72,3 +72,79 @@ export type zReturnedAssetsResult = z.infer<typeof AssetsResponse>
 
 export const AssetCategoriesResponse = z.array(AssetCategory)
 export type zReturnedAssetCategoriesResult = z.infer<typeof AssetCategoriesResponse>
+
+
+export const assetCategoryTypeParam = z
+	.enum([
+		'Account',
+		'Alert',
+		'App',
+		'Authentication Method',
+		'Bucket',
+		'Bucket Iam Permission',
+		'Bucket Permission',
+		'Calendar',
+		'Certificate',
+		'Channel',
+		'Commit',
+		'Content',
+		'Credential',
+		'Domain',
+		'Drive',
+		'Environment',
+		'Factor',
+		'File',
+		'File Permission',
+		'Folder',
+		'Group',
+		'Incident',
+		'Instance',
+		'Issue',
+		'Label',
+		'Meeting',
+		'Message',
+		'Message Rule',
+		'Namespace',
+		'Organization',
+		'Package',
+		'Pipeline',
+		'Project',
+		'Report',
+		'Repository',
+		'Risky User',
+		'Role',
+		'Server',
+		'Site',
+		'Space',
+		'Submodule',
+		'Third Party User',
+		'User',
+		'User No Mfa',
+		'Variable',
+		'Webhook',
+		'Workspace',
+	])
+	.optional()
+	.describe('Type of cloud resource or service category')
+
+	export const assetCategoryVendorParam = z
+	.enum([
+		'AWS',
+		'Bitbucket',
+		'Box',
+		'Confluence',
+		'Dropbox',
+		'GitHub',
+		'Google Cloud Platform',
+		'Google Workspace',
+		'Jira',
+		'Microsoft',
+		'Microsoft Azure',
+		'Okta',
+		'Salesforce',
+		'ServiceNow',
+		'Slack',
+		'Workday',
+		'Zoom',
+	])
+	.describe('Vendor of the cloud service or resource')
