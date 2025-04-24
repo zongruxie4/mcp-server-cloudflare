@@ -10,9 +10,12 @@ import {
 	handleIntegrationById,
 	handleIntegrations,
 } from '@repo/mcp-common/src/api/cf1-integration'
+import {
+	assetCategoryTypeParam,
+	assetCategoryVendorParam,
+} from '@repo/mcp-common/src/schemas/cf1-integrations'
 
 import type { MyMCP } from '../index'
-import { assetCategoryTypeParam, assetCategoryVendorParam } from '@repo/mcp-common/src/schemas/cf1-integrations'
 
 const PAGE_SIZE = 3
 
@@ -24,12 +27,10 @@ const assetSearchTerm = z.string().describe('The search keyword for assets')
 const assetIdParam = z.string().describe('The UUID of the asset to analyze')
 const assetCategoryIdParam = z.string().describe('The UUID of the asset category to analyze')
 
-
-
-
-
 // Define types for our tool handlers
-type ToolHandler<T extends Record<string, any>> = (params: T & { accountId: string; apiToken: string }) => Promise<any>
+type ToolHandler<T extends Record<string, any>> = (
+	params: T & { accountId: string; apiToken: string }
+) => Promise<any>
 
 interface ToolDefinition<T extends Record<string, any>> {
 	name: string
@@ -39,10 +40,7 @@ interface ToolDefinition<T extends Record<string, any>> {
 }
 
 // Helper function to handle common error cases and account ID checks
-const withAccountCheck = <T extends Record<string, any>>(
-	agent: MyMCP,
-	handler: ToolHandler<T>
-) => {
+const withAccountCheck = <T extends Record<string, any>>(agent: MyMCP, handler: ToolHandler<T>) => {
 	return async (params: T) => {
 		const accountId = agent.getActiveAccountId()
 		if (!accountId) {
@@ -81,12 +79,20 @@ const withAccountCheck = <T extends Record<string, any>>(
 }
 
 // Tool definitions with their handlers
-const toolDefinitions: ToolDefinition<any>[] = [
+const toolDefinitions: Array<ToolDefinition<any>> = [
 	{
 		name: 'integration_by_id',
 		description: 'Analyze Cloudflare One Integration by ID',
 		params: { integrationIdParam },
-		handler: async ({ integrationIdParam, accountId, apiToken }: { integrationIdParam: string; accountId: string; apiToken: string }) => {
+		handler: async ({
+			integrationIdParam,
+			accountId,
+			apiToken,
+		}: {
+			integrationIdParam: string
+			accountId: string
+			apiToken: string
+		}) => {
 			const { integration } = await handleIntegrationById({
 				integrationIdParam,
 				accountId,
@@ -100,6 +106,7 @@ const toolDefinitions: ToolDefinition<any>[] = [
 		description: 'List all Cloudflare One Integrations in a given account',
 		params: {},
 		handler: async ({ accountId, apiToken }: { accountId: string; apiToken: string }) => {
+			console.log('integrations_list', accountId, apiToken)
 			const { integrations } = await handleIntegrations({ accountId, apiToken })
 			return { integrations }
 		},
@@ -108,7 +115,15 @@ const toolDefinitions: ToolDefinition<any>[] = [
 		name: 'assets_search',
 		description: 'Search Assets by keyword',
 		params: { assetSearchTerm },
-		handler: async ({ assetSearchTerm, accountId, apiToken }: { assetSearchTerm: string; accountId: string; apiToken: string }) => {
+		handler: async ({
+			assetSearchTerm,
+			accountId,
+			apiToken,
+		}: {
+			assetSearchTerm: string
+			accountId: string
+			apiToken: string
+		}) => {
 			const { assets } = await handleAssetsSearch({
 				accountId,
 				apiToken,
@@ -122,7 +137,15 @@ const toolDefinitions: ToolDefinition<any>[] = [
 		name: 'asset_by_id',
 		description: 'Search Assets by ID',
 		params: { assetIdParam },
-		handler: async ({ assetIdParam, accountId, apiToken }: { assetIdParam: string; accountId: string; apiToken: string }) => {
+		handler: async ({
+			assetIdParam,
+			accountId,
+			apiToken,
+		}: {
+			assetIdParam: string
+			accountId: string
+			apiToken: string
+		}) => {
 			const { asset } = await handleAssetById({
 				accountId,
 				apiToken,
@@ -135,7 +158,15 @@ const toolDefinitions: ToolDefinition<any>[] = [
 		name: 'assets_by_integration_id',
 		description: 'Search Assets by Integration ID',
 		params: { integrationIdParam },
-		handler: async ({ integrationIdParam, accountId, apiToken }: { integrationIdParam: string; accountId: string; apiToken: string }) => {
+		handler: async ({
+			integrationIdParam,
+			accountId,
+			apiToken,
+		}: {
+			integrationIdParam: string
+			accountId: string
+			apiToken: string
+		}) => {
 			const { assets } = await handleAssetsByIntegrationId({
 				accountId,
 				apiToken,
@@ -149,7 +180,15 @@ const toolDefinitions: ToolDefinition<any>[] = [
 		name: 'assets_by_category_id',
 		description: 'Search Assets by Asset Category ID',
 		params: { assetCategoryIdParam },
-		handler: async ({ assetCategoryIdParam, accountId, apiToken }: { assetCategoryIdParam: string; accountId: string; apiToken: string }) => {
+		handler: async ({
+			assetCategoryIdParam,
+			accountId,
+			apiToken,
+		}: {
+			assetCategoryIdParam: string
+			accountId: string
+			apiToken: string
+		}) => {
 			const { assets } = await handleAssetsByAssetCategoryId({
 				accountId,
 				apiToken,
@@ -188,7 +227,15 @@ const toolDefinitions: ToolDefinition<any>[] = [
 		name: 'asset_categories_by_vendor',
 		description: 'List asset categories by vendor',
 		params: { assetCategoryVendorParam },
-		handler: async ({ assetCategoryVendorParam, accountId, apiToken }: { assetCategoryVendorParam: string; accountId: string; apiToken: string }) => {
+		handler: async ({
+			assetCategoryVendorParam,
+			accountId,
+			apiToken,
+		}: {
+			assetCategoryVendorParam: string
+			accountId: string
+			apiToken: string
+		}) => {
 			const { categories } = await handleAssetCategories({
 				accountId,
 				apiToken,
@@ -201,7 +248,15 @@ const toolDefinitions: ToolDefinition<any>[] = [
 		name: 'asset_categories_by_type',
 		description: 'Search Asset Categories by type',
 		params: { assetCategoryTypeParam },
-		handler: async ({ assetCategoryTypeParam, accountId, apiToken }: { assetCategoryTypeParam?: string; accountId: string; apiToken: string }) => {
+		handler: async ({
+			assetCategoryTypeParam,
+			accountId,
+			apiToken,
+		}: {
+			assetCategoryTypeParam?: string
+			accountId: string
+			apiToken: string
+		}) => {
 			const { categories } = await handleAssetCategories({
 				accountId,
 				apiToken,
@@ -214,7 +269,17 @@ const toolDefinitions: ToolDefinition<any>[] = [
 		name: 'asset_categories_by_vendor_and_type',
 		description: 'Search Asset Categories by vendor and type',
 		params: { assetCategoryTypeParam, assetCategoryVendorParam },
-		handler: async ({ assetCategoryTypeParam, assetCategoryVendorParam, accountId, apiToken }: { assetCategoryTypeParam?: string; assetCategoryVendorParam: string; accountId: string; apiToken: string }) => {
+		handler: async ({
+			assetCategoryTypeParam,
+			assetCategoryVendorParam,
+			accountId,
+			apiToken,
+		}: {
+			assetCategoryTypeParam?: string
+			assetCategoryVendorParam: string
+			accountId: string
+			apiToken: string
+		}) => {
 			const { categories } = await handleAssetCategories({
 				accountId,
 				apiToken,

@@ -1,7 +1,0 @@
-{
-  "mcpServers": {
-    "cloudflare-one-casb-local": {
-      "url": "http://localhost:8976/sse"
-    }
-  }
-}
