@@ -66,6 +66,9 @@ importers:
       '@repo/mcp-common':
         specifier: workspace:*
         version: link:../../packages/mcp-common
+      '@repo/mcp-observability':
+        specifier: workspace:*
+        version: link:../../packages/mcp-observability
       agents:
         specifier: 0.0.62
         version: 0.0.62(@cloudflare/workers-types@4.20250410.0)
@@ -88,6 +91,9 @@ importers:
       '@cloudflare/workers-types':
         specifier: 4.20250410.0
         version: 4.20250410.0
+      '@types/node':
+        specifier: ^22.14.1
+        version: 22.14.1
       prettier:
         specifier: 3.5.3
         version: 3.5.3
@@ -127,6 +133,9 @@ importers:
       '@repo/mcp-common':
         specifier: workspace:*
         version: link:../../packages/mcp-common
+      '@repo/mcp-observability':
+        specifier: workspace:*
+        version: link:../../packages/mcp-observability
       '@types/node':
         specifier: ^22.13.10
         version: 22.14.1
@@ -200,6 +209,9 @@ importers:
       '@repo/mcp-common':
         specifier: workspace:*
         version: link:../../packages/mcp-common
+      '@repo/mcp-observability':
+        specifier: workspace:*
+        version: link:../../packages/mcp-observability
       agents:
         specifier: 0.0.62
         version: 0.0.62(@cloudflare/workers-types@4.20250410.0)
@@ -246,6 +258,9 @@ importers:
       '@repo/mcp-common':
         specifier: workspace:*
         version: link:../../packages/mcp-common
+      '@repo/mcp-observability':
+        specifier: workspace:*
+        version: link:../../packages/mcp-observability
       agents:
         specifier: 0.0.62
         version: 0.0.62(@cloudflare/workers-types@4.20250410.0)
@@ -265,6 +280,9 @@ importers:
       '@cloudflare/workers-types':
         specifier: 4.20250410.0
         version: 4.20250410.0
+      '@types/node':
+        specifier: ^22.14.1
+        version: 22.14.1
       prettier:
         specifier: 3.5.3
         version: 3.5.3
@@ -359,6 +377,9 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: 1.9.0
         version: 1.9.0
+      '@repo/mcp-observability':
+        specifier: workspace:*
+        version: link:../mcp-observability
       agents:
         specifier: 0.0.62
         version: 0.0.62(@cloudflare/workers-types@4.20250410.0)
@@ -390,12 +411,34 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/node':
+        specifier: ^22.14.1
+        version: 22.14.1
       '@vitest/ui':
         specifier: 3.0.9
         version: 3.0.9(vitest@3.0.9)
       vitest:
         specifier: 3.0.9
         version: 3.0.9(@types/node@22.14.1)(@vitest/ui@3.0.9)(lightningcss@1.29.2)
+
+  packages/mcp-observability:
+    dependencies:
+      '@modelcontextprotocol/sdk':
+        specifier: 1.9.0
+        version: 1.9.0
+      '@types/node':
+        specifier: ^22.14.1
+        version: 22.14.1
+      wrangler:
+        specifier: ^4.10.0
+        version: 4.10.0(@cloudflare/workers-types@4.20250416.0)
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
 
   packages/tools: {}
 
