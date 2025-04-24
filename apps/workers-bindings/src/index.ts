@@ -31,10 +31,6 @@ export class WorkersBindingsMCP extends McpAgent<Env, WorkersBindingsMCPState, P
 		version: '1.0.0',
 	})
 
-	initialState: WorkersBindingsMCPState = {
-		activeAccountId: null,
-	}
-
 	async init() {
 		registerAccountTools(this)
 		registerKVTools(this)
