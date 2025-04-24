@@ -11,8 +11,6 @@ import { registerAccountTools } from '@repo/mcp-common/src/tools/account'
 
 import { registerIntegrationsTools } from './tools/integrations'
 
-
-
 import type { AccountSchema, UserSchema } from '@repo/mcp-common/src/cloudflare-oauth-handler'
 
 // Context from the auth process, encrypted & stored in the auth token
@@ -67,9 +65,6 @@ export class MyMCP extends McpAgent<Env, State, Props> {
 const CloudflareOneCasbScopes = {
 	'account:read': 'See your account info such as account details, analytics, and memberships.',
 	'user:read': 'See your user info such as name, email address, and account memberships.',
-	'workers:write':
-		'See and change Cloudflare Workers data such as zones, KV storage, namespaces, scripts, and routes.',
-	'workers_observability:read': 'See observability logs for your account',
 	'teams:read': 'See Cloudflare One Resources',
 	offline_access: 'Grants refresh tokens for long-lived access.',
 } as const

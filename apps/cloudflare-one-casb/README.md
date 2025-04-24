@@ -6,8 +6,7 @@ You should use this as a template to build an MCP server for Cloudflare, provide
 
 ## Getting Started
 
-
-- Set secrets via Wrangler (ask in the `Cloudflare's Own MCP Servers` internal channel to get credentials)
+- Set secrets via Wrangler
 
 ```bash
 wrangler secret put CLOUDFLARE_CLIENT_ID
@@ -28,9 +27,5 @@ Deploy the MCP server to make it available on your workers.dev domain
 Test the remote server using [Inspector](https://modelcontextprotocol.io/docs/tools/inspector):
 
 ```
-npx @modelcontextprotocol/inspector@latest
+npx wrangler deploy
 ```
-
-## Deploying to production
-
-- You will need to liberate the zone (LTZ) for your `<server-name>.mcp.cloudflare.com`

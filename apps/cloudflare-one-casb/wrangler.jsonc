@@ -37,10 +37,9 @@
 	"preview_urls": false,
 	"env": {
 		"staging": {
-			"name": "mcp-cloudflare-staging",
+			"name": "mcp-cloudflare-casb-staging",
 			"account_id": "8995c0f49cdcf57eb54d2c1e52b7d2f3",
-			// enable workers-dev for staging
-			"workers_dev": true,
+			"routes": [{ "pattern": "casb-staging.mcp.cloudflare.com", "custom_domain": true }],
 			"durable_objects": {
 				"bindings": [
 					{
@@ -59,7 +58,7 @@
 		"production": {
 			"name": "mcp-cloudflare-production",
 			"account_id": "8995c0f49cdcf57eb54d2c1e52b7d2f3",
-			"routes": ["mcp.cloudflare.com/*"],
+			"routes": [{ "pattern": "casb.mcp.cloudflare.com", "custom_domain": true }],
 			"durable_objects": {
 				"bindings": [
 					{
