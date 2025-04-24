@@ -30,10 +30,6 @@ export class ObservabilityMCP extends McpAgent<Env, State, Props> {
 		version: '1.0.0',
 	})
 
-	initialState: State = {
-		activeAccountId: null,
-	}
-
 	async init() {
 		registerAccountTools(this)
 
