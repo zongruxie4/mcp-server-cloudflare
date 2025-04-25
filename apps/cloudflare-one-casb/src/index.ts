@@ -20,8 +20,6 @@ const metrics = new MetricsTracker(env.MCP_METRICS, {
 	version: env.MCP_SERVER_VERSION,
 })
 
-// Context from the auth process, encrypted & stored in the auth token
-// and provided to the DurableMCP as this.props
 export type Props = {
 	accessToken: string
 	user: UserSchema['result']
@@ -41,7 +39,6 @@ export class CASBMCP extends McpAgent<Env, State, Props> {
 	}
 
 	getActiveAccountId() {
-		// TODO: Figure out why this fail sometimes, and why we need to wrap this in a try catch
 		try {
 			return this.state.activeAccountId ?? null
 		} catch (e) {
