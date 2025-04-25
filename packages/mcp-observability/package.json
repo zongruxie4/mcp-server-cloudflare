@@ -10,9 +10,9 @@
 	},
 	"dependencies": {
 		"@modelcontextprotocol/sdk": "1.9.0",
-		"wrangler": "^4.10.0",
-		"zod": "^3.24.2",
-		"@types/node": "^22.14.1"
+		"wrangler": "4.10.0",
+		"zod": "3.24.2",
+		"@types/node": "22.14.1"
 	},
 	"devDependencies": {
 		"@repo/typescript-config": "workspace:*"

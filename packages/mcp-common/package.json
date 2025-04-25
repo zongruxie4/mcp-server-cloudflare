@@ -23,12 +23,12 @@
 	"devDependencies": {
 		"@cloudflare/types": "6.29.1",
 		"@cloudflare/vitest-pool-workers": "0.8.14",
-		"@cloudflare/workers-types": "4.20250410.0",
+		"@cloudflare/workers-types": "4.20250414.0",
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@vitest/ui": "3.0.9",
 		"vitest": "3.0.9",
-		"@types/node": "^22.14.1"
+		"@types/node": "22.14.1"
 	}
 }
