@@ -222,7 +222,7 @@ export function createAuthHandlers({ scopes }: { scopes: Record<string, string> 
 						label: user.email,
 					},
 					scope: oauthReqInfo.scope,
-					// This will be available on this.props inside MyMCP
+					// This will be available on this.props inside CASBMCP
 					props: {
 						user,
 						accounts,

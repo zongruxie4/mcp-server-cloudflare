@@ -22,10 +22,10 @@ export type Props = {
 }
 
 export type State = { activeAccountId: string | null }
-export class MyMCP extends McpAgent<Env, State, Props> {
+export class CASBMCP extends McpAgent<Env, State, Props> {
 	// @ts-ignore
 	server = new McpServer({
-		name: 'Remote MCP Server with Workers Observability',
+		name: "Remote MCP Server with Cloudflare One's Cloud Access Security Broker (CASB)",
 		version: '1.0.0',
 	})
 
@@ -34,7 +34,6 @@ export class MyMCP extends McpAgent<Env, State, Props> {
 	}
 
 	async init() {
-		// @ts-ignore
 		registerAccountTools(this)
 		registerIntegrationsTools(this)
 	}
@@ -72,7 +71,7 @@ const CloudflareOneCasbScopes = {
 export default new OAuthProvider({
 	apiRoute: '/sse',
 	// @ts-ignore
-	apiHandler: MyMCP.mount('/sse'),
+	apiHandler: CASBMCP.mount('/sse'),
 	// @ts-ignore
 	defaultHandler: createAuthHandlers({ scopes: CloudflareOneCasbScopes }),
 	authorizeEndpoint: '/oauth/authorize',
