@@ -15,7 +15,7 @@ import {
 	assetCategoryVendorParam,
 } from '@repo/mcp-common/src/schemas/cf1-integrations'
 
-import type { MyMCP } from '../index'
+import type { CASBMCP } from '../index'
 
 const PAGE_SIZE = 3
 
@@ -40,7 +40,10 @@ interface ToolDefinition<T extends Record<string, any>> {
 }
 
 // Helper function to handle common error cases and account ID checks
-const withAccountCheck = <T extends Record<string, any>>(agent: MyMCP, handler: ToolHandler<T>) => {
+const withAccountCheck = <T extends Record<string, any>>(
+	agent: CASBMCP,
+	handler: ToolHandler<T>
+) => {
 	return async (params: T) => {
 		const accountId = agent.getActiveAccountId()
 		if (!accountId) {
@@ -295,7 +298,7 @@ const toolDefinitions: Array<ToolDefinition<any>> = [
  * Registers the logs analysis tool with the MCP server
  * @param agent The MCP server instance
  */
-export function registerIntegrationsTools(agent: MyMCP) {
+export function registerIntegrationsTools(agent: CASBMCP) {
 	toolDefinitions.forEach(({ name, description, params, handler }) => {
 		agent.server.tool(name, description, params, withAccountCheck(agent, handler))
 	})

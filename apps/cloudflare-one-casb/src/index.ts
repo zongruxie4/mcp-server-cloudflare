@@ -1,5 +1,4 @@
 import OAuthProvider from '@cloudflare/workers-oauth-provider'
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { McpAgent } from 'agents/mcp'
 import { env } from 'cloudflare:workers'
 
@@ -7,6 +6,7 @@ import {
 	createAuthHandlers,
 	handleTokenExchangeCallback,
 } from '@repo/mcp-common/src/cloudflare-oauth-handler'
+import { CloudflareMCPServer } from '@repo/mcp-common/src/server'
 import { registerAccountTools } from '@repo/mcp-common/src/tools/account'
 
 import { registerIntegrationsTools } from './tools/integrations'
@@ -22,19 +22,13 @@ export type Props = {
 }
 
 export type State = { activeAccountId: string | null }
-export class MyMCP extends McpAgent<Env, State, Props> {
-	// @ts-ignore
-	server = new McpServer({
-		name: 'Remote MCP Server with Workers Observability',
-		version: '1.0.0',
+export class CASBMCP extends McpAgent<Env, State, Props> {
+	server = new CloudflareMCPServer(undefined, env.MCP_METRICS, {
+		name: env.MCP_SERVER_NAME,
+		version: env.MCP_SERVER_VERSION,
 	})
 
-	initialState: State = {
-		activeAccountId: null,
-	}
-
 	async init() {
-		// @ts-ignore
 		registerAccountTools(this)
 		registerIntegrationsTools(this)
 	}
@@ -50,8 +44,6 @@ export class MyMCP extends McpAgent<Env, State, Props> {
 	}
 
 	setActiveAccountId(accountId: string) {
-		console.log('Setting account ID: ', accountId)
-		// TODO: Figure out why this fail sometimes, and why we need to wrap this in a try catch
 		try {
 			this.setState({
 				...this.state,
@@ -72,7 +64,7 @@ const CloudflareOneCasbScopes = {
 export default new OAuthProvider({
 	apiRoute: '/sse',
 	// @ts-ignore
-	apiHandler: MyMCP.mount('/sse'),
+	apiHandler: CASBMCP.mount('/sse'),
 	// @ts-ignore
 	defaultHandler: createAuthHandlers({ scopes: CloudflareOneCasbScopes }),
 	authorizeEndpoint: '/oauth/authorize',
