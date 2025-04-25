@@ -9,9 +9,16 @@ import {
 import { CloudflareMCPServer } from '@repo/mcp-common/src/server'
 import { registerAccountTools } from '@repo/mcp-common/src/tools/account'
 
+import { MetricsTracker } from '../../../packages/mcp-observability/src'
 import { registerIntegrationsTools } from './tools/integrations'
 
 import type { AccountSchema, UserSchema } from '@repo/mcp-common/src/cloudflare-oauth-handler'
+import type { CloudflareMcpAgent } from '@repo/mcp-common/src/types/cloudflare-mcp-agent'
+
+const metrics = new MetricsTracker(env.MCP_METRICS, {
+	name: env.MCP_SERVER_NAME,
+	version: env.MCP_SERVER_VERSION,
+})
 
 // Context from the auth process, encrypted & stored in the auth token
 // and provided to the DurableMCP as this.props
@@ -29,7 +36,7 @@ export class CASBMCP extends McpAgent<Env, State, Props> {
 	})
 
 	async init() {
-		registerAccountTools(this)
+		registerAccountTools(this as unknown as CloudflareMcpAgent)
 		registerIntegrationsTools(this)
 	}
 
@@ -66,7 +73,7 @@ export default new OAuthProvider({
 	// @ts-ignore
 	apiHandler: CASBMCP.mount('/sse'),
 	// @ts-ignore
-	defaultHandler: createAuthHandlers({ scopes: CloudflareOneCasbScopes }),
+	defaultHandler: createAuthHandlers({ scopes: CloudflareOneCasbScopes, metrics }),
 	authorizeEndpoint: '/oauth/authorize',
 	tokenEndpoint: '/token',
 	tokenExchangeCallback: (options) =>
