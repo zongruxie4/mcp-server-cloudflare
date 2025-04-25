@@ -32,13 +32,23 @@
 		}
 	],
 	"vars": {
-		"ENVIRONMENT": "development"
+		"ENVIRONMENT": "development",
+		"MCP_SERVER_NAME": "PLACEHOLDER",
+		"MCP_SERVER_VERSION": "PLACEHOLDER",
+		"CLOUDFLARE_CLIENT_ID": "PLACEHOLDER",
+		"CLOUDFLARE_CLIENT_SECRET": "PLACEHOLDER"
 	},
 	"dev": {
 		"port": 8976
 	},
 	"workers_dev": false,
 	"preview_urls": false,
+	"analytics_engine_datasets": [
+		{
+			"binding": "MCP_METRICS",
+			"dataset": "mcp-metrics-dev"
+		}
+	],
 	"env": {
 		"staging": {
 			"name": "mcp-cloudflare-workers-observability-staging",
@@ -60,7 +70,13 @@
 			],
 			"vars": {
 				"ENVIRONMENT": "staging"
-			}
+			},
+			"analytics_engine_datasets": [
+				{
+					"binding": "MCP_METRICS",
+					"dataset": "mcp-metrics-staging"
+				}
+			]
 		},
 		"production": {
 			"name": "mcp-cloudflare-workers-observability-production",
@@ -82,7 +98,13 @@
 			],
 			"vars": {
 				"ENVIRONMENT": "production"
-			}
+			},
+			"analytics_engine_datasets": [
+				{
+					"binding": "MCP_METRICS",
+					"dataset": "mcp-metrics-production"
+				}
+			]
 		}
 	}
 }
