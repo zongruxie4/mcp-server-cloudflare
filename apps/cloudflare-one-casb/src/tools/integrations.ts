@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { withAccountCheck } from '@repo/mcp-common/src/api/account'
 import {
 	handleAssetById,
 	handleAssetCategories,
@@ -15,73 +16,17 @@ import {
 	assetCategoryVendorParam,
 } from '@repo/mcp-common/src/schemas/cf1-integrations'
 
+import type { McpAgentWithAccount } from '@repo/mcp-common/src/api/account'
+import type { ToolDefinition } from '@repo/mcp-common/src/types/tools'
 import type { CASBMCP } from '../index'
 
 const PAGE_SIZE = 3
 
-// CF1INT Integration Params
 const integrationIdParam = z.string().describe('The UUID of the integration to analyze')
-
-// CF1INT Asset Params
 const assetSearchTerm = z.string().describe('The search keyword for assets')
 const assetIdParam = z.string().describe('The UUID of the asset to analyze')
 const assetCategoryIdParam = z.string().describe('The UUID of the asset category to analyze')
 
-// Define types for our tool handlers
-type ToolHandler<T extends Record<string, any>> = (
-	params: T & { accountId: string; apiToken: string }
-) => Promise<any>
-
-interface ToolDefinition<T extends Record<string, any>> {
-	name: string
-	description: string
-	params: Record<string, z.ZodType>
-	handler: ToolHandler<T>
-}
-
-// Helper function to handle common error cases and account ID checks
-const withAccountCheck = <T extends Record<string, any>>(
-	agent: CASBMCP,
-	handler: ToolHandler<T>
-) => {
-	return async (params: T) => {
-		const accountId = agent.getActiveAccountId()
-		if (!accountId) {
-			return {
-				content: [
-					{
-						type: 'text' as const,
-						text: 'No currently active accountId. Try listing your accounts (accounts_list) and then setting an active account (set_active_account)',
-					},
-				],
-			}
-		}
-
-		try {
-			const result = await handler({
-				...params,
-				accountId,
-				apiToken: agent.props.accessToken,
-			})
-			return {
-				content: [{ type: 'text' as const, text: JSON.stringify(result) }],
-			}
-		} catch (error) {
-			return {
-				content: [
-					{
-						type: 'text' as const,
-						text: JSON.stringify({
-							error: `Error processing request: ${error instanceof Error ? error.message : 'Unknown error'}`,
-						}),
-					},
-				],
-			}
-		}
-	}
-}
-
-// Tool definitions with their handlers
 const toolDefinitions: Array<ToolDefinition<any>> = [
 	{
 		name: 'integration_by_id',
@@ -109,7 +54,6 @@ const toolDefinitions: Array<ToolDefinition<any>> = [
 		description: 'List all Cloudflare One Integrations in a given account',
 		params: {},
 		handler: async ({ accountId, apiToken }: { accountId: string; apiToken: string }) => {
-			console.log('integrations_list', accountId, apiToken)
 			const { integrations } = await handleIntegrations({ accountId, apiToken })
 			return { integrations }
 		},
@@ -300,6 +244,11 @@ const toolDefinitions: Array<ToolDefinition<any>> = [
  */
 export function registerIntegrationsTools(agent: CASBMCP) {
 	toolDefinitions.forEach(({ name, description, params, handler }) => {
-		agent.server.tool(name, description, params, withAccountCheck(agent, handler))
+		agent.server.tool(
+			name,
+			description,
+			params,
+			withAccountCheck(agent as unknown as McpAgentWithAccount, handler)
+		)
 	})
 }
