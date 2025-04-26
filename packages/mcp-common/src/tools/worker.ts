@@ -15,7 +15,7 @@ const workerNameParam = z.string().describe('The name of the worker script to re
 
 export function registerWorkersTools(agent: CloudflareMcpAgent) {
 	// Tool to list all workers
-	agent.server.tool('workers_list', 'List all Workers in your Cloudflare account', {}, async () => {
+	agent.server.tool('workers_list', 'List all Workers in your Cloudflare account', async () => {
 		const accountId = agent.getActiveAccountId()
 		if (!accountId) {
 			return {
@@ -57,12 +57,13 @@ export function registerWorkersTools(agent: CloudflareMcpAgent) {
 					},
 				],
 			}
-		} catch (error) {
+		} catch (e) {
+			agent.server.recordError(e)
 			return {
 				content: [
 					{
 						type: 'text',
-						text: `Error listing workers: ${error instanceof Error && error.message}`,
+						text: `Error listing workers: ${e instanceof Error && e.message}`,
 					},
 				],
 			}
@@ -101,12 +102,13 @@ export function registerWorkersTools(agent: CloudflareMcpAgent) {
 						},
 					],
 				}
-			} catch (error) {
+			} catch (e) {
+				agent.server.recordError(e)
 				return {
 					content: [
 						{
 							type: 'text',
-							text: `Error retrieving worker script: ${error instanceof Error && error.message}`,
+							text: `Error retrieving worker script: ${e instanceof Error && e.message}`,
 						},
 					],
 				}
