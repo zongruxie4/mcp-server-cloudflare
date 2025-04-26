@@ -51,7 +51,7 @@ export class CASBMCP extends McpAgent<Env, State, Props> {
 			version: this.env.MCP_SERVER_VERSION,
 		})
 
-		registerAccountTools(this as unknown as CloudflareMcpAgent)
+		registerAccountTools(this)
 		registerIntegrationsTools(this)
 	}
 
