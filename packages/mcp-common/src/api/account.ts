@@ -1,6 +1,6 @@
-import type { McpAgent } from 'agents/mcp'
 import type { Cloudflare } from 'cloudflare'
 import type { Account } from 'cloudflare/resources/accounts/accounts.mjs'
+import type { CloudflareMcpAgent } from '../types/cloudflare-mcp-agent'
 import type { ToolHandler } from '../types/tools'
 
 export async function handleAccountsList({ client }: { client: Cloudflare }): Promise<Account[]> {
@@ -9,12 +9,8 @@ export async function handleAccountsList({ client }: { client: Cloudflare }): Pr
 	return response.result
 }
 
-export interface McpAgentWithAccount extends McpAgent {
-	getActiveAccountId: () => string
-}
-
 export const withAccountCheck = <T extends Record<string, any>>(
-	agent: McpAgentWithAccount,
+	agent: CloudflareMcpAgent,
 	handler: ToolHandler<T>
 ) => {
 	return async (params: T) => {

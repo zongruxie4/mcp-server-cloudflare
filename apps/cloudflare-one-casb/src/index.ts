@@ -28,12 +28,29 @@ export type Props = {
 
 export type State = { activeAccountId: string | null }
 export class CASBMCP extends McpAgent<Env, State, Props> {
-	server = new CloudflareMCPServer(undefined, env.MCP_METRICS, {
-		name: env.MCP_SERVER_NAME,
-		version: env.MCP_SERVER_VERSION,
-	})
+	_server: CloudflareMCPServer | undefined
+	set server(server: CloudflareMCPServer) {
+		this._server = server
+	}
+
+	get server(): CloudflareMCPServer {
+		if (!this._server) {
+			throw new Error('Tried to access server before it was initialized')
+		}
+
+		return this._server
+	}
+
+	constructor(ctx: DurableObjectState, env: Env) {
+		super(ctx, env)
+	}
 
 	async init() {
+		this.server = new CloudflareMCPServer(this.props.user.id, this.env.MCP_METRICS, {
+			name: this.env.MCP_SERVER_NAME,
+			version: this.env.MCP_SERVER_VERSION,
+		})
+
 		registerAccountTools(this as unknown as CloudflareMcpAgent)
 		registerIntegrationsTools(this)
 	}
