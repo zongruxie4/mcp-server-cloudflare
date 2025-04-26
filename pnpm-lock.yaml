@@ -43,7 +43,7 @@ importers:
         specifier: 13.0.3
         version: 13.0.3(typescript@5.5.4)
       turbo:
-        specifier: ^2.5.0
+        specifier: 2.5.0
         version: 2.5.0
       typescript:
         specifier: 5.5.4
@@ -51,55 +51,6 @@ importers:
       vitest:
         specifier: 3.0.9
         version: 3.0.9(@types/node@22.14.1)(@vitest/ui@3.0.9)(lightningcss@1.29.2)
-
-  apps/cloudflare-one-casb:
-    dependencies:
-      '@cloudflare/workers-oauth-provider':
-        specifier: 0.0.2
-        version: 0.0.2
-      '@hono/zod-validator':
-        specifier: 0.4.3
-        version: 0.4.3(hono@4.7.6)(zod@3.24.2)
-      '@modelcontextprotocol/sdk':
-        specifier: 1.9.0
-        version: 1.9.0
-      '@repo/mcp-common':
-        specifier: workspace:*
-        version: link:../../packages/mcp-common
-      agents:
-        specifier: 0.0.49
-        version: 0.0.49(@cloudflare/workers-types@4.20250410.0)
-      cloudflare:
-        specifier: 4.2.0
-        version: 4.2.0
-      hono:
-        specifier: 4.7.6
-        version: 4.7.6
-      zod:
-        specifier: 3.24.2
-        version: 3.24.2
-    devDependencies:
-      '@cloudflare/vitest-pool-workers':
-        specifier: 0.8.14
-        version: 0.8.14(@cloudflare/workers-types@4.20250410.0)(@vitest/runner@3.0.9)(@vitest/snapshot@3.0.9)(vitest@3.0.9)
-      '@cloudflare/workers-types':
-        specifier: 4.20250410.0
-        version: 4.20250410.0
-      '@types/jsonwebtoken':
-        specifier: 9.0.9
-        version: 9.0.9
-      prettier:
-        specifier: 3.5.3
-        version: 3.5.3
-      typescript:
-        specifier: 5.5.4
-        version: 5.5.4
-      vitest:
-        specifier: 3.0.9
-        version: 3.0.9(@types/node@22.14.1)(@vitest/ui@3.0.9)(lightningcss@1.29.2)
-      wrangler:
-        specifier: 4.10.0
-        version: 4.10.0(@cloudflare/workers-types@4.20250410.0)
 
   apps/docs-autorag:
     dependencies:
@@ -120,7 +71,7 @@ importers:
         version: link:../../packages/mcp-observability
       agents:
         specifier: 0.0.62
-        version: 0.0.62(@cloudflare/workers-types@4.20250410.0)
+        version: 0.0.62(@cloudflare/workers-types@4.20250416.0)
       cloudflare:
         specifier: 4.2.0
         version: 4.2.0
@@ -128,7 +79,7 @@ importers:
         specifier: 4.7.6
         version: 4.7.6
       mime:
-        specifier: ^4.0.6
+        specifier: 4.0.6
         version: 4.0.6
       zod:
         specifier: 3.24.2
@@ -136,12 +87,9 @@ importers:
     devDependencies:
       '@cloudflare/vitest-pool-workers':
         specifier: 0.8.14
-        version: 0.8.14(@cloudflare/workers-types@4.20250410.0)(@vitest/runner@3.0.9)(@vitest/snapshot@3.0.9)(vitest@3.0.9)
-      '@cloudflare/workers-types':
-        specifier: 4.20250410.0
-        version: 4.20250410.0
+        version: 0.8.14(@cloudflare/workers-types@4.20250416.0)(@vitest/runner@3.0.9)(@vitest/snapshot@3.0.9)(vitest@3.0.9)
       '@types/node':
-        specifier: ^22.14.1
+        specifier: 22.14.1
         version: 22.14.1
       prettier:
         specifier: 3.5.3
@@ -154,27 +102,24 @@ importers:
         version: 3.0.9(@types/node@22.14.1)(@vitest/ui@3.0.9)(lightningcss@1.29.2)
       wrangler:
         specifier: 4.10.0
-        version: 4.10.0(@cloudflare/workers-types@4.20250410.0)
+        version: 4.10.0(@cloudflare/workers-types@4.20250416.0)
 
   apps/sandbox-container:
     dependencies:
       '@cloudflare/workers-oauth-provider':
         specifier: 0.0.2
         version: 0.0.2
-      '@cloudflare/workers-types':
-        specifier: ^4.20250320.0
-        version: 4.20250416.0
       '@hono/node-server':
-        specifier: ^1.13.8
+        specifier: 1.13.8
         version: 1.13.8(hono@4.7.6)
       '@hono/zod-validator':
-        specifier: ^0.4.3
+        specifier: 0.4.3
         version: 0.4.3(hono@4.7.6)(zod@3.24.2)
       '@modelcontextprotocol/sdk':
-        specifier: ^1.9.0
+        specifier: 1.9.0
         version: 1.9.0
       '@n8n/json-schema-to-zod':
-        specifier: ^1.1.0
+        specifier: 1.1.0
         version: 1.1.0(zod@3.24.2)
       '@repo/eval-tools':
         specifier: workspace:*
@@ -186,65 +131,65 @@ importers:
         specifier: workspace:*
         version: link:../../packages/mcp-observability
       '@types/node':
-        specifier: ^22.13.10
+        specifier: 22.14.1
         version: 22.14.1
       agents:
-        specifier: ^0.0.62
+        specifier: 0.0.62
         version: 0.0.62(@cloudflare/workers-types@4.20250416.0)
       cron-schedule:
-        specifier: ^5.0.4
+        specifier: 5.0.4
         version: 5.0.4
       esbuild:
         specifier: 0.25.1
         version: 0.25.1
       hono:
-        specifier: ^4.7.5
+        specifier: 4.7.6
         version: 4.7.6
       mime:
-        specifier: ^4.0.6
+        specifier: 4.0.6
         version: 4.0.6
       octokit:
-        specifier: ^4.1.2
+        specifier: 4.1.2
         version: 4.1.2
       partyserver:
-        specifier: ^0.0.65
+        specifier: 0.0.65
         version: 0.0.65(@cloudflare/workers-types@4.20250416.0)
       simple-git-hooks:
-        specifier: ^2.12.1
+        specifier: 2.12.1
         version: 2.12.1
       tsx:
-        specifier: ^4.19.3
+        specifier: 4.19.3
         version: 4.19.3
       vitest-evals:
-        specifier: ^0.1.4
+        specifier: 0.1.4
         version: 0.1.4(vitest@3.0.9)
       workers-mcp:
         specifier: 0.1.0-3
         version: 0.1.0-3
       zod:
-        specifier: ^3.24.2
+        specifier: 3.24.2
         version: 3.24.2
     devDependencies:
       '@cloudflare/vitest-pool-workers':
         specifier: 0.8.14
         version: 0.8.14(@cloudflare/workers-types@4.20250416.0)(@vitest/runner@3.0.9)(@vitest/snapshot@3.0.9)(vitest@3.0.9)
       '@types/mock-fs':
-        specifier: ^4.13.4
+        specifier: 4.13.4
         version: 4.13.4
       ai:
-        specifier: ^4.3.6
+        specifier: 4.3.6
         version: 4.3.6(react@17.0.2)(zod@3.24.2)
       concurrently:
-        specifier: ^9.1.2
+        specifier: 9.1.2
         version: 9.1.2
       mock-fs:
-        specifier: ^5.5.0
+        specifier: 5.5.0
         version: 5.5.0
       start-server-and-test:
-        specifier: ^2.0.11
+        specifier: 2.0.11
         version: 2.0.11
       wrangler:
-        specifier: ^4.9.1
+        specifier: 4.10.0
         version: 4.10.0(@cloudflare/workers-types@4.20250416.0)
 
   apps/workers-bindings:
@@ -255,6 +200,9 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: 1.9.0
         version: 1.9.0
+      '@n8n/json-schema-to-zod':
+        specifier: 1.1.0
+        version: 1.1.0(zod@3.24.2)
       '@repo/mcp-common':
         specifier: workspace:*
         version: link:../../packages/mcp-common
@@ -263,7 +211,7 @@ importers:
         version: link:../../packages/mcp-observability
       agents:
         specifier: 0.0.62
-        version: 0.0.62(@cloudflare/workers-types@4.20250410.0)
+        version: 0.0.62(@cloudflare/workers-types@4.20250416.0)
       hono:
         specifier: 4.7.6
         version: 4.7.6
@@ -273,10 +221,7 @@ importers:
     devDependencies:
       '@cloudflare/vitest-pool-workers':
         specifier: 0.8.14
-        version: 0.8.14(@cloudflare/workers-types@4.20250410.0)(@vitest/runner@3.0.9)(@vitest/snapshot@3.0.9)(vitest@3.0.9)
-      '@cloudflare/workers-types':
-        specifier: 4.20250410.0
-        version: 4.20250410.0
+        version: 0.8.14(@cloudflare/workers-types@4.20250416.0)(@vitest/runner@3.0.9)(@vitest/snapshot@3.0.9)(vitest@3.0.9)
       '@types/node':
         specifier: 22.14.1
         version: 22.14.1
@@ -291,7 +236,7 @@ importers:
         version: 3.0.9(@types/node@22.14.1)(@vitest/ui@3.0.9)(lightningcss@1.29.2)
       wrangler:
         specifier: 4.10.0
-        version: 4.10.0(@cloudflare/workers-types@4.20250410.0)
+        version: 4.10.0(@cloudflare/workers-types@4.20250416.0)
 
   apps/workers-observability:
     dependencies:
@@ -312,7 +257,7 @@ importers:
         version: link:../../packages/mcp-observability
       agents:
         specifier: 0.0.62
-        version: 0.0.62(@cloudflare/workers-types@4.20250410.0)
+        version: 0.0.62(@cloudflare/workers-types@4.20250416.0)
       cloudflare:
         specifier: 4.2.0
         version: 4.2.0
@@ -325,12 +270,9 @@ importers:
     devDependencies:
       '@cloudflare/vitest-pool-workers':
         specifier: 0.8.14
-        version: 0.8.14(@cloudflare/workers-types@4.20250410.0)(@vitest/runner@3.0.9)(@vitest/snapshot@3.0.9)(vitest@3.0.9)
-      '@cloudflare/workers-types':
-        specifier: 4.20250410.0
-        version: 4.20250410.0
+        version: 0.8.14(@cloudflare/workers-types@4.20250416.0)(@vitest/runner@3.0.9)(@vitest/snapshot@3.0.9)(vitest@3.0.9)
       '@types/node':
-        specifier: ^22.14.1
+        specifier: 22.14.1
         version: 22.14.1
       prettier:
         specifier: 3.5.3
@@ -343,7 +285,7 @@ importers:
         version: 3.0.9(@types/node@22.14.1)(@vitest/ui@3.0.9)(lightningcss@1.29.2)
       wrangler:
         specifier: 4.10.0
-        version: 4.10.0(@cloudflare/workers-types@4.20250410.0)
+        version: 4.10.0(@cloudflare/workers-types@4.20250416.0)
 
   packages/eslint-config:
     devDependencies:
@@ -387,32 +329,29 @@ importers:
   packages/eval-tools:
     dependencies:
       '@ai-sdk/openai':
-        specifier: ^1.3.12
+        specifier: 1.3.12
         version: 1.3.12(zod@3.24.2)
       '@cloudflare/vitest-pool-workers':
         specifier: 0.8.14
         version: 0.8.14(@cloudflare/workers-types@4.20250416.0)(@vitest/runner@3.0.9)(@vitest/snapshot@3.0.9)(vitest@3.0.9)
-      '@cloudflare/workers-types':
-        specifier: ^4.20250414.0
-        version: 4.20250416.0
       ai:
-        specifier: ^4.3.6
+        specifier: 4.3.6
         version: 4.3.6(react@17.0.2)(zod@3.24.2)
       workers-ai-provider:
-        specifier: ^0.3.0
+        specifier: 0.3.0
         version: 0.3.0
       wrangler:
-        specifier: ^4.10.0
+        specifier: 4.10.0
         version: 4.10.0(@cloudflare/workers-types@4.20250416.0)
       zod:
-        specifier: ^3.24.2
+        specifier: 3.24.2
         version: 3.24.2
     devDependencies:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       vitest-evals:
-        specifier: ^0.1.4
+        specifier: 0.1.4
         version: 0.1.4(vitest@3.0.9)
 
   packages/mcp-common:
@@ -431,7 +370,7 @@ importers:
         version: link:../mcp-observability
       agents:
         specifier: 0.0.62
-        version: 0.0.62(@cloudflare/workers-types@4.20250410.0)
+        version: 0.0.62(@cloudflare/workers-types@4.20250416.0)
       cloudflare:
         specifier: 4.2.0
         version: 4.2.0
@@ -442,15 +381,9 @@ importers:
         specifier: 3.24.2
         version: 3.24.2
     devDependencies:
-      '@cloudflare/types':
-        specifier: 6.29.1
-        version: 6.29.1(react@17.0.2)
       '@cloudflare/vitest-pool-workers':
         specifier: 0.8.14
-        version: 0.8.14(@cloudflare/workers-types@4.20250410.0)(@vitest/runner@3.0.9)(@vitest/snapshot@3.0.9)(vitest@3.0.9)
-      '@cloudflare/workers-types':
-        specifier: 4.20250410.0
-        version: 4.20250410.0
+        version: 0.8.14(@cloudflare/workers-types@4.20250416.0)(@vitest/runner@3.0.9)(@vitest/snapshot@3.0.9)(vitest@3.0.9)
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
@@ -461,7 +394,7 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
-        specifier: ^22.14.1
+        specifier: 22.14.1
         version: 22.14.1
       '@vitest/ui':
         specifier: 3.0.9
@@ -469,6 +402,9 @@ importers:
       vitest:
         specifier: 3.0.9
         version: 3.0.9(@types/node@22.14.1)(@vitest/ui@3.0.9)(lightningcss@1.29.2)
+      wrangler:
+        specifier: 4.10.0
+        version: 4.10.0(@cloudflare/workers-types@4.20250416.0)
 
   packages/mcp-observability:
     dependencies:
@@ -476,13 +412,13 @@ importers:
         specifier: 1.9.0
         version: 1.9.0
       '@types/node':
-        specifier: ^22.14.1
+        specifier: 22.14.1
         version: 22.14.1
       wrangler:
-        specifier: ^4.10.0
+        specifier: 4.10.0
         version: 4.10.0(@cloudflare/workers-types@4.20250416.0)
       zod:
-        specifier: ^3.24.2
+        specifier: 3.24.2
         version: 3.24.2
     devDependencies:
       '@repo/typescript-config':
@@ -629,19 +565,9 @@ packages:
   '@clack/prompts@0.8.2':
     resolution: {integrity: sha512-6b9Ab2UiZwJYA9iMyboYyW9yJvAO9V753ZhS+DHKEjZRKAxPPOb7MXXu84lsPFG+vZt6FRFniZ8rXi+zCIw4yQ==}
 
-  '@cloudflare/intl-types@1.5.7':
-    resolution: {integrity: sha512-5p+NqAoM3rOMsZsAS6RMWvClhuxWA3YqRkfIxkTcc6uYNsays90GuyzdXmN/v+T7UiSkmzRa7Atu75tD/245MQ==}
-    peerDependencies:
-      react: ^15.0.0-0 || ^16.0.0-0 || ^17.0.0-0
-
   '@cloudflare/kv-asset-handler@0.4.0':
     resolution: {integrity: sha512-+tv3z+SPp+gqTIcImN9o0hqE9xyfQjI1XD9pL6NuKjua9B1y7mNYv0S9cP+QEbA4ppVgGZEmKOvHX5G5Ei1CVA==}
     engines: {node: '>=18.0.0'}
-
-  '@cloudflare/types@6.29.1':
-    resolution: {integrity: sha512-3AfpWx3G47NWgrkTMMIxcDxl/JpS8K4a5w28+4afK8Eyzd2Mnh7+JRB3C59A6mUjo6e+KTJ/cEvyVIHYO6FQDA==}
-    peerDependencies:
-      react: ^15.0.0-0 || ^16.0.0-0 || ^17.0.0-0
 
   '@cloudflare/unenv-preset@2.3.1':
     resolution: {integrity: sha512-Xq57Qd+ADpt6hibcVBO0uLG9zzRgyRhfCUgBT9s+g3+3Ivg5zDyVgLFy40ES1VdNcu8rPNSivm9A+kGP5IVaPg==}
@@ -651,9 +577,6 @@ packages:
     peerDependenciesMeta:
       workerd:
         optional: true
-
-  '@cloudflare/util-en-garde@8.0.10':
-    resolution: {integrity: sha512-qdCFf90hoZzT4o4xEmxOKUf9+bEJNGh4ANnRYApo6BMyVnHoHEHAQ3nWmGSHBmo+W9hOk2Ik7r1oHLbI0O/RRg==}
 
   '@cloudflare/vitest-pool-workers@0.8.14':
     resolution: {integrity: sha512-uqUvelQQkU/8JD/mgd9OV3byB6CaHxkw/DzHZ4z2haM9epR9D5mDshw5+AfPu7x/IWZ9zciaDawjM8QW8QrjIA==}
@@ -725,8 +648,8 @@ packages:
   '@cloudflare/workers-oauth-provider@0.0.2':
     resolution: {integrity: sha512-/4ITlItqtmG077CBdo/14c4GNrhLDQ9Y/+mDMEppzXz5g0gVbYjzZGtXrQFQG1mfOHNfXmNxgVwin2eh0X423Q==}
 
-  '@cloudflare/workers-types@4.20250410.0':
-    resolution: {integrity: sha512-Yx9VUi6QpmXtUIhOL+em+V02gue12kmVBVL6RGH5mhFh50M0x9JyOmm6wKwKZUny2uQd+22nuouE2q3z1OrsIQ==}
+  '@cloudflare/workers-types@4.20250414.0':
+    resolution: {integrity: sha512-ZHl8LiyUMWiIxYqpasen8Lc75Ef+0afqL26TEd95eRIi5kgkEbjDJ7uIUnpxMoZTRI0J8Hy5YEPtt4nFXt+TpA==}
 
   '@cloudflare/workers-types@4.20250416.0':
     resolution: {integrity: sha512-i37TX0Clp+MrPdXMBdvKZM7JghCrWD9GtG7E+8ANOAPmtZjUkZfEy9qq46IG3XlNpagPaWDkY3SgJ3s01gPxCw==}
@@ -1378,9 +1301,6 @@ packages:
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
 
-  '@types/jsonwebtoken@9.0.9':
-    resolution: {integrity: sha512-uoe+GxEuHbvy12OUQct2X9JenKM3qAscquYymuQN4fMWG9DBQtykrQEFcAbVACF7qaLw9BePSodUL0kquqBJpQ==}
-
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
 
@@ -1392,9 +1312,6 @@ packages:
 
   '@types/mock-fs@4.13.4':
     resolution: {integrity: sha512-mXmM0o6lULPI8z3XNnQCpL0BGxPwx1Ul1wXYEPBGl4efShyxW2Rln0JOPEWGyZaYZMM6OVXM/15zUuFMY52ljg==}
-
-  '@types/ms@2.1.0':
-    resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
   '@types/node-fetch@2.6.12':
     resolution: {integrity: sha512-8nneRWKCg3rMtF69nLQJnOYUcbafYeFSjqkw3jCRLsqkWFlHaoQrr5mXmofFGOx3DKn7UfmBMyov8ySvLRVldA==}
@@ -1531,9 +1448,6 @@ packages:
   agentkeepalive@4.6.0:
     resolution: {integrity: sha512-kja8j7PjmncONqaTsB8fQ+wE2mSU2DJ9D4XKoJ5PFWIdRMa6SLSN1ff4mOr4jCbfRSsxR4keIiySJU0N9T5hIQ==}
     engines: {node: '>= 8.0.0'}
-
-  agents@0.0.49:
-    resolution: {integrity: sha512-AzyV8iyW9uT9xunfbegIXyOqKjU1Kxza2VSaM7cLKEZdZqzXHn8QuQdXz7jtGfdGo9K9K/opOsFoUriArK5/Ow==}
 
   agents@0.0.62:
     resolution: {integrity: sha512-jxBdXzEi4g0JY/ZWxxCsYmPsFoAy04vDFIALPofo5IIzN2mf0yPFWoIcCaJRU3NO2KsyAH1OmWJIWuRq7QuN0w==}
@@ -2302,9 +2216,6 @@ packages:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
 
-  fp-ts@2.16.10:
-    resolution: {integrity: sha512-vuROzbNVfCmUkZSUbnWSltR1sbheyQbTzug7LB/46fEa1c0EucLeBaCEUE0gF3ZGUGBt9lVUiziGOhhj6K1ORA==}
-
   fresh@2.0.0:
     resolution: {integrity: sha512-Rx/WycZ60HOaqLKAi6cHRKKI7zxWbJ31MhntmtwMoaTeF7XFH9hhBp8vITaMidfljRQ6eYWCKkaTK+ykVJHP2A==}
     engines: {node: '>= 0.8'}
@@ -2519,11 +2430,6 @@ packages:
   internal-slot@1.0.7:
     resolution: {integrity: sha512-NGnrKwXzSms2qUUih/ILZ5JBqNTSa1+ZmP6flaIp6KmSElgE9qdndzS3cqjrDovwFdmwsGsLdeFgB6suw+1e9g==}
     engines: {node: '>= 0.4'}
-
-  io-ts@2.2.22:
-    resolution: {integrity: sha512-FHCCztTkHoV9mdBsHpocLpdTAfh956ZQcIkWQxxS0U5HT53vtrcuYdQneEJKH6xILaLNzXVl2Cvwtoy8XNN0AA==}
-    peerDependencies:
-      fp-ts: ^2.5.0
 
   ipaddr.js@1.9.1:
     resolution: {integrity: sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g==}
@@ -2996,7 +2902,6 @@ packages:
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
-    deprecated: Use your platform's native DOMException instead
 
   node-fetch@2.7.0:
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
@@ -4254,19 +4159,9 @@ snapshots:
       picocolors: 1.1.1
       sisteransi: 1.0.5
 
-  '@cloudflare/intl-types@1.5.7(react@17.0.2)':
-    dependencies:
-      react: 17.0.2
-
   '@cloudflare/kv-asset-handler@0.4.0':
     dependencies:
       mime: 3.0.0
-
-  '@cloudflare/types@6.29.1(react@17.0.2)':
-    dependencies:
-      '@cloudflare/intl-types': 1.5.7(react@17.0.2)
-      '@cloudflare/util-en-garde': 8.0.10
-      react: 17.0.2
 
   '@cloudflare/unenv-preset@2.3.1(unenv@2.0.0-rc.15)(workerd@1.20250408.0)':
     dependencies:
@@ -4279,29 +4174,6 @@ snapshots:
       unenv: 2.0.0-rc.15
     optionalDependencies:
       workerd: 1.20250409.0
-
-  '@cloudflare/util-en-garde@8.0.10':
-    dependencies:
-      fp-ts: 2.16.10
-      io-ts: 2.2.22(fp-ts@2.16.10)
-
-  '@cloudflare/vitest-pool-workers@0.8.14(@cloudflare/workers-types@4.20250410.0)(@vitest/runner@3.0.9)(@vitest/snapshot@3.0.9)(vitest@3.0.9)':
-    dependencies:
-      '@vitest/runner': 3.0.9
-      '@vitest/snapshot': 3.0.9
-      birpc: 0.2.14
-      cjs-module-lexer: 1.3.1
-      devalue: 4.3.3
-      esbuild: 0.25.1
-      miniflare: 4.20250408.0
-      semver: 7.7.1
-      vitest: 3.0.9(@types/node@22.14.1)(@vitest/ui@3.0.9)(lightningcss@1.29.2)
-      wrangler: 4.9.1(@cloudflare/workers-types@4.20250410.0)
-      zod: 3.24.2
-    transitivePeerDependencies:
-      - '@cloudflare/workers-types'
-      - bufferutil
-      - utf-8-validate
 
   '@cloudflare/vitest-pool-workers@0.8.14(@cloudflare/workers-types@4.20250416.0)(@vitest/runner@3.0.9)(@vitest/snapshot@3.0.9)(vitest@3.0.9)':
     dependencies:
@@ -4353,9 +4225,9 @@ snapshots:
 
   '@cloudflare/workers-oauth-provider@0.0.2':
     dependencies:
-      '@cloudflare/workers-types': 4.20250416.0
+      '@cloudflare/workers-types': 4.20250414.0
 
-  '@cloudflare/workers-types@4.20250410.0': {}
+  '@cloudflare/workers-types@4.20250414.0': {}
 
   '@cloudflare/workers-types@4.20250416.0': {}
 
@@ -4911,11 +4783,6 @@ snapshots:
 
   '@types/json5@0.0.29': {}
 
-  '@types/jsonwebtoken@9.0.9':
-    dependencies:
-      '@types/ms': 2.1.0
-      '@types/node': 22.14.1
-
   '@types/linkify-it@5.0.0': {}
 
   '@types/markdown-it@14.1.2':
@@ -4928,8 +4795,6 @@ snapshots:
   '@types/mock-fs@4.13.4':
     dependencies:
       '@types/node': 22.14.1
-
-  '@types/ms@2.1.0': {}
 
   '@types/node-fetch@2.6.12':
     dependencies:
@@ -5104,28 +4969,6 @@ snapshots:
   agentkeepalive@4.6.0:
     dependencies:
       humanize-ms: 1.2.1
-
-  agents@0.0.49(@cloudflare/workers-types@4.20250410.0):
-    dependencies:
-      '@modelcontextprotocol/sdk': 1.9.0
-      cron-schedule: 5.0.4
-      nanoid: 5.1.5
-      partyserver: 0.0.66(@cloudflare/workers-types@4.20250410.0)
-      partysocket: 1.1.3
-    transitivePeerDependencies:
-      - '@cloudflare/workers-types'
-      - supports-color
-
-  agents@0.0.62(@cloudflare/workers-types@4.20250410.0):
-    dependencies:
-      '@modelcontextprotocol/sdk': 1.9.0
-      cron-schedule: 5.0.4
-      nanoid: 5.1.5
-      partyserver: 0.0.66(@cloudflare/workers-types@4.20250410.0)
-      partysocket: 1.1.3
-    transitivePeerDependencies:
-      - '@cloudflare/workers-types'
-      - supports-color
 
   agents@0.0.62(@cloudflare/workers-types@4.20250416.0):
     dependencies:
@@ -6037,8 +5880,6 @@ snapshots:
 
   forwarded@0.2.0: {}
 
-  fp-ts@2.16.10: {}
-
   fresh@2.0.0: {}
 
   from@0.1.7: {}
@@ -6264,10 +6105,6 @@ snapshots:
       es-errors: 1.3.0
       hasown: 2.0.2
       side-channel: 1.0.6
-
-  io-ts@2.2.22(fp-ts@2.16.10):
-    dependencies:
-      fp-ts: 2.16.10
 
   ipaddr.js@1.9.1: {}
 
@@ -6846,11 +6683,6 @@ snapshots:
   partyserver@0.0.65(@cloudflare/workers-types@4.20250416.0):
     dependencies:
       '@cloudflare/workers-types': 4.20250416.0
-      nanoid: 5.1.5
-
-  partyserver@0.0.66(@cloudflare/workers-types@4.20250410.0):
-    dependencies:
-      '@cloudflare/workers-types': 4.20250410.0
       nanoid: 5.1.5
 
   partyserver@0.0.66(@cloudflare/workers-types@4.20250416.0):
@@ -7686,7 +7518,7 @@ snapshots:
 
   workers-ai-provider@0.3.0:
     dependencies:
-      '@cloudflare/workers-types': 4.20250416.0
+      '@cloudflare/workers-types': 4.20250414.0
 
   workers-mcp@0.1.0-3:
     dependencies:
@@ -7707,24 +7539,6 @@ snapshots:
       - '@75lb/nature'
       - supports-color
 
-  wrangler@4.10.0(@cloudflare/workers-types@4.20250410.0):
-    dependencies:
-      '@cloudflare/kv-asset-handler': 0.4.0
-      '@cloudflare/unenv-preset': 2.3.1(unenv@2.0.0-rc.15)(workerd@1.20250409.0)
-      blake3-wasm: 2.1.5
-      esbuild: 0.25.1
-      miniflare: 4.20250409.0
-      path-to-regexp: 6.3.0
-      unenv: 2.0.0-rc.15
-      workerd: 1.20250409.0
-    optionalDependencies:
-      '@cloudflare/workers-types': 4.20250410.0
-      fsevents: 2.3.3
-      sharp: 0.33.5
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   wrangler@4.10.0(@cloudflare/workers-types@4.20250416.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.0
@@ -7737,24 +7551,6 @@ snapshots:
       workerd: 1.20250409.0
     optionalDependencies:
       '@cloudflare/workers-types': 4.20250416.0
-      fsevents: 2.3.3
-      sharp: 0.33.5
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  wrangler@4.9.1(@cloudflare/workers-types@4.20250410.0):
-    dependencies:
-      '@cloudflare/kv-asset-handler': 0.4.0
-      '@cloudflare/unenv-preset': 2.3.1(unenv@2.0.0-rc.15)(workerd@1.20250408.0)
-      blake3-wasm: 2.1.5
-      esbuild: 0.25.1
-      miniflare: 4.20250408.0
-      path-to-regexp: 6.3.0
-      unenv: 2.0.0-rc.15
-      workerd: 1.20250408.0
-    optionalDependencies:
-      '@cloudflare/workers-types': 4.20250410.0
       fsevents: 2.3.3
       sharp: 0.33.5
     transitivePeerDependencies:
