@@ -6,10 +6,11 @@ import {
 	createAuthHandlers,
 	handleTokenExchangeCallback,
 } from '@repo/mcp-common/src/cloudflare-oauth-handler'
+import { RequiredScopes } from '@repo/mcp-common/src/scopes'
 import { CloudflareMCPServer } from '@repo/mcp-common/src/server'
 import { registerAccountTools } from '@repo/mcp-common/src/tools/account'
+import { MetricsTracker } from '@repo/mcp-observability'
 
-import { MetricsTracker } from '../../../packages/mcp-observability/src'
 import { registerDEXTools } from './tools/dex'
 
 import type { AccountSchema, UserSchema } from '@repo/mcp-common/src/cloudflare-oauth-handler'
@@ -88,15 +89,13 @@ export class CloudflareDEXMCP extends McpAgent<Env, State, Props> {
 }
 
 const DexScopes = {
-	'account:read': 'See your account info such as account details, analytics, and memberships.',
-	'user:read': 'See your user info such as name, email address, and account memberships.',
+	...RequiredScopes,
 	'dex:read': 'See Cloudflare Cloudflare DEX data for your account',
 	offline_access: 'Grants refresh tokens for long-lived access.',
 } as const
 
 export default new OAuthProvider({
 	apiRoute: '/sse',
-	// @ts-ignore
 	apiHandler: CloudflareDEXMCP.mount('/sse'),
 	// @ts-ignore
 	defaultHandler: createAuthHandlers({ scopes: DexScopes, metrics }),
