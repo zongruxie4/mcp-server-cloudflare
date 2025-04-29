@@ -23,7 +23,7 @@ export type Props = {
 
 export type State = { activeAccountId: string | null }
 
-export class MyMCP extends McpAgent<Env, State, Props> {
+export class CloudflareDEXMCP extends McpAgent<Env, State, Props> {
 	server = new McpServer({
 		name: 'Remote MCP Server with Cloudflare DEX Analysis',
 		version: '1.0.0',
@@ -65,14 +65,14 @@ export class MyMCP extends McpAgent<Env, State, Props> {
 const DexScopes = {
 	'account:read': 'See your account info such as account details, analytics, and memberships.',
 	'user:read': 'See your user info such as name, email address, and account memberships.',
-	'teams:read': 'See Cloudflare Cloudflare Zero Trust data for your account', // TODO: Finalize configuration for this.
+	'dex:read': 'See Cloudflare Cloudflare DEX data for your account',
 	offline_access: 'Grants refresh tokens for long-lived access.',
 } as const
 
 export default new OAuthProvider({
 	apiRoute: '/sse',
 	// @ts-ignore
-	apiHandler: MyMCP.mount('/sse'),
+	apiHandler: CloudflareDEXMCP.mount('/sse'),
 	// @ts-ignore
 	defaultHandler: createAuthHandlers({ scopes: DexScopes }),
 	authorizeEndpoint: '/oauth/authorize',

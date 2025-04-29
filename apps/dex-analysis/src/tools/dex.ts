@@ -2,9 +2,9 @@ import { z } from 'zod'
 
 import { fetchDexTestAnalyzation, fetchDexTests } from '../api/dex'
 
-import type { MyMCP } from '../index'
+import type { CloudflareDEXMCP } from '../index'
 
-// Worker logs parameter schema
+// DEX parameter schema
 const dexTestIdParam = z.string().describe('The DEX Test ID to analyze details of.')
 const dexTestTimeStart = z
 	.string()
@@ -17,14 +17,7 @@ const dexTestTimeEnd = z
 		'The datetime of the ending point of time range for DEX test analyzation. Must be in ISO 8601 datetime string in the extended format with UTC time (e.g, 2025-04-22T00:00:00Z).'
 	)
 
-/**
- * Registers the dex analysis tool with the MCP server
- * @param server The MCP server instance
- * @param accountId Cloudflare account ID
- * @param apiToken Cloudflare API token
- */
-
-export function registerDEXTools(agent: MyMCP) {
+export function registerDEXTools(agent: CloudflareDEXMCP) {
 	// Register the dex test analysis tool by test id
 	agent.server.tool(
 		'dex_test_statistics',
