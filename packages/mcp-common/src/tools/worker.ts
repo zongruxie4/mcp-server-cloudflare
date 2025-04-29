@@ -2,7 +2,8 @@ import { z } from 'zod'
 
 import { handleWorkerScriptDownload, handleWorkersList } from '../api/workers'
 import { getCloudflareClient } from '../cloudflare-api'
-import { type CloudflareMcpAgent } from '../types/cloudflare-mcp-agent'
+
+import type { CloudflareMcpAgent } from '../types/cloudflare-mcp-agent'
 
 /**
  * Registers the workers tools with the MCP server

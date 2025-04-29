@@ -14,7 +14,7 @@ import { registerAccountTools } from '@repo/mcp-common/src/tools/account'
 import { registerWorkersTools } from '@repo/mcp-common/src/tools/worker'
 
 import { MetricsTracker } from '../../../packages/mcp-observability/src'
-import { registerLogsTools } from './tools/logs'
+import { registerObservabilityTools } from './tools/observability'
 
 import type { AccountSchema, UserSchema } from '@repo/mcp-common/src/cloudflare-oauth-handler'
 import type { Env } from './context'
@@ -51,10 +51,6 @@ export class ObservabilityMCP extends McpAgent<Env, State, Props> {
 		return this._server
 	}
 
-	constructor(ctx: DurableObjectState, env: Env) {
-		super(ctx, env)
-	}
-
 	async init() {
 		this.server = new CloudflareMCPServer({
 			userId: this.props.user.id,
@@ -64,6 +60,30 @@ export class ObservabilityMCP extends McpAgent<Env, State, Props> {
 				version: this.env.MCP_SERVER_VERSION,
 			},
 			sentry: initSentryWithUser(env, this.ctx, this.props.user.id),
+			options: {
+				instructions: `# Cloudflare Workers Observability Tool
+
+This tool provides powerful capabilities to analyze and troubleshoot your Cloudflare Workers through logs and metrics. Here's how to use it effectively:
+
+## IMPORTANT: Query Discipline
+
+**STOP after the first successful query if it answers the user's question.** Do not run multiple queries unless absolutely necessary. The first query often contains the answer - review it thoroughly before running additional queries.
+
+## Best Practices
+
+### Efficient Querying
+- Start with a focused query that's most likely to answer the question
+- Review results completely before deciding if additional queries are needed
+- If the first query provides the answer, STOP and present it to the user
+- Only run additional queries when specifically directed or when essential information is missing
+
+### When to STOP Querying
+- STOP after presenting meaningful results from the first query
+- STOP when you've answered the user's specific question
+- STOP when the user hasn't requested additional exploration
+- Only continue if explicitly directed with "EXPLORE" or similar instruction
+`,
+			},
 		})
 
 		registerAccountTools(this)
@@ -72,7 +92,7 @@ export class ObservabilityMCP extends McpAgent<Env, State, Props> {
 		registerWorkersTools(this)
 
 		// Register Cloudflare Workers logs tools
-		registerLogsTools(this)
+		registerObservabilityTools(this)
 	}
 
 	async getActiveAccountId() {
