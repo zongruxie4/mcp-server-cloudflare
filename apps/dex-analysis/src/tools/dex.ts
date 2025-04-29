@@ -28,7 +28,7 @@ export function registerDEXTools(agent: CloudflareDEXMCP) {
 			timeEnd: dexTestTimeEnd,
 		},
 		async (params) => {
-			const accountId = agent.getActiveAccountId()
+			const accountId = await agent.getActiveAccountId()
 			if (!accountId) {
 				return {
 					content: [
@@ -82,7 +82,7 @@ export function registerDEXTools(agent: CloudflareDEXMCP) {
 		'Retrieve a list of all Cloudflare DEX Tests configured.',
 		{},
 		async () => {
-			const accountId = agent.getActiveAccountId()
+			const accountId = await agent.getActiveAccountId()
 			if (!accountId) {
 				return {
 					content: [
