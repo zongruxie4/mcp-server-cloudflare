@@ -1,5 +1,4 @@
 import OAuthProvider from '@cloudflare/workers-oauth-provider'
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { McpAgent } from 'agents/mcp'
 import { env } from 'cloudflare:workers'
 
@@ -7,11 +6,18 @@ import {
 	createAuthHandlers,
 	handleTokenExchangeCallback,
 } from '@repo/mcp-common/src/cloudflare-oauth-handler'
+import { CloudflareMCPServer } from '@repo/mcp-common/src/server'
 import { registerAccountTools } from '@repo/mcp-common/src/tools/account'
 
+import { MetricsTracker } from '../../../packages/mcp-observability/src'
 import { registerDEXTools } from './tools/dex'
 
 import type { AccountSchema, UserSchema } from '@repo/mcp-common/src/cloudflare-oauth-handler'
+
+const metrics = new MetricsTracker(env.MCP_METRICS, {
+	name: env.MCP_SERVER_NAME,
+	version: env.MCP_SERVER_VERSION,
+})
 
 // Context from the auth process, encrypted & stored in the auth token
 // and provided to the DurableMCP as this.props
@@ -24,20 +30,39 @@ export type Props = {
 export type State = { activeAccountId: string | null }
 
 export class CloudflareDEXMCP extends McpAgent<Env, State, Props> {
-	server = new McpServer({
-		name: 'Remote MCP Server with Cloudflare DEX Analysis',
-		version: '1.0.0',
-	})
+	_server: CloudflareMCPServer | undefined
+	set server(server: CloudflareMCPServer) {
+		this._server = server
+	}
 
-	initialState: State = {
-		activeAccountId: null,
+	get server(): CloudflareMCPServer {
+		if (!this._server) {
+			throw new Error('Tried to access server before it was initialized')
+		}
+
+		return this._server
+	}
+
+	constructor(ctx: DurableObjectState, env: Env) {
+		super(ctx, env)
 	}
 
 	async init() {
-		registerAccountTools(this)
+		this.server = new CloudflareMCPServer({
+			userId: this.props.user.id,
+			wae: this.env.MCP_METRICS,
+			serverInfo: {
+				name: this.env.MCP_SERVER_NAME,
+				version: this.env.MCP_SERVER_VERSION,
+			},
+		})
 
-		// EXAMPLE TOOLS — register your own here
+		registerAccountTools(this)
 		registerDEXTools(this)
+	}
+
+	initialState: State = {
+		activeAccountId: null,
 	}
 
 	getActiveAccountId() {
@@ -74,7 +99,7 @@ export default new OAuthProvider({
 	// @ts-ignore
 	apiHandler: CloudflareDEXMCP.mount('/sse'),
 	// @ts-ignore
-	defaultHandler: createAuthHandlers({ scopes: DexScopes }),
+	defaultHandler: createAuthHandlers({ scopes: DexScopes, metrics }),
 	authorizeEndpoint: '/oauth/authorize',
 	tokenEndpoint: '/token',
 	tokenExchangeCallback: (options) =>

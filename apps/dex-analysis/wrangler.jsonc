@@ -38,6 +38,12 @@
 	},
 	"workers_dev": false,
 	"preview_urls": false,
+	"analytics_engine_datasets": [
+		{
+			"binding": "MCP_METRICS",
+			"dataset": "mcp-metrics-dev"
+		}
+	],
 	"env": {
 		"staging": {
 			"name": "mcp-cloudflare-workers-dex-staging",
@@ -59,7 +65,13 @@
 			],
 			"vars": {
 				"ENVIRONMENT": "staging"
-			}
+			},
+			"analytics_engine_datasets": [
+				{
+					"binding": "MCP_METRICS",
+					"dataset": "mcp-metrics-staging"
+				}
+			],
 		},
 		"production": {
 			"name": "mcp-cloudflare-workers-dex-production",
@@ -81,7 +93,13 @@
 			],
 			"vars": {
 				"ENVIRONMENT": "production"
-			}
+			},
+			"analytics_engine_datasets": [
+				{
+					"binding": "MCP_METRICS",
+					"dataset": "mcp-metrics-production"
+				}
+			],
 		}
 	}
 }

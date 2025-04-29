@@ -14,7 +14,7 @@ export const fetchDexTestAnalyzation = async ({
 	timeEnd: string
 }) => {
 	return await fetchCloudflareApi({
-		endpoint: `/dex/test-results/by-quartile?from=${timeStart}&to=${timeEnd}&limit=5&testId=${dexTestId}`,
+		endpoint: `/dex/test-results/by-quartile?from=${timeStart}&to=${timeEnd}&limit=4&testId=${dexTestId}`,
 		accountId,
 		apiToken: accessToken,
 		options: {
