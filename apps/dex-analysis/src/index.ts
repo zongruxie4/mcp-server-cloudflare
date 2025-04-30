@@ -1,11 +1,12 @@
 import OAuthProvider from '@cloudflare/workers-oauth-provider'
 import { McpAgent } from 'agents/mcp'
-import { env } from 'cloudflare:workers'
 
 import {
 	createAuthHandlers,
 	handleTokenExchangeCallback,
 } from '@repo/mcp-common/src/cloudflare-oauth-handler'
+import { getUserDetails, UserDetails } from '@repo/mcp-common/src/durable-objects/user_details'
+import { getEnv } from '@repo/mcp-common/src/env'
 import { RequiredScopes } from '@repo/mcp-common/src/scopes'
 import { CloudflareMCPServer } from '@repo/mcp-common/src/server'
 import { registerAccountTools } from '@repo/mcp-common/src/tools/account'
@@ -14,6 +15,11 @@ import { MetricsTracker } from '@repo/mcp-observability'
 import { registerDEXTools } from './tools/dex'
 
 import type { AccountSchema, UserSchema } from '@repo/mcp-common/src/cloudflare-oauth-handler'
+import type { Env } from './context'
+
+export { UserDetails }
+
+const env = getEnv<Env>()
 
 const metrics = new MetricsTracker(env.MCP_METRICS, {
 	name: env.MCP_SERVER_NAME,
@@ -62,36 +68,32 @@ export class CloudflareDEXMCP extends McpAgent<Env, State, Props> {
 		registerDEXTools(this)
 	}
 
-	initialState: State = {
-		activeAccountId: null,
-	}
-
-	getActiveAccountId() {
-		// TODO: Figure out why this fail sometimes, and why we need to wrap this in a try catch
+	async getActiveAccountId() {
 		try {
-			return this.state.activeAccountId ?? null
+			// Get UserDetails Durable Object based off the userId and retrieve the activeAccountId from it
+			// we do this so we can persist activeAccountId across sessions
+			const userDetails = getUserDetails(env, this.props.user.id)
+			return await userDetails.getActiveAccountId()
 		} catch (e) {
+			this.server.recordError(e)
 			return null
 		}
 	}
 
-	setActiveAccountId(accountId: string) {
-		// TODO: Figure out why this fail sometimes, and why we need to wrap this in a try catch
+	async setActiveAccountId(accountId: string) {
 		try {
-			this.setState({
-				...this.state,
-				activeAccountId: accountId,
-			})
+			const userDetails = getUserDetails(env, this.props.user.id)
+			await userDetails.setActiveAccountId(accountId)
 		} catch (e) {
-			return null
+			this.server.recordError(e)
 		}
 	}
 }
 
 const DexScopes = {
 	...RequiredScopes,
+	'account:read': 'See your account info such as account details, analytics, and memberships.',
 	'dex:read': 'See Cloudflare Cloudflare DEX data for your account',
-	offline_access: 'Grants refresh tokens for long-lived access.',
 } as const
 
 export default new OAuthProvider({
