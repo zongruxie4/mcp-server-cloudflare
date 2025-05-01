@@ -12,7 +12,7 @@ The following servers are included in this repository:
 | [**Workers Bindings server**](/apps/workers-bindings)          | Build Workers applications with storage, AI, and compute primitives                             | `https://bindings.mcp.cloudflare.com/sse`      |
 | [**Observability server**](/apps/workers-observability)        | Debug and get insight into your application’s logs and analytics                                | `https://observability.mcp.cloudflare.com/sse` |
 | [**Radar server**](/apps/radar)                                | Get global Internet traffic insights, trends, URL scans, and other utilities                    | `https://radar.mcp.cloudflare.com/sse`         |
-| [**Container server**](/apps/sandbox-container)                        | Spin up a sandbox development environment                                                       | `https://containers.mcp.cloudflare.com/sse`    |
+| [**Container server**](/apps/sandbox-container)                | Spin up a sandbox development environment                                                       | `https://containers.mcp.cloudflare.com/sse`    |
 | [**Browser rendering server**](/apps/browser-rendering)        | Fetch web pages, convert them to markdown and take screenshots                                  | `https://browser.mcp.cloudflare.com/sse`       |
 | [**Logpush server**](/apps/logpush)                            | Get quick summaries for Logpush job health                                                      | `https://logs.mcp.cloudflare.com/sse`          |
 | [**AI Gateway server**](/apps/ai-gateway)                      | Search your logs, get details about the prompts and responses                                   | `https://ai-gateway.mcp.cloudflare.com/sse`    |
@@ -20,7 +20,7 @@ The following servers are included in this repository:
 | [**Audit Logs server**](/apps/auditlogs)                       | Query audit logs and generate reports for review                                                | `https://auditlogs.mcp.cloudflare.com/sse`     |
 | [**DNS Analytics server**](/apps/dns-analytics)                | Optimize DNS performance and debug issues based on current set up                               | `https://dns-analytics.mcp.cloudflare.com/sse` |
 | [**Digital Experience Monitoring server**](/apps/dex-analysis) | Get quick insight on critical applications for your organization                                | `https://dex.mcp.cloudflare.com/sse`           |
-| [**Cloudflare One CASB server**](/apps/cloudflare-one-casb)                   | Quickly identify any security misconfigurations for SaaS applications to safeguard users & data | `https://casb.mcp.cloudflare.com/sse`          |
+| [**Cloudflare One CASB server**](/apps/cloudflare-one-casb)    | Quickly identify any security misconfigurations for SaaS applications to safeguard users & data | `https://casb.mcp.cloudflare.com/sse`          |
 
 ## Access the remote MCP server from any MCP client
 

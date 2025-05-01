@@ -6,18 +6,17 @@ It integrates tools for running a sandbox container with your MCP client. With t
 
 ## Tools
 
-| **Category**      | **Tool**                   | **Description**                                                               |
-| ----------------- | -------------------------- | ----------------------------------------------------------------------------- |
-| **Container Lifecycle**       | `container_initialize`            | (Re)start a container. Containers are intended to be ephemeral and don't save any state. Containers are only guaranteed to last ~10m.|
-|                   | `container_ping`      | Ping a container for connectivity                          |
-| **Filesystem** | `container_file_write`       | Write to a file                     |
-|                   | `container_files_list`      | List all files in the work directory                          |
-|                   | `container_file_read`      |  Read the contents of a single file or directory                              |
-|                   | `container_file_delete`         | Delete a single file or directory                     |
-| **Execution**       | `container_exec`             | Run a command in the shell |
+| **Category**            | **Tool**                | **Description**                                                                                                                       |
+| ----------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **Container Lifecycle** | `container_initialize`  | (Re)start a container. Containers are intended to be ephemeral and don't save any state. Containers are only guaranteed to last ~10m. |
+|                         | `container_ping`        | Ping a container for connectivity                                                                                                     |
+| **Filesystem**          | `container_file_write`  | Write to a file                                                                                                                       |
+|                         | `container_files_list`  | List all files in the work directory                                                                                                  |
+|                         | `container_file_read`   | Read the contents of a single file or directory                                                                                       |
+|                         | `container_file_delete` | Delete a single file or directory                                                                                                     |
+| **Execution**           | `container_exec`        | Run a command in the shell                                                                                                            |
 
 This MCP server is still a work in progress, and we plan to add more tools in the future.
-
 
 ### Prompt Examples
 
