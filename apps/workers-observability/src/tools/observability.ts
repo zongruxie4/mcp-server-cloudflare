@@ -1,3 +1,5 @@
+import { writeToString } from '@fast-csv/format'
+
 import {
 	handleWorkerLogsKeys,
 	handleWorkerLogsValues,
@@ -60,6 +62,100 @@ This tool provides three primary views of your Worker data:
 			}
 			try {
 				const response = await queryWorkersObservability(agent.props.accessToken, accountId, query)
+
+				if (query.view === 'calculations') {
+					let data = ''
+					for (const calculation of response?.calculations || []) {
+						const alias = calculation.alias || calculation.calculation
+						const aggregates = calculation.aggregates.map((agg) => {
+							const keys = agg.groups?.reduce(
+								(acc, group) => {
+									acc[`${group.key}`] = `${group.value}`
+									return acc
+								},
+								{} as Record<string, string>
+							)
+							return {
+								...keys,
+								[alias]: agg.value,
+							}
+						})
+
+						const aggregatesString = await writeToString(aggregates, {
+							headers: true,
+							delimiter: '\t',
+						})
+
+						const series = calculation.series.map(({ time, data }) => {
+							return {
+								time,
+								...data.reduce(
+									(acc, point) => {
+										const key = point.groups?.reduce((acc, group) => {
+											return `${acc} * ${group.value}`
+										}, '')
+										if (!key) {
+											return {
+												...acc,
+												[alias]: point.value,
+											}
+										}
+										return {
+											...acc,
+											key,
+											[alias]: point.value,
+										}
+									},
+									{} as Record<string, string | number | undefined>
+								),
+							}
+						})
+						const seriesString = await writeToString(series, { headers: true, delimiter: '\t' })
+						data = data + '\n' + `## ${alias}`
+						data = data + '\n' + `### Aggregation`
+						data = data + '\n' + aggregatesString
+						data = data + '\n' + `### Series`
+						data = data + '\n' + seriesString
+					}
+
+					return {
+						content: [
+							{
+								type: 'text',
+								text: data,
+							},
+						],
+					}
+				}
+
+				if (query.view === 'events') {
+					const events = response?.events?.events
+					return {
+						content: [
+							{
+								type: 'text',
+								text: JSON.stringify(events),
+							},
+						],
+					}
+				}
+
+				if (query.view === 'invocations') {
+					const invocations = Object.entries(response?.invocations || {}).map(([_, logs]) => {
+						const invocationLog = logs.find((log) => log.$metadata.type === 'cf-worker-event')
+						return invocationLog?.$metadata ?? logs[0]?.$metadata
+					})
+
+					const tsv = await writeToString(invocations, { headers: true, delimiter: '\t' })
+					return {
+						content: [
+							{
+								type: 'text',
+								text: tsv,
+							},
+						],
+					}
+				}
 				return {
 					content: [
 						{
@@ -110,11 +206,16 @@ This tool provides three primary views of your Worker data:
 			}
 			try {
 				const result = await handleWorkerLogsKeys(agent.props.accessToken, accountId, keysQuery)
+
+				const tsv = await writeToString(
+					result.map((key) => ({ type: key.type, key: key.key })),
+					{ headers: true, delimiter: '\t' }
+				)
 				return {
 					content: [
 						{
 							type: 'text',
-							text: JSON.stringify(result),
+							text: tsv,
 						},
 					],
 				}
@@ -155,11 +256,15 @@ This tool provides three primary views of your Worker data:
 			}
 			try {
 				const result = await handleWorkerLogsValues(agent.props.accessToken, accountId, valuesQuery)
+				const tsv = await writeToString(
+					result?.map((value) => ({ type: value.type, value: value.value })) || [],
+					{ headers: true, delimiter: '\t' }
+				)
 				return {
 					content: [
 						{
 							type: 'text',
-							text: JSON.stringify(result),
+							text: tsv,
 						},
 					],
 				}

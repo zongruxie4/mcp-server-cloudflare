@@ -40,6 +40,16 @@ export async function fetchCloudflareApi<T>({
 }): Promise<T> {
 	const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}${endpoint}`
 
+	// @ts-expect-error We don't have actual env in this package
+	if (env.DEV_DISABLE_OAUTH) {
+		options.headers = {
+			...options.headers,
+			// @ts-expect-error We don't have actual env in this package
+			'X-Auth-Email': env.DEV_CLOUDFLARE_EMAIL,
+			// @ts-expect-error We don't have actual env in this package
+			'X-Auth-Key': env.DEV_CLOUDFLARE_API_TOKEN,
+		}
+	}
 	const response = await fetch(url, {
 		...options,
 		headers: {
