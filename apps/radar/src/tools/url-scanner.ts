@@ -16,33 +16,55 @@ export function registerUrlScannerTools(agent: RadarMCP) {
 			url: UrlParam,
 		},
 		async ({ url }) => {
+			const accountId = await agent.getActiveAccountId()
+			if (!accountId) {
+				return {
+					content: [
+						{
+							type: 'text',
+							text: 'No currently active accountId. Try listing your accounts (accounts_list) and then setting an active account (set_active_account)',
+						},
+					],
+				}
+			}
+
 			try {
 				const client = getCloudflareClient(agent.props.accessToken)
-				const account_id = agent.env.ACCOUNT_ID
-				const headers = {
-					Authorization: `Bearer ${agent.env.URL_SCANNER_API_TOKEN}`,
-				}
 
-				// TODO investigate why this does not work
-				// const scan = await (client.urlScanner.scans.create({ account_id, url: "https://www.example.com" }, { headers })).withResponse()
+				// Search if there are recent scans for the URL
+				const scans = await client.urlScanner.scans.list({
+					account_id: accountId,
+					q: `page.url:"${url}"`,
+				})
 
-				const res = await fetch(
-					`https://api.cloudflare.com/client/v4/accounts/${account_id}/urlscanner/v2/scan`,
-					{
-						method: 'POST',
-						headers,
-						body: JSON.stringify({ url }),
+				let scanId = scans.results.length > 0 ? scans.results[0]._id : null
+
+				if (!scanId) {
+					// Submit scan
+					// TODO theres an issue (reported) with this method in the cloudflare TS lib
+					// const scan = await (client.urlScanner.scans.create({ account_id, url: "https://www.example.com" }, { headers })).withResponse()
+
+					const res = await fetch(
+						`https://api.cloudflare.com/client/v4/accounts/${accountId}/urlscanner/v2/scan`,
+						{
+							method: 'POST',
+							headers: {
+								Authorization: `Bearer ${agent.props.accessToken}`,
+							},
+							body: JSON.stringify({ url }),
+						}
+					)
+
+					if (!res.ok) {
+						throw new Error('Failed to submit scan')
 					}
-				)
-				if (!res.ok) {
-					throw new Error('Failed to submit scan')
-				}
 
-				const scan = CreateScanResult.parse(await res.json())
-				const scanId = scan?.uuid
+					const scan = CreateScanResult.parse(await res.json())
+					scanId = scan?.uuid
+				}
 
 				const r = await pollUntilReady({
-					taskFn: () => client.urlScanner.scans.get(scanId, { account_id }, { headers }),
+					taskFn: () => client.urlScanner.scans.get(scanId, { account_id: accountId }),
 					intervalSeconds: INTERVAL_SECONDS,
 					maxWaitSeconds: MAX_WAIT_SECONDS,
 				})
@@ -52,7 +74,7 @@ export function registerUrlScannerTools(agent: RadarMCP) {
 						{
 							type: 'text',
 							text: JSON.stringify({
-								result: r, // TODO select what is more relevant, or add a param to allow the agent to select a set of metrics
+								result: { verdicts: r.verdicts, stats: r.stats, page: r.page }, // TODO select what is more relevant, or add a param to allow the agent to select a set of metrics
 							}),
 						},
 					],
