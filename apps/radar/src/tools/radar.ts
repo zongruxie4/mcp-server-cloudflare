@@ -1,7 +1,10 @@
+import { z } from 'zod'
+
 import { getCloudflareClient } from '@repo/mcp-common/src/cloudflare-api'
 import { PaginationLimitParam, PaginationOffsetParam } from '@repo/mcp-common/src/types/shared'
 
 import {
+	AiDimensionParam,
 	AsnArrayParam,
 	AsnParam,
 	AsOrderByParam,
@@ -19,6 +22,7 @@ import {
 	EmailRoutingDimensionParam,
 	EmailSecurityDimensionParam,
 	HttpDimensionParam,
+	InternetQualityMetricParam,
 	InternetServicesCategoryParam,
 	InternetSpeedDimensionParam,
 	InternetSpeedOrderByParam,
@@ -621,6 +625,102 @@ export function registerRadarTools(agent: RadarMCP) {
 						{
 							type: 'text',
 							text: `Error getting Internet speed data: ${error instanceof Error && error.message}`,
+						},
+					],
+				}
+			}
+		}
+	)
+
+	agent.server.tool(
+		'get_internet_quality_data',
+		'Retrieves a summary or time series of bandwidth, latency, or DNS response time percentiles from the Radar Internet Quality Index (IQI).',
+		{
+			dateRange: DateRangeArrayParam.optional(),
+			dateStart: DateStartArrayParam.optional(),
+			dateEnd: DateEndArrayParam.optional(),
+			asn: AsnArrayParam,
+			continent: ContinentArrayParam,
+			location: LocationArrayParam,
+			format: z.enum(['summary', 'timeseriesGroups']),
+			metric: InternetQualityMetricParam,
+		},
+		async ({ dateRange, dateStart, dateEnd, asn, location, continent, format, metric }) => {
+			try {
+				const client = getCloudflareClient(agent.props.accessToken)
+				const r = await client.radar.quality.iqi[format]({
+					asn,
+					continent,
+					location,
+					dateRange,
+					dateStart,
+					dateEnd,
+					metric,
+				})
+
+				return {
+					content: [
+						{
+							type: 'text',
+							text: JSON.stringify({
+								result: r,
+							}),
+						},
+					],
+				}
+			} catch (error) {
+				return {
+					content: [
+						{
+							type: 'text',
+							text: `Error getting Internet quality data: ${error instanceof Error && error.message}`,
+						},
+					],
+				}
+			}
+		}
+	)
+
+	agent.server.tool(
+		'get_ai_data',
+		'Retrieves AI-related data, including traffic from AI user agents, as well as popular models and model tasks specifically from Cloudflare Workers AI.',
+		{
+			dateRange: DateRangeArrayParam.optional(),
+			dateStart: DateStartArrayParam.optional(),
+			dateEnd: DateEndArrayParam.optional(),
+			asn: AsnArrayParam,
+			continent: ContinentArrayParam,
+			location: LocationArrayParam,
+			dimension: AiDimensionParam,
+		},
+		async ({ dateRange, dateStart, dateEnd, asn, location, continent, dimension }) => {
+			try {
+				const client = getCloudflareClient(agent.props.accessToken)
+				const r = await resolveAndInvoke(client.radar.ai, dimension, {
+					asn,
+					continent,
+					location,
+					dateRange,
+					dateStart,
+					dateEnd,
+				})
+
+				return {
+					content: [
+						{
+							type: 'text',
+							text: JSON.stringify({
+								result: r,
+							}),
+						},
+					],
+				}
+			} catch (error) {
+				return {
+					content: [
+						{
+							type: 'text',
+							text: `Error getting AI data: ${error instanceof Error && error.message}`,
 						},
 					],
 				}

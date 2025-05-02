@@ -293,6 +293,17 @@ export const EmailSecurityDimensionParam = z
 	])
 	.describe('Dimension indicating the type and format of Email Security data to retrieve.')
 
+export const AiDimensionParam = z
+	.enum([
+		'bots/summary/userAgent',
+		'bots/timeseriesGroups/userAgent',
+		'inference/summary/model',
+		'inference/summary/task',
+		'inference/timeseriesGroups/model',
+		'inference/timeseriesGroups/task',
+	])
+	.describe('Dimension indicating the type and format of AI data to retrieve.')
+
 export const InternetSpeedDimensionParam = z
 	.enum(['summary', 'top/locations', 'top/ases'])
 	.describe('Dimension indicating the type and format of Internet speed data to retrieve.')
@@ -307,3 +318,7 @@ export const InternetSpeedOrderByParam = z
 		'JITTER_LOADED',
 	])
 	.describe('Specifies the metric to order the results by. Only allowed for top locations and ASes')
+
+export const InternetQualityMetricParam = z
+	.enum(['BANDWIDTH', 'DNS', 'LATENCY'])
+	.describe('Specifies which metric to return (bandwidth, latency, or DNS response time).')
