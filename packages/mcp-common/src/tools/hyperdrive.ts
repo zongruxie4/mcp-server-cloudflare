@@ -19,6 +19,14 @@ import {
 	HyperdriveOriginUserSchema,
 } from '../types/hyperdrive'
 
+export const HYPERDRIVE_TOOLS = {
+	hyperdrive_configs_list: 'hyperdrive_configs_list',
+	hyperdrive_config_create: 'hyperdrive_config_create',
+	hyperdrive_config_delete: 'hyperdrive_config_delete',
+	hyperdrive_config_get: 'hyperdrive_config_get',
+	hyperdrive_config_edit: 'hyperdrive_config_edit',
+}
+
 /**
  * Registers Hyperdrive tools with the Cloudflare MCP Agent.
  * @param agent The Cloudflare MCP Agent instance.
@@ -28,7 +36,7 @@ export function registerHyperdriveTools(agent: CloudflareMcpAgent) {
 	 * Tool to list Hyperdrive configurations.
 	 */
 	agent.server.tool(
-		'hyperdrive_configs_list',
+		HYPERDRIVE_TOOLS.hyperdrive_configs_list,
 		'List Hyperdrive configurations in your Cloudflare account',
 		{
 			page: HyperdriveListParamPageSchema.nullable(),
@@ -77,81 +85,82 @@ export function registerHyperdriveTools(agent: CloudflareMcpAgent) {
 		}
 	)
 
+	// TODO: Once elicitation is available in MCP as a way to securely pass parameters, re-enable this tool. See: https://github.com/modelcontextprotocol/modelcontextprotocol/pull/382
 	/**
 	 * Tool to create a Hyperdrive configuration.
 	 */
-	agent.server.tool(
-		'hyperdrive_config_create',
-		'Create a new Hyperdrive configuration in your Cloudflare account',
-		{
-			name: HyperdriveConfigNameSchema,
-			database: HyperdriveOriginDatabaseSchema,
-			host: HyperdriveOriginHostSchema,
-			port: HyperdriveOriginPortSchema,
-			scheme: HyperdriveOriginSchemeSchema,
-			user: HyperdriveOriginUserSchema,
-			password: HyperdriveOriginPasswordSchema,
-			caching_disabled: HyperdriveCachingDisabledSchema.nullable(),
-			caching_max_age: HyperdriveCachingMaxAgeSchema.nullable(),
-			caching_stale_while_revalidate: HyperdriveCachingStaleWhileRevalidateSchema.nullable(),
-		},
-		async ({
-			name,
-			database,
-			host,
-			port,
-			scheme,
-			user,
-			password,
-			caching_disabled = undefined,
-			caching_max_age = undefined,
-			caching_stale_while_revalidate = undefined,
-		}) => {
-			const account_id = await agent.getActiveAccountId()
-			if (!account_id) {
-				return MISSING_ACCOUNT_ID_RESPONSE
-			}
-			try {
-				const origin = { database, host, port, scheme, user, password }
-				const caching: Record<string, any> = {}
-				if (caching_disabled !== undefined) caching.disabled = caching_disabled
-				if (caching_max_age !== undefined) caching.max_age = caching_max_age
-				if (caching_stale_while_revalidate !== undefined)
-					caching.stale_while_revalidate = caching_stale_while_revalidate
+	// agent.server.tool(
+	// 	HYPERDRIVE_TOOLS.hyperdrive_config_create,
+	// 	'Create a new Hyperdrive configuration in your Cloudflare account',
+	// 	{
+	// 		name: HyperdriveConfigNameSchema,
+	// 		database: HyperdriveOriginDatabaseSchema,
+	// 		host: HyperdriveOriginHostSchema,
+	// 		port: HyperdriveOriginPortSchema,
+	// 		scheme: HyperdriveOriginSchemeSchema,
+	// 		user: HyperdriveOriginUserSchema,
+	// 		password: HyperdriveOriginPasswordSchema,
+	// 		caching_disabled: HyperdriveCachingDisabledSchema.nullable(),
+	// 		caching_max_age: HyperdriveCachingMaxAgeSchema.nullable(),
+	// 		caching_stale_while_revalidate: HyperdriveCachingStaleWhileRevalidateSchema.nullable(),
+	// 	},
+	// 	async ({
+	// 		name,
+	// 		database,
+	// 		host,
+	// 		port,
+	// 		scheme,
+	// 		user,
+	// 		password,
+	// 		caching_disabled = undefined,
+	// 		caching_max_age = undefined,
+	// 		caching_stale_while_revalidate = undefined,
+	// 	}) => {
+	// 		const account_id = await agent.getActiveAccountId()
+	// 		if (!account_id) {
+	// 			return MISSING_ACCOUNT_ID_RESPONSE
+	// 		}
+	// 		try {
+	// 			const origin = { database, host, port, scheme, user, password }
+	// 			const caching: Record<string, any> = {}
+	// 			if (caching_disabled !== undefined) caching.disabled = caching_disabled
+	// 			if (caching_max_age !== undefined) caching.max_age = caching_max_age
+	// 			if (caching_stale_while_revalidate !== undefined)
+	// 				caching.stale_while_revalidate = caching_stale_while_revalidate
 
-				const client = getCloudflareClient(agent.props.accessToken)
-				const hyperdriveConfig = await client.hyperdrive.configs.create({
-					account_id,
-					name,
-					origin,
-					...(Object.keys(caching).length > 0 && { caching }),
-				})
-				return {
-					content: [
-						{
-							type: 'text',
-							text: JSON.stringify(hyperdriveConfig),
-						},
-					],
-				}
-			} catch (error) {
-				return {
-					content: [
-						{
-							type: 'text',
-							text: `Error creating Hyperdrive config: ${error instanceof Error ? error.message : String(error)}`,
-						},
-					],
-				}
-			}
-		}
-	)
+	// 			const client = getCloudflareClient(agent.props.accessToken)
+	// 			const hyperdriveConfig = await client.hyperdrive.configs.create({
+	// 				account_id,
+	// 				name,
+	// 				origin,
+	// 				...(Object.keys(caching).length > 0 && { caching }),
+	// 			})
+	// 			return {
+	// 				content: [
+	// 					{
+	// 						type: 'text',
+	// 						text: JSON.stringify(hyperdriveConfig),
+	// 					},
+	// 				],
+	// 			}
+	// 		} catch (error) {
+	// 			return {
+	// 				content: [
+	// 					{
+	// 						type: 'text',
+	// 						text: `Error creating Hyperdrive config: ${error instanceof Error ? error.message : String(error)}`,
+	// 					},
+	// 				],
+	// 			}
+	// 		}
+	// 	}
+	// )
 
 	/**
 	 * Tool to delete a Hyperdrive configuration.
 	 */
 	agent.server.tool(
-		'hyperdrive_config_delete',
+		HYPERDRIVE_TOOLS.hyperdrive_config_delete,
 		'Delete a Hyperdrive configuration in your Cloudflare account',
 		{
 			hyperdrive_id: HyperdriveConfigIdSchema,
@@ -189,7 +198,7 @@ export function registerHyperdriveTools(agent: CloudflareMcpAgent) {
 	 * Tool to get a specific Hyperdrive configuration.
 	 */
 	agent.server.tool(
-		'hyperdrive_config_get',
+		HYPERDRIVE_TOOLS.hyperdrive_config_get,
 		'Get details of a specific Hyperdrive configuration in your Cloudflare account',
 		{
 			hyperdrive_id: HyperdriveConfigIdSchema,
@@ -229,7 +238,7 @@ export function registerHyperdriveTools(agent: CloudflareMcpAgent) {
 	 * Tool to edit (PATCH) a Hyperdrive configuration.
 	 */
 	agent.server.tool(
-		'hyperdrive_config_edit',
+		HYPERDRIVE_TOOLS.hyperdrive_config_edit,
 		'Edit (patch) a Hyperdrive configuration in your Cloudflare account',
 		{
 			hyperdrive_id: HyperdriveConfigIdSchema,
@@ -239,7 +248,6 @@ export function registerHyperdriveTools(agent: CloudflareMcpAgent) {
 			port: HyperdriveOriginPortSchema.optional().nullable(),
 			scheme: HyperdriveOriginSchemeSchema.optional().nullable(),
 			user: HyperdriveOriginUserSchema.optional().nullable(),
-			password: HyperdriveOriginPasswordSchema.optional().nullable(),
 			caching_disabled: HyperdriveCachingDisabledSchema.optional().nullable(),
 			caching_max_age: HyperdriveCachingMaxAgeSchema.optional().nullable(),
 			caching_stale_while_revalidate:
@@ -253,7 +261,6 @@ export function registerHyperdriveTools(agent: CloudflareMcpAgent) {
 			port,
 			scheme,
 			user,
-			password,
 			caching_disabled,
 			caching_max_age,
 			caching_stale_while_revalidate,
@@ -269,7 +276,6 @@ export function registerHyperdriveTools(agent: CloudflareMcpAgent) {
 				if (port) originPatch.port = port
 				if (scheme) originPatch.scheme = scheme
 				if (user) originPatch.user = user
-				if (password) originPatch.password = password
 
 				const cachingPatch: Record<string, any> = {}
 				if (caching_disabled) cachingPatch.disabled = caching_disabled
@@ -318,7 +324,4 @@ export function registerHyperdriveTools(agent: CloudflareMcpAgent) {
 			}
 		}
 	)
-
-	// Note: client.hyperdrive.configs.update (PUT) was requested but doesn't exist in the SDK.
-	// The SDK provides client.hyperdrive.configs.edit (PATCH) which is implemented above.
 }
