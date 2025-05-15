@@ -20,6 +20,7 @@
 		"fix:deps": "run-fix-deps",
 		"test:watch": "vitest",
 		"eval:ci": "run-turbo eval:ci",
+		"eval:dev": "run-turbo eval:dev",
 		"update-deps": "syncpack update"
 	},
 	"devDependencies": {
