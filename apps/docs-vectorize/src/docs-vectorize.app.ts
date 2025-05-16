@@ -4,6 +4,7 @@ import { createApiHandler } from '@repo/mcp-common/src/api-handler'
 import { getEnv } from '@repo/mcp-common/src/env'
 import { CloudflareMCPServer } from '@repo/mcp-common/src/server'
 
+import { registerPrompts } from './prompts/docs-vectorize.prompts'
 import { registerDocsTools } from './tools/docs-vectorize.tools'
 
 import type { Env } from './docs-vectorize.context'
@@ -33,6 +34,7 @@ export class CloudflareDocumentationMCP extends McpAgent<Env, State, Props> {
 
 	async init() {
 		registerDocsTools(this)
+		registerPrompts(this)
 	}
 }
 
