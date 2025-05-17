@@ -10,7 +10,6 @@ const TOP_K = 10
  * @param agent The MCP server instance
  */
 export function registerDocsTools(agent: CloudflareDocumentationMCP) {
-	// Register the worker logs analysis tool by worker name
 	agent.server.tool(
 		'search_cloudflare_documentation',
 		`Search the Cloudflare documentation.
