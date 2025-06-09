@@ -33,8 +33,6 @@ export type Props = AuthProps
 const ContainerScopes = {
 	...RequiredScopes,
 	'account:read': 'See your account info such as account details, analytics, and memberships.',
-	'workers:write':
-		'See and change Cloudflare Workers data such as zones, KV storage, namespaces, scripts, and routes.',
 } as const
 
 export default {

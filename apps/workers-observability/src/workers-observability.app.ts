@@ -118,7 +118,7 @@ export class ObservabilityMCP extends McpAgent<Env, State, Props> {
 const ObservabilityScopes = {
 	...RequiredScopes,
 	'account:read': 'See your account info such as account details, analytics, and memberships.',
-	'workers:write':
+	'workers:read':
 		'See and change Cloudflare Workers data such as zones, KV storage, namespaces, scripts, and routes.',
 	'workers_observability:read': 'See observability logs for your account',
 } as const
