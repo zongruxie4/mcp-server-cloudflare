@@ -27,7 +27,7 @@
 		"@repo/eslint-config": "workspace:*",
 		"@repo/tools": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
-		"@sentry/types": "8.9.2",
+		"@sentry/types": "9.34.0",
 		"@types/node": "22.14.1",
 		"@vitest/ui": "3.0.9",
 		"vitest": "3.0.9",
