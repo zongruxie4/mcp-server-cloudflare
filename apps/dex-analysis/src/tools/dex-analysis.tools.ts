@@ -209,19 +209,14 @@ export function registerDEXTools(agent: CloudflareDEXMCP) {
 	})
 
 	registerTool({
-		name: 'dex_create_remote_capture',
+		name: 'dex_create_remote_pcap',
 		description:
-			'Create a remote capture for a device. This is a resource intensive and privacy-sensitive operation on a real user device.' +
+			'Create a remote packet capture (PCAP) for a device. This is a resource intensive and privacy-sensitive operation on a real user device.' +
 			'Always ask for confirmation from the user that the targeted email and device are correct before executing a capture',
 		schema: {
 			device_id: z.string().describe('The device ID to target.'),
 			user_email: z.string().describe('The email of the user associated with the device.'),
-			type: z.enum(['pcap', 'warp-diag']).describe('The type of remote capture to perform.'),
-			interfaces: z
-				.array(z.enum(['default', 'tunnel']))
-				.optional()
-				.describe('The network interfaces to capture packets on.'),
-			max_file_size_mb: z
+			'max-file-size-mb': z
 				.number()
 				.min(1)
 				.default(5)
@@ -230,20 +225,13 @@ export function registerDEXTools(agent: CloudflareDEXMCP) {
 					'Maximum file size in MB for the capture file. Specifies the maximum file size of the warp-daig zip artifact that can be uploaded. ' +
 						'If the zip artifact exceeds the specified max file size it will NOT be uploaded.'
 				),
-			max_packet_size_bytes: z
+			'packet-size-bytes': z
 				.number()
 				.min(1)
 				.default(160)
 				.optional()
 				.describe('Maximum number of bytes to save for each packet.'),
-			test_all_routes: z
-				.boolean()
-				.default(true)
-				.describe(
-					'Test an IP address from all included or excluded ranges. Tests an IP address from all included or excluded ranges.' +
-						"Essentially the same as running 'route get '' and collecting the results. This option may increase the time taken to collect the warp-diag"
-				),
-			time_limit_mins: z
+			'time-limit-min': z
 				.number()
 				.min(1)
 				.default(5)
@@ -251,8 +239,8 @@ export function registerDEXTools(agent: CloudflareDEXMCP) {
 		},
 		agent,
 		llmContext:
-			'If the request was successful, the command has been created. You can poll the dex_list_remote_commands tool periodically to check on the completion status.',
-		callback: async ({ accountId, accessToken, type, device_id, user_email, ...command_args }) => {
+			'If the request was successful, the capture has been initiated. You can poll the dex_list_remote_commands tool periodically to check on the completion status.',
+		callback: async ({ accountId, accessToken, device_id, user_email, ...command_args }) => {
 			return await fetchCloudflareApi({
 				endpoint: `/dex/commands`,
 				accountId,
@@ -265,7 +253,53 @@ export function registerDEXTools(agent: CloudflareDEXMCP) {
 					body: JSON.stringify({
 						commands: [
 							{
-								type,
+								type: 'pcap',
+								device_id,
+								user_email,
+								args: command_args,
+								version: 1,
+							},
+						],
+					}),
+				},
+			})
+		},
+	})
+
+	registerTool({
+		name: 'dex_create_remote_warp_diag',
+		description:
+			'Create a remote Warp Diagnostic (WARP-diag) for a device. This is a resource intensive and privacy-sensitive operation on a real user device.' +
+			'Always ask for confirmation from the user that the targeted email and device are correct before executing a capture',
+		schema: {
+			device_id: z.string().describe('The device ID to target.'),
+			user_email: z.string().describe('The email of the user associated with the device.'),
+			'test-all-routes': z
+				.boolean()
+				.default(true)
+				.describe(
+					'Test an IP address from all included or excluded ranges. Tests an IP address from all included or excluded ranges.' +
+						"Essentially the same as running 'route get '' and collecting the results. This option may increase the time taken to collect the warp-diag"
+				),
+		},
+		agent,
+		llmContext:
+			'If the request was successful, the diagnostic has been initiated. You can poll the dex_list_remote_commands tool periodically to check on the completion status.' +
+			'See https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/warp/troubleshooting/warp-logs/ for more info on warp-diags',
+		callback: async ({ accountId, accessToken, device_id, user_email, ...command_args }) => {
+			return await fetchCloudflareApi({
+				endpoint: `/dex/commands`,
+				accountId,
+				apiToken: accessToken,
+				options: {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						commands: [
+							{
+								type: 'warp-diag',
 								device_id,
 								user_email,
 								args: command_args,
@@ -498,7 +532,8 @@ export function registerDEXTools(agent: CloudflareDEXMCP) {
 		},
 		llmContext:
 			'Use the dex_explore_remote_warp_diag_output tool for specific file paths to explore the file contents for analysis. ' +
-			'Hint: you can call dex_explore_remote_warp_diag_output multiple times in parallel if necessary to take advantage of in-memory caching for best performance.',
+			'Hint: you can call dex_explore_remote_warp_diag_output multiple times in parallel if necessary to take advantage of in-memory caching for best performance.' +
+			'See https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/warp/troubleshooting/warp-logs/ for more info on warp-diags',
 		agent,
 		callback: async ({ accessToken, download }) => {
 			const reader = await getReader(env, accessToken, download)
