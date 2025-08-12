@@ -5,7 +5,7 @@
 	"scripts": {
 		"check:lint": "run-eslint-workers",
 		"check:types": "run-tsc",
-		"deploy": "wrangler deploy",
+		"deploy": "run-wrangler-deploy",
 		"deploy:staging": "wrangler deploy --env staging",
 		"deploy:production": "wrangler deploy --env production",
 		"eval:dev": "start-server-and-test --expect 404 eval:server http://localhost:8977 'vitest --testTimeout=60000 --config vitest.config.evals.ts'",
