@@ -13,7 +13,7 @@
 		"vitest": "3.0.9"
 	},
 	"dependencies": {
-		"@commander-js/extra-typings": "13.1.0",
+		"@commander-js/extra-typings": "14.0.0",
 		"@jahands/cli-tools": "0.10.2",
 		"commander": "13.1.0",
 		"empathic": "1.1.0",
