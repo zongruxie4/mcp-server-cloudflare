@@ -1,5 +1,13 @@
 # docs-vectorize
 
+## 0.3.3
+
+### Patch Changes
+
+- 24dd872: feat: Add MCP tool titles and hints to all Cloudflare tools
+- Updated dependencies [24dd872]
+  - @repo/mcp-common@0.19.2
+
 ## 0.3.2
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # containers-mcp
 
+## 0.2.5
+
+### Patch Changes
+
+- 24dd872: feat: Add MCP tool titles and hints to all Cloudflare tools
+- Updated dependencies [24dd872]
+  - @repo/eval-tools@0.32.2
+  - @repo/mcp-common@0.19.2
+
 ## 0.2.4
 
 ### Patch Changes

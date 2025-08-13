@@ -1,5 +1,13 @@
 # logpush
 
+## 0.1.6
+
+### Patch Changes
+
+- 24dd872: feat: Add MCP tool titles and hints to all Cloudflare tools
+- Updated dependencies [24dd872]
+  - @repo/mcp-common@0.19.2
+
 ## 0.1.5
 
 ### Patch Changes

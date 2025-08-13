@@ -1,5 +1,13 @@
 # dex-analysis
 
+## 0.2.1
+
+### Patch Changes
+
+- 24dd872: feat: Add MCP tool titles and hints to all Cloudflare tools
+- Updated dependencies [24dd872]
+  - @repo/mcp-common@0.19.2
+
 ## 0.2.0
 
 ### Minor Changes
