@@ -28,6 +28,14 @@ export function registerWorkersTools(agent: CloudflareMcpAgent) {
 
 			If you only need details of a single Worker, use workers_get_worker.
 		`),
+		{},
+		{
+			title: 'List Workers',
+			annotations: {
+				readOnlyHint: true,
+				destructiveHint: false,
+			},
+		},
 		async () => {
 			const accountId = await agent.getActiveAccountId()
 			if (!accountId) {
@@ -94,6 +102,13 @@ export function registerWorkersTools(agent: CloudflareMcpAgent) {
 		{
 			scriptName: workerNameParam,
 		},
+		{
+			title: 'Get Worker details',
+			annotations: {
+				readOnlyHint: true,
+				destructiveHint: false,
+			},
+		},
 		async (params) => {
 			const accountId = await agent.getActiveAccountId()
 			if (!accountId) {
@@ -158,6 +173,13 @@ export function registerWorkersTools(agent: CloudflareMcpAgent) {
 		'workers_get_worker_code',
 		'Get the source code of a Cloudflare Worker. Note: This may be a bundled version of the worker.',
 		{ scriptName: workerNameParam },
+		{
+			title: 'Get Worker code',
+			annotations: {
+				readOnlyHint: true,
+				destructiveHint: false,
+			},
+		},
 		async (params) => {
 			const accountId = await agent.getActiveAccountId()
 			if (!accountId) {
