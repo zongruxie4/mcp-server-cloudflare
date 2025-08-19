@@ -1,5 +1,25 @@
 # dex-analysis
 
+## 0.2.1
+
+### Patch Changes
+
+- 24dd872: feat: Add MCP tool titles and hints to all Cloudflare tools
+- Updated dependencies [24dd872]
+  - @repo/mcp-common@0.19.2
+
+## 0.2.0
+
+### Minor Changes
+
+- 9496e21: Add tool for analyzing WARP-diags for common issues via bonobo
+
+## 0.1.7
+
+### Patch Changes
+
+- dffbd36: Improve DEX remote captures tools, separate by type for clarity
+
 ## 0.1.6
 
 ### Patch Changes

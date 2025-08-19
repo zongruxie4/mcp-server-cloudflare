@@ -1,5 +1,11 @@
 # @repo/mcp-common
 
+## 0.19.2
+
+### Patch Changes
+
+- 24dd872: feat: Add MCP tool titles and hints to all Cloudflare tools
+
 ## 0.19.1
 
 ### Patch Changes
