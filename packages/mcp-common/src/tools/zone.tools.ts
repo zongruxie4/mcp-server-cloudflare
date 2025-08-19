@@ -28,6 +28,13 @@ export function registerZoneTools(agent: CloudflareMcpAgent) {
 				.default('desc')
 				.describe('Direction to order results (asc, desc)'),
 		},
+		{
+			title: 'List zones',
+			annotations: {
+				readOnlyHint: true,
+				destructiveHint: false,
+			},
+		},
 		async (params) => {
 			const accountId = await agent.getActiveAccountId()
 			if (!accountId) {
@@ -83,6 +90,13 @@ export function registerZoneTools(agent: CloudflareMcpAgent) {
 		'Get details for a specific Cloudflare zone',
 		{
 			zoneId: z.string().describe('The ID of the zone to get details for'),
+		},
+		{
+			title: 'Get zone details',
+			annotations: {
+				readOnlyHint: true,
+				destructiveHint: false,
+			},
 		},
 		async (params) => {
 			const accountId = await agent.getActiveAccountId()
