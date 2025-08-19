@@ -1,6 +1,6 @@
 {
 	"name": "demo-day",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"private": true,
 	"scripts": {
 		"check:types": "run-tsc",
@@ -11,10 +11,10 @@
 		"test": "vitest run"
 	},
 	"dependencies": {
-		"@modelcontextprotocol/sdk": "1.13.3",
+		"@modelcontextprotocol/sdk": "1.17.2",
 		"@repo/mcp-common": "workspace:*",
 		"@repo/mcp-observability": "workspace:*",
-		"agents": "0.0.100",
+		"agents": "0.0.113",
 		"zod": "3.24.2"
 	},
 	"devDependencies": {
