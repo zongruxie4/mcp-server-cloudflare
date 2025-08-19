@@ -13,11 +13,16 @@
 		"vitest": "3.0.9"
 	},
 	"dependencies": {
-		"@commander-js/extra-typings": "13.1.0",
+		"@commander-js/extra-typings": "14.0.0",
 		"@jahands/cli-tools": "0.10.2",
 		"commander": "13.1.0",
 		"empathic": "2.0.0",
 		"tsx": "4.19.3",
+     main
+		"commander": "14.0.0",
+		"empathic": "1.1.0",
+		"tsx": "4.20.3",
+     snyk-upgrade-de707a74325cddd25688a12eff001280
 		"zod": "4.0.0-beta.20250505T195954",
 		"zx": "8.5.4"
 	}

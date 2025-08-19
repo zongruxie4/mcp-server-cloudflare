@@ -1,5 +1,19 @@
 # workers-builds
 
+## 0.1.6
+
+### Patch Changes
+
+- 24dd872: feat: Add MCP tool titles and hints to all Cloudflare tools
+- Updated dependencies [24dd872]
+  - @repo/mcp-common@0.19.2
+
+## 0.1.5
+
+### Patch Changes
+
+- dffbd36: Use proper wrangler deploy in all servers so we get the name and version
+
 ## 0.1.4
 
 ### Patch Changes

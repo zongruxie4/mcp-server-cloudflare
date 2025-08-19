@@ -1,5 +1,11 @@
 # @repo/eval-tools
 
+## 0.32.2
+
+### Patch Changes
+
+- 24dd872: feat: Add MCP tool titles and hints to all Cloudflare tools
+
 ## 0.32.1
 
 ### Patch Changes
