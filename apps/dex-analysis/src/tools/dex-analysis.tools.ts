@@ -561,6 +561,33 @@ export function registerDEXTools(agent: CloudflareDEXMCP) {
 			return await reader.read(accessToken, download, filepath)
 		},
 	})
+
+	registerTool({
+		name: 'dex_analyze_warp_diag',
+		description:
+			'Analyze successful WARP-diag remote captures for common issues. This should be the first place you start when trying to narrow down device-level issues with WARP.',
+		schema: {
+			command_id: z
+				.string()
+				.describe('The command_id of the successful WARP-diag remote capture to analyze.'),
+		},
+		llmContext:
+			'Detections with 0 occurences can be ruled out. Focus on detections with the highest severity.',
+		agent,
+		callback: async ({ accessToken, accountId, command_id }) => {
+			return await fetchCloudflareApi({
+				endpoint: `/dex/commands/${command_id}/analysis`,
+				accountId,
+				apiToken: accessToken,
+				options: {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			})
+		},
+	})
 }
 
 // Helper to simplify tool registration by reducing boilerplate for accountId and accessToken
