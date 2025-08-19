@@ -9,8 +9,12 @@
 	},
 	"devDependencies": {
 		"@types/fs-extra": "11.0.4",
+		"@types/node": "24.1.0",
+		"vitest": "3.0.9"
+     main
 		"@types/node": "22.14.1",
 		"vitest": "3.2.4"
+     snyk-upgrade-fe1c555f00b33736a233fe39549549bb
 	},
 	"dependencies": {
 		"@commander-js/extra-typings": "14.0.0",
