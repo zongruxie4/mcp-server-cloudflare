@@ -17,8 +17,12 @@
      snyk-upgrade-fe1c555f00b33736a233fe39549549bb
 	},
 	"dependencies": {
+		"@commander-js/extra-typings": "13.1.0",
+		"@jahands/cli-tools": "0.10.12",
+     main
 		"@commander-js/extra-typings": "14.0.0",
 		"@jahands/cli-tools": "0.10.2",
+     snyk-upgrade-6c06cd30e7188da6ed52fe17fcd1aa67
 		"commander": "13.1.0",
 		"empathic": "2.0.0",
 		"tsx": "4.19.3",
