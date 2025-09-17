@@ -18,7 +18,7 @@
 		"@modelcontextprotocol/sdk": "1.17.2",
 		"@repo/mcp-common": "workspace:*",
 		"@repo/mcp-observability": "workspace:*",
-		"agents": "0.0.113",
+		"agents": "0.1.0",
 		"cloudflare": "4.2.0",
 		"hono": "4.7.6",
 		"jszip": "3.10.1",
