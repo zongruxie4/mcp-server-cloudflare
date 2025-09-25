@@ -41,7 +41,7 @@
 	"vectorize": [
 		{
 			"binding": "VECTORIZE",
-			"index_name": "docs-bge-base"
+			"index_name": "docs-embeddinggemma-v1"
 		}
 	],
 	"vars": {
@@ -98,7 +98,7 @@
 			"vectorize": [
 				{
 					"binding": "VECTORIZE",
-					"index_name": "docs-bge-base"
+					"index_name": "docs-embeddinggemma-v1"
 				}
 			],
 			"analytics_engine_datasets": [
@@ -136,7 +136,7 @@
 			"vectorize": [
 				{
 					"binding": "VECTORIZE",
-					"index_name": "docs-bge-base"
+					"index_name": "docs-embeddinggemma-v1"
 				}
 			],
 			"vars": {
