@@ -23,7 +23,7 @@
 		"zod": "3.24.2"
 	},
 	"devDependencies": {
-		"@cloudflare/vite-plugin": "1.1.0",
+		"@cloudflare/vite-plugin": "1.6.0",
 		"@cloudflare/vitest-pool-workers": "0.8.14",
 		"@types/node": "22.14.1",
 		"prettier": "3.5.3",
