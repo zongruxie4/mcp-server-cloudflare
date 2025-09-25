@@ -42,6 +42,7 @@ export function registerDocsTools(agent: CloudflareMcpAgentNoAccount, env: Requi
 				.map((result) => {
 					return `<result>
 <url>${result.url}</url>
+<title>${result.title}</title>
 <text>
 ${result.text}
 </text>
@@ -93,10 +94,8 @@ ${result.text}
 }
 
 async function queryVectorize(ai: Ai, vectorizeIndex: VectorizeIndex, query: string, topK: number) {
-	// Recommendation from: https://huggingface.co/BAAI/bge-base-en-v1.5#model-list
-	const [queryEmbedding] = await getEmbeddings(ai, [
-		'Represent this sentence for searching relevant passages: ' + query,
-	])
+	// Recommendation from: https://ai.google.dev/gemma/docs/embeddinggemma/model_card#prompt_instructions
+	const [queryEmbedding] = await getEmbeddings(ai, ['task: search result | query: ' + query])
 
 	const { matches } = await vectorizeIndex.query(queryEmbedding, {
 		topK,
@@ -108,6 +107,7 @@ async function queryVectorize(ai: Ai, vectorizeIndex: VectorizeIndex, query: str
 		similarity: Math.min(match.score, 1),
 		id: match.id,
 		url: sourceToUrl(String(match.metadata?.filePath ?? '')),
+		title: String(match.metadata?.title ?? ''),
 		text: String(match.metadata?.text ?? ''),
 	}))
 }
@@ -123,15 +123,15 @@ function sourceToUrl(path: string) {
 	)
 }
 
-async function getEmbeddings(ai: Ai, strings: string[]) {
+async function getEmbeddings(ai: Ai, strings: string[]): Promise<number[][]> {
 	const response = await doWithRetries(() =>
-		ai.run('@cf/baai/bge-base-en-v1.5', {
+		// @ts-expect-error embeddinggemma not in types yet
+		ai.run('@cf/google/embeddinggemma-300m', {
 			text: strings,
-			// @ts-expect-error pooling not in types yet
-			pooling: 'cls',
 		})
 	)
 
+	// @ts-expect-error embeddinggemma not in types yet
 	return response.data
 }
 
