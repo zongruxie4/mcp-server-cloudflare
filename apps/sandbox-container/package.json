@@ -41,7 +41,7 @@
 		"@cloudflare/vitest-pool-workers": "0.8.14",
 		"@types/mock-fs": "4.13.4",
 		"@types/node": "22.14.1",
-		"ai": "4.3.10",
+		"ai": "5.0.52",
 		"concurrently": "9.1.2",
 		"mock-fs": "5.5.0",
 		"start-server-and-test": "2.0.11",
