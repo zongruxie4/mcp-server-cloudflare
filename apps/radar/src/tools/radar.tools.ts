@@ -43,6 +43,7 @@ import {
 	BotsCrawlersFormatParam,
 	BotsDimensionParam,
 	BotVerificationStatusParam,
+	BucketSizeParam,
 	ContinentArrayParam,
 	CrawlerClientTypeParam,
 	CrawlerIndustryParam,
@@ -63,8 +64,10 @@ import {
 	DateStartArrayParam,
 	DateStartParam,
 	DnsDimensionParam,
+	DomainCategoryArrayParam,
 	DomainParam,
 	DomainRankingTypeParam,
+	DomainsArrayParam,
 	EmailRoutingDimensionParam,
 	EmailSecurityDimensionParam,
 	GeoIdArrayParam,
@@ -98,7 +101,12 @@ import {
 	RobotsTxtDomainCategoryParam,
 	RobotsTxtPatternParam,
 	RobotsTxtUserAgentCategoryParam,
+	SpeedHistogramMetricParam,
 	TcpResetsTimeoutsDimensionParam,
+	TldFilterParam,
+	TldManagerParam,
+	TldParam,
+	TldTypeParam,
 } from '../types/radar'
 import { resolveAndInvoke } from '../utils'
 
@@ -451,8 +459,8 @@ export function registerRadarTools(agent: RadarMCP) {
 		async ({ dateStart, dateEnd, dateRange, asn, location, continent, geoId, dimension }) => {
 			try {
 				const props = getProps(agent)
-				const client = getCloudflareClient(props.accessToken)
-				const r = await resolveAndInvoke(client.radar.http, dimension, {
+
+				const result = await fetchRadarApi(props.accessToken, `/http/${dimension}`, {
 					asn,
 					continent,
 					location,
@@ -465,10 +473,8 @@ export function registerRadarTools(agent: RadarMCP) {
 				return {
 					content: [
 						{
-							type: 'text',
-							text: JSON.stringify({
-								result: r,
-							}),
+							type: 'text' as const,
+							text: JSON.stringify({ result }),
 						},
 					],
 				}
@@ -476,8 +482,8 @@ export function registerRadarTools(agent: RadarMCP) {
 				return {
 					content: [
 						{
-							type: 'text',
-							text: `Error getting HTTP data: ${error instanceof Error && error.message}`,
+							type: 'text' as const,
+							text: `Error getting HTTP data: ${error instanceof Error ? error.message : String(error)}`,
 						},
 					],
 				}
@@ -500,8 +506,8 @@ export function registerRadarTools(agent: RadarMCP) {
 		async ({ dateStart, dateEnd, dateRange, asn, location, continent, dimension }) => {
 			try {
 				const props = getProps(agent)
-				const client = getCloudflareClient(props.accessToken)
-				const r = await resolveAndInvoke(client.radar.dns, dimension, {
+
+				const result = await fetchRadarApi(props.accessToken, `/dns/${dimension}`, {
 					asn,
 					continent,
 					location,
@@ -513,10 +519,8 @@ export function registerRadarTools(agent: RadarMCP) {
 				return {
 					content: [
 						{
-							type: 'text',
-							text: JSON.stringify({
-								result: r,
-							}),
+							type: 'text' as const,
+							text: JSON.stringify({ result }),
 						},
 					],
 				}
@@ -524,8 +528,8 @@ export function registerRadarTools(agent: RadarMCP) {
 				return {
 					content: [
 						{
-							type: 'text',
-							text: `Error getting DNS data: ${error instanceof Error && error.message}`,
+							type: 'text' as const,
+							text: `Error getting DNS data: ${error instanceof Error ? error.message : String(error)}`,
 						},
 					],
 				}
@@ -827,8 +831,8 @@ export function registerRadarTools(agent: RadarMCP) {
 		async ({ dateRange, dateStart, dateEnd, asn, location, continent, dimension }) => {
 			try {
 				const props = getProps(agent)
-				const client = getCloudflareClient(props.accessToken)
-				const r = await resolveAndInvoke(client.radar.ai, dimension, {
+
+				const result = await fetchRadarApi(props.accessToken, `/ai/${dimension}`, {
 					asn,
 					continent,
 					location,
@@ -840,10 +844,8 @@ export function registerRadarTools(agent: RadarMCP) {
 				return {
 					content: [
 						{
-							type: 'text',
-							text: JSON.stringify({
-								result: r,
-							}),
+							type: 'text' as const,
+							text: JSON.stringify({ result }),
 						},
 					],
 				}
@@ -851,8 +853,8 @@ export function registerRadarTools(agent: RadarMCP) {
 				return {
 					content: [
 						{
-							type: 'text',
-							text: `Error getting AI data: ${error instanceof Error && error.message}`,
+							type: 'text' as const,
+							text: `Error getting AI data: ${error instanceof Error ? error.message : String(error)}`,
 						},
 					],
 				}
@@ -1158,9 +1160,7 @@ export function registerRadarTools(agent: RadarMCP) {
 			try {
 				const props = getProps(agent)
 
-				const endpoint = dimension === 'timeseries' ? '/ct/timeseries' : `/ct/${dimension}`
-
-				const result = await fetchRadarApi(props.accessToken, endpoint, {
+				const result = await fetchRadarApi(props.accessToken, `/ct/${dimension}`, {
 					dateRange,
 					dateStart,
 					dateEnd,
@@ -2546,6 +2546,182 @@ export function registerRadarTools(agent: RadarMCP) {
 						{
 							type: 'text' as const,
 							text: `Error getting AS relationships: ${error instanceof Error ? error.message : String(error)}`,
+						},
+					],
+				}
+			}
+		}
+	)
+
+	// ============================================================
+	// TLD Tools
+	// ============================================================
+
+	agent.server.tool(
+		'list_tlds',
+		'List top-level domains (TLDs) including generic, country-code, and sponsored TLDs. Filter by type or manager.',
+		{
+			limit: PaginationLimitParam,
+			offset: PaginationOffsetParam,
+			tldType: TldTypeParam,
+			manager: TldManagerParam,
+			tld: TldFilterParam,
+		},
+		async ({ limit, offset, tldType, manager, tld }) => {
+			try {
+				const props = getProps(agent)
+				const result = await fetchRadarApi(props.accessToken, '/entities/tlds', {
+					limit,
+					offset,
+					tldType,
+					manager,
+					tld,
+				})
+
+				return {
+					content: [
+						{
+							type: 'text' as const,
+							text: JSON.stringify({ result }),
+						},
+					],
+				}
+			} catch (error) {
+				return {
+					content: [
+						{
+							type: 'text' as const,
+							text: `Error listing TLDs: ${error instanceof Error ? error.message : String(error)}`,
+						},
+					],
+				}
+			}
+		}
+	)
+
+	agent.server.tool(
+		'get_tld_details',
+		'Get detailed information about a specific top-level domain (TLD).',
+		{
+			tld: TldParam,
+		},
+		async ({ tld }) => {
+			try {
+				const props = getProps(agent)
+				const result = await fetchRadarApi(props.accessToken, `/entities/tlds/${tld}`)
+
+				return {
+					content: [
+						{
+							type: 'text' as const,
+							text: JSON.stringify({ result }),
+						},
+					],
+				}
+			} catch (error) {
+				return {
+					content: [
+						{
+							type: 'text' as const,
+							text: `Error getting TLD details: ${error instanceof Error ? error.message : String(error)}`,
+						},
+					],
+				}
+			}
+		}
+	)
+
+	// ============================================================
+	// Ranking Timeseries Tool
+	// ============================================================
+
+	agent.server.tool(
+		'get_domains_ranking_timeseries',
+		'Get domain ranking timeseries data. Track how specific domains rank over time.',
+		{
+			dateRange: DateRangeArrayParam.optional(),
+			dateStart: DateStartArrayParam.optional(),
+			dateEnd: DateEndArrayParam.optional(),
+			domains: DomainsArrayParam,
+			domainCategory: DomainCategoryArrayParam,
+			location: LocationArrayParam,
+			limit: PaginationLimitParam,
+		},
+		async ({ dateRange, dateStart, dateEnd, domains, domainCategory, location, limit }) => {
+			try {
+				const props = getProps(agent)
+				const result = await fetchRadarApi(props.accessToken, '/ranking/timeseries_groups', {
+					dateRange,
+					dateStart,
+					dateEnd,
+					domains,
+					domainCategory,
+					location,
+					limit,
+				})
+
+				return {
+					content: [
+						{
+							type: 'text' as const,
+							text: JSON.stringify({ result }),
+						},
+					],
+				}
+			} catch (error) {
+				return {
+					content: [
+						{
+							type: 'text' as const,
+							text: `Error getting domains ranking timeseries: ${error instanceof Error ? error.message : String(error)}`,
+						},
+					],
+				}
+			}
+		}
+	)
+
+	// ============================================================
+	// Speed Histogram Tool
+	// ============================================================
+
+	agent.server.tool(
+		'get_speed_histogram',
+		'Get speed test histogram data. Shows distribution of speed test results for bandwidth, latency, or jitter.',
+		{
+			dateEnd: DateEndArrayParam.optional(),
+			asn: AsnArrayParam,
+			continent: ContinentArrayParam,
+			location: LocationArrayParam,
+			metric: SpeedHistogramMetricParam,
+			bucketSize: BucketSizeParam,
+		},
+		async ({ dateEnd, asn, continent, location, metric, bucketSize }) => {
+			try {
+				const props = getProps(agent)
+				const result = await fetchRadarApi(props.accessToken, '/quality/speed/histogram', {
+					dateEnd,
+					asn,
+					continent,
+					location,
+					metric,
+					bucketSize,
+				})
+
+				return {
+					content: [
+						{
+							type: 'text' as const,
+							text: JSON.stringify({ result }),
+						},
+					],
+				}
+			} catch (error) {
+				return {
+					content: [
+						{
+							type: 'text' as const,
+							text: `Error getting speed histogram: ${error instanceof Error ? error.message : String(error)}`,
 						},
 					],
 				}
