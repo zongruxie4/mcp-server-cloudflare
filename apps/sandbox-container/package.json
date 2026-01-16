@@ -22,7 +22,7 @@
 		"@cloudflare/workers-oauth-provider": "0.0.13",
 		"@hono/node-server": "1.13.8",
 		"@hono/zod-validator": "0.4.3",
-		"@modelcontextprotocol/sdk": "1.20.2",
+		"@modelcontextprotocol/sdk": "1.24.0",
 		"@n8n/json-schema-to-zod": "1.1.0",
 		"@repo/eval-tools": "workspace:*",
 		"@repo/mcp-common": "workspace:*",
