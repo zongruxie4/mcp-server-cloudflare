@@ -14,7 +14,7 @@
 	"dependencies": {
 		"@cloudflare/workers-oauth-provider": "0.0.13",
 		"@hono/zod-validator": "0.4.3",
-		"@modelcontextprotocol/sdk": "1.20.2",
+		"@modelcontextprotocol/sdk": "1.25.2",
 		"@repo/mcp-common": "workspace:*",
 		"@repo/mcp-observability": "workspace:*",
 		"agents": "0.2.19",
