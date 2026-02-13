@@ -14,7 +14,7 @@
 		"@modelcontextprotocol/sdk": "1.20.2",
 		"@repo/mcp-common": "workspace:*",
 		"@repo/mcp-observability": "workspace:*",
-		"agents": "0.2.19",
+		"agents": "0.3.10",
 		"zod": "3.24.2"
 	},
 	"devDependencies": {
