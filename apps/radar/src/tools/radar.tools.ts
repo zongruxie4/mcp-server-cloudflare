@@ -1324,14 +1324,7 @@ export function registerRadarTools(agent: RadarMCP) {
 			try {
 				const props = getProps(agent)
 
-				let endpoint: string
-				if (dimension === 'timeseries') {
-					endpoint = '/netflows/timeseries'
-				} else if (dimension === 'summary') {
-					endpoint = '/netflows/summary'
-				} else {
-					endpoint = `/netflows/${dimension}`
-				}
+				const endpoint = `/netflows/${dimension}`
 
 				const result = await fetchRadarApi(props.accessToken, endpoint, {
 					asn,
@@ -1343,7 +1336,7 @@ export function registerRadarTools(agent: RadarMCP) {
 					dateEnd,
 					product,
 					normalization,
-					limitPerGroup: !['timeseries', 'summary'].includes(dimension) ? limitPerGroup : undefined,
+					limitPerGroup: dimension !== 'timeseries' ? limitPerGroup : undefined,
 				})
 
 				return {
