@@ -117,7 +117,6 @@ export default {
 				'/mcp': CASBMCP.serve('/mcp'),
 				'/sse': CASBMCP.serveSSE('/sse'),
 			},
-			// @ts-ignore
 			defaultHandler: createAuthHandlers({ scopes: CloudflareOneCasbScopes, metrics }),
 			authorizeEndpoint: '/oauth/authorize',
 			tokenEndpoint: '/token',

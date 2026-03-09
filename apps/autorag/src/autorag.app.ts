@@ -119,7 +119,6 @@ export default {
 				'/mcp': AutoRAGMCP.serve('/mcp'),
 				'/sse': AutoRAGMCP.serveSSE('/sse'),
 			},
-			// @ts-ignore
 			defaultHandler: createAuthHandlers({ scopes: LogPushScopes, metrics }),
 			authorizeEndpoint: '/oauth/authorize',
 			tokenEndpoint: '/token',

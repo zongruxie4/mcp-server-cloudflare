@@ -122,7 +122,6 @@ export default {
 				'/mcp': RadarMCP.serve('/mcp'),
 				'/sse': RadarMCP.serveSSE('/sse'),
 			},
-			// @ts-ignore
 			defaultHandler: createAuthHandlers({ scopes: RadarScopes, metrics }),
 			authorizeEndpoint: '/oauth/authorize',
 			tokenEndpoint: '/token',

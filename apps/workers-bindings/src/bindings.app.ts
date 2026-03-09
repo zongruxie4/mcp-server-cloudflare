@@ -139,7 +139,6 @@ export default {
 				'/mcp': WorkersBindingsMCP.serve('/mcp'),
 				'/sse': WorkersBindingsMCP.serveSSE('/sse'),
 			},
-			// @ts-ignore
 			defaultHandler: createAuthHandlers({ scopes: BindingsScopes, metrics }),
 			authorizeEndpoint: '/oauth/authorize',
 			tokenEndpoint: '/token',

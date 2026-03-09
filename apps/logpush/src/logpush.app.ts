@@ -120,7 +120,6 @@ export default {
 				'/mcp': LogsMCP.serve('/mcp'),
 				'/sse': LogsMCP.serveSSE('/sse'),
 			},
-			// @ts-ignore
 			defaultHandler: createAuthHandlers({ scopes: LogPushScopes, metrics }),
 			authorizeEndpoint: '/oauth/authorize',
 			tokenEndpoint: '/token',
