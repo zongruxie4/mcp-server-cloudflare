@@ -24,7 +24,7 @@
 	},
 	"devDependencies": {
 		"@cloudflare/vite-plugin": "1.1.0",
-		"@cloudflare/vitest-pool-workers": "0.8.14",
+		"@cloudflare/vitest-pool-workers": "0.8.69",
 		"@types/node": "22.14.1",
 		"prettier": "3.5.3",
 		"typescript": "5.5.4",
