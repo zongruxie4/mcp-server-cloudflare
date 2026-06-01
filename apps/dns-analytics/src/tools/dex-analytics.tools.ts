@@ -16,12 +16,14 @@ function getStartDate(days: number) {
 
 export function registerAnalyticTools(agent: DNSAnalyticsMCP) {
 	// Register DNS Report tool
-	agent.server.tool(
+	agent.server.registerTool(
 		'dns_report',
-		'Fetch the DNS Report for a given zone since a date',
 		{
-			zone: z.string(),
-			days: z.number(),
+			description: 'Fetch the DNS Report for a given zone since a date',
+			inputSchema: {
+				zone: z.string(),
+				days: z.number(),
+			},
 		},
 		async ({ zone, days }) => {
 			try {
@@ -53,27 +55,18 @@ export function registerAnalyticTools(agent: DNSAnalyticsMCP) {
 							text: `Error fetching DNS report: ${error instanceof Error && error.message}`,
 						},
 					],
+					isError: true,
 				}
 			}
 		}
 	)
 	// Register Account DNS Settings display tool
-	agent.server.tool(
+	agent.server.accountTool(
 		'show_account_dns_settings',
 		'Show DNS settings for current account',
-		async () => {
+		{},
+		async (_args, accountId) => {
 			try {
-				const accountId = await agent.getActiveAccountId()
-				if (!accountId) {
-					return {
-						content: [
-							{
-								type: 'text',
-								text: 'No currently active accountId. Try listing your accounts (accounts_list) and then setting an active account (set_active_account)',
-							},
-						],
-					}
-				}
 				const props = getProps(agent)
 				const client = getCloudflareClient(props.accessToken)
 				const params: AccountGetParams = {
@@ -98,16 +91,19 @@ export function registerAnalyticTools(agent: DNSAnalyticsMCP) {
 							text: `Error fetching DNS report: ${error instanceof Error && error.message}`,
 						},
 					],
+					isError: true,
 				}
 			}
 		}
 	)
 	// Register Zone DNS Settings display tool
-	agent.server.tool(
+	agent.server.registerTool(
 		'show_zone_dns_settings',
-		'Show DNS settings for a zone',
 		{
-			zone: z.string(),
+			description: 'Show DNS settings for a zone',
+			inputSchema: {
+				zone: z.string(),
+			},
 		},
 		async ({ zone }) => {
 			try {
@@ -135,6 +131,7 @@ export function registerAnalyticTools(agent: DNSAnalyticsMCP) {
 							text: `Error fetching DNS report: ${error instanceof Error && error.message}`,
 						},
 					],
+					isError: true,
 				}
 			}
 		}

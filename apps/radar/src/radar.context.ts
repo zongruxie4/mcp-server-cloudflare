@@ -1,4 +1,4 @@
-import type { RadarMCP, UserDetails } from './radar.app'
+import type { RadarMCP } from './radar.app'
 
 export interface Env {
 	OAUTH_KV: KVNamespace
@@ -9,7 +9,6 @@ export interface Env {
 	CLOUDFLARE_CLIENT_ID: string
 	CLOUDFLARE_CLIENT_SECRET: string
 	MCP_OBJECT: DurableObjectNamespace<RadarMCP>
-	USER_DETAILS: DurableObjectNamespace<UserDetails>
 	MCP_METRICS: AnalyticsEngineDataset
 	DEV_DISABLE_OAUTH: string
 	DEV_CLOUDFLARE_API_TOKEN: string
@@ -23,7 +22,7 @@ This server provides tools powered by the Cloudflare Radar API for global Intern
 
 ## Authentication
 
-- **URL Scanner** requires an active account (use \`set_active_account\`)
+- **URL Scanner** is account-scoped: if your credentials span multiple accounts, pass \`account_id\` (or set a \`cf-account-id\` request header in your MCP client config)
 - All other Radar data tools work without account selection
 
 ## Tool Categories

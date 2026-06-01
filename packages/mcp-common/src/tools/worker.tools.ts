@@ -22,7 +22,7 @@ const workerNameParam = z.string().describe('The name of the worker script to re
 
 export function registerWorkersTools(agent: CloudflareMcpAgent) {
 	// Tool to list all workers
-	agent.server.tool(
+	agent.server.accountTool(
 		'workers_list',
 		fmt.trim(`
 			List all Workers in your Cloudflare account.
@@ -32,24 +32,10 @@ export function registerWorkersTools(agent: CloudflareMcpAgent) {
 		{},
 		{
 			title: 'List Workers',
-			annotations: {
-				readOnlyHint: true,
-				destructiveHint: false,
-			},
+			readOnlyHint: true,
+			destructiveHint: false,
 		},
-		async () => {
-			const accountId = await agent.getActiveAccountId()
-			if (!accountId) {
-				return {
-					content: [
-						{
-							type: 'text',
-							text: 'No currently active accountId. Try listing your accounts (accounts_list) and then setting an active account (set_active_account)',
-						},
-					],
-				}
-			}
-
+		async (_params, accountId) => {
 			try {
 				const props = getProps(agent)
 				const results = await handleWorkersList({
@@ -92,13 +78,14 @@ export function registerWorkersTools(agent: CloudflareMcpAgent) {
 							text: `Error listing workers: ${e instanceof Error && e.message}`,
 						},
 					],
+					isError: true,
 				}
 			}
 		}
 	)
 
 	// Tool to get a specific worker's script details
-	agent.server.tool(
+	agent.server.accountTool(
 		'workers_get_worker',
 		'Get the details of the Cloudflare Worker.',
 		{
@@ -106,24 +93,10 @@ export function registerWorkersTools(agent: CloudflareMcpAgent) {
 		},
 		{
 			title: 'Get Worker details',
-			annotations: {
-				readOnlyHint: true,
-				destructiveHint: false,
-			},
+			readOnlyHint: true,
+			destructiveHint: false,
 		},
-		async (params) => {
-			const accountId = await agent.getActiveAccountId()
-			if (!accountId) {
-				return {
-					content: [
-						{
-							type: 'text',
-							text: 'No currently active accountId. Try listing your accounts (accounts_list) and then setting an active account (set_active_account)',
-						},
-					],
-				}
-			}
-
+		async (params, accountId) => {
 			try {
 				const props = getProps(agent)
 				const { scriptName } = params
@@ -166,36 +139,23 @@ export function registerWorkersTools(agent: CloudflareMcpAgent) {
 							text: `Error retrieving worker script: ${e instanceof Error && e.message}`,
 						},
 					],
+					isError: true,
 				}
 			}
 		}
 	)
 
 	// Tool to get a specific worker's script content
-	agent.server.tool(
+	agent.server.accountTool(
 		'workers_get_worker_code',
 		'Get the source code of a Cloudflare Worker. Note: This may be a bundled version of the worker.',
 		{ scriptName: workerNameParam },
 		{
 			title: 'Get Worker code',
-			annotations: {
-				readOnlyHint: true,
-				destructiveHint: false,
-			},
+			readOnlyHint: true,
+			destructiveHint: false,
 		},
-		async (params) => {
-			const accountId = await agent.getActiveAccountId()
-			if (!accountId) {
-				return {
-					content: [
-						{
-							type: 'text',
-							text: 'No currently active accountId. Try listing your accounts (accounts_list) and then setting an active account (set_active_account)',
-						},
-					],
-				}
-			}
-
+		async (params, accountId) => {
 			try {
 				const props = getProps(agent)
 				const { scriptName } = params
@@ -221,6 +181,7 @@ export function registerWorkersTools(agent: CloudflareMcpAgent) {
 							text: `Error retrieving worker script: ${e instanceof Error && e.message}`,
 						},
 					],
+					isError: true,
 				}
 			}
 		}

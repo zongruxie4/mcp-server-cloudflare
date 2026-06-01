@@ -13,17 +13,19 @@ import type { BuildsMCP } from '../workers-builds.app'
  * @param apiToken Cloudflare API token
  */
 export function registerBuildsTools(agent: BuildsMCP) {
-	agent.server.tool(
+	agent.server.registerTool(
 		'workers_builds_set_active_worker',
-		fmt.trim(`
+		{
+			description: fmt.trim(`
 			Set the active Worker ID for subsequent calls.
 			Use this tool to set the active worker for subsequent calls.
 
 			Worker IDs are formatted similar to: db6a6421c2b046679a9daada1537088b
 			If you are given a Worker name or script name, you can use workers_get_worker to get the Worker ID.
 		`),
-		{
-			workerId: z.string().describe('The Worker ID to set as active.'),
+			inputSchema: {
+				workerId: z.string().describe('The Worker ID to set as active.'),
+			},
 		},
 		async ({ workerId }) => {
 			await agent.setActiveWorkerId(workerId)
@@ -38,7 +40,7 @@ export function registerBuildsTools(agent: BuildsMCP) {
 		}
 	)
 
-	agent.server.tool(
+	agent.server.accountTool(
 		'workers_builds_list_builds',
 		fmt.trim(`
 			Use the Workers Builds API to list builds for a Cloudflare Worker.
@@ -50,22 +52,7 @@ export function registerBuildsTools(agent: BuildsMCP) {
 			page: z.number().optional().default(1).describe('The page number to return.'),
 			perPage: z.number().optional().default(10).describe('The number of builds per page.'),
 		},
-		async ({ workerId, page, perPage }) => {
-			const accountId = await agent.getActiveAccountId()
-			if (!accountId) {
-				return {
-					content: [
-						{
-							type: 'text',
-							text: fmt.oneLine(`
-								No currently active accountId. Try listing your accounts (accounts_list)
-								and then setting an active account (set_active_account)
-							`),
-						},
-					],
-				}
-			}
-
+		async ({ workerId, page, perPage }, accountId) => {
 			if (!workerId) {
 				const activeWorkerId = await agent.getActiveWorkerId()
 				if (activeWorkerId) {
@@ -147,12 +134,13 @@ export function registerBuildsTools(agent: BuildsMCP) {
 							text: `Error: listing builds failed: ${error instanceof Error && error.message}`,
 						},
 					],
+					isError: true,
 				}
 			}
 		}
 	)
 
-	agent.server.tool(
+	agent.server.accountTool(
 		'workers_builds_get_build',
 		fmt.trim(`
 			Get details for a specific build by its UUID.
@@ -161,19 +149,7 @@ export function registerBuildsTools(agent: BuildsMCP) {
 		{
 			buildUUID: z.string().describe('The build UUID to get details for.'),
 		},
-		async ({ buildUUID }) => {
-			const accountId = await agent.getActiveAccountId()
-			if (!accountId) {
-				return {
-					content: [
-						{
-							type: 'text',
-							text: 'No currently active accountId. Set an active account first.',
-						},
-					],
-				}
-			}
-
+		async ({ buildUUID }, accountId) => {
 			try {
 				const props = getProps(agent)
 				const { result: build } = await getBuild({
@@ -222,12 +198,13 @@ export function registerBuildsTools(agent: BuildsMCP) {
 							text: `Error: getting build failed: ${error instanceof Error && error.message}`,
 						},
 					],
+					isError: true,
 				}
 			}
 		}
 	)
 
-	agent.server.tool(
+	agent.server.accountTool(
 		'workers_builds_get_build_logs',
 		fmt.trim(`
 			Get logs for a Cloudflare Workers build.
@@ -235,19 +212,7 @@ export function registerBuildsTools(agent: BuildsMCP) {
 		{
 			buildUUID: z.string().describe('The build UUID to get logs for.'),
 		},
-		async ({ buildUUID }) => {
-			const accountId = await agent.getActiveAccountId()
-			if (!accountId) {
-				return {
-					content: [
-						{
-							type: 'text',
-							text: 'No currently active accountId. Set an active account first.',
-						},
-					],
-				}
-			}
-
+		async ({ buildUUID }, accountId) => {
 			try {
 				const props = getProps(agent)
 				const logs = await getBuildLogs({
@@ -275,6 +240,7 @@ export function registerBuildsTools(agent: BuildsMCP) {
 							text: `Error: getting build logs failed: ${error instanceof Error && error.message}`,
 						},
 					],
+					isError: true,
 				}
 			}
 		}

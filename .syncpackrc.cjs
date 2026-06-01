@@ -24,7 +24,7 @@ const config = {
 		{
 			label: 'pin vitest compatible with @cloudflare/vitest-pool-workers',
 			dependencies: ['vitest', '@vitest/ui'],
-			pinVersion: '3.0.9',
+			pinVersion: '4.1.8',
 		},
 		{
 			label: 'pin typescript for eslint',
@@ -48,7 +48,7 @@ const config = {
 		{
 			label: 'use zod v4 in packages/tools',
 			dependencies: ['zod'],
-			pinVersion: '4.0.0-beta.20250505T195954',
+			pinVersion: '4.4.3',
 			packages: ['@repo/tools'],
 		},
 	],
