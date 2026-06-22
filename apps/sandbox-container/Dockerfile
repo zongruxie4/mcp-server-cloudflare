@@ -1,5 +1,5 @@
 # Use Alpine as base for minimal size
-FROM alpine:3.19 as base
+FROM alpine:3.22.1 as base
 
 # Install necessary packages while minimizing layers
 # We combine commands with && and clean cache in the same layer
