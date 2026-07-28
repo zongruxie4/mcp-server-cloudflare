@@ -2,6 +2,8 @@
 
 This is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server that provides tools for searching and reading the [Cloudflare Blog](https://blog.cloudflare.com).
 
+The `/mcp` and `/sse` URLs use the same stateless SDK v2 handler and create a fresh server for every request. `/sse` is not the deprecated HTTP+SSE transport. The handler supports modern MCP requests and stateless 2025 compatibility without an MCP protocol session.
+
 ## 🔨 Available Tools
 
 | **Tool**       | **Description**                                                                                  |
