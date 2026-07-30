@@ -66,22 +66,68 @@ interface TypeDetailsResponse {
 	}
 }
 
-// Define the structure of a single error
-const graphQLErrorSchema = z.object({
-	message: z.string(),
-	path: z.array(z.union([z.string(), z.number()])),
-	extensions: z.object({
-		code: z.string(),
-		timestamp: z.string(),
-		ray_id: z.string(),
-	}),
-})
+const graphQLLocationSchema = z
+	.object({
+		line: z.number().int().positive(),
+		column: z.number().int().positive(),
+	})
+	.strict()
 
-// Define the overall GraphQL response schema
-const graphQLResponseSchema = z.object({
-	data: z.union([z.record(z.string(), z.unknown()), z.null()]),
-	errors: z.union([z.array(graphQLErrorSchema), z.null()]),
-})
+const graphQLPathSegmentSchema = z.union([z.string().min(1), z.number().int().nonnegative()])
+
+// GraphQL requires only `message`. Cloudflare also returns null for some optional fields,
+// so tolerate null as well as the omission defined by the specification.
+const graphQLErrorSchema = z
+	.object({
+		message: z.string(),
+		locations: z.array(graphQLLocationSchema).nonempty().nullish(),
+		path: z.array(graphQLPathSegmentSchema).nonempty().nullish(),
+		extensions: z.record(z.string(), z.unknown()).nullish(),
+	})
+	.strict()
+
+const graphQLResponseSchema = z
+	.object({
+		data: z.record(z.string(), z.unknown()).nullable().optional(),
+		// GraphQL omits `errors` on success. Cloudflare may return null instead.
+		errors: z.array(graphQLErrorSchema).nonempty().nullable().optional(),
+		extensions: z.record(z.string(), z.unknown()).optional(),
+	})
+	.strict()
+	.refine(
+		(response) =>
+			'data' in response || (Array.isArray(response.errors) && response.errors.length > 0),
+		{ message: 'A GraphQL response must contain data or at least one error' }
+	)
+
+type GraphQLResponse = z.infer<typeof graphQLResponseSchema>
+
+/** Validate known GraphQL responses without allowing a new upstream shape to break this relay. */
+export function validateGraphQLResponse(response: unknown): GraphQLResponse {
+	const validation = graphQLResponseSchema.safeParse(response)
+	if (!validation.success) {
+		console.warn(
+			'GraphQL response did not match the expected schema; passing through the raw response',
+			validation.error
+		)
+	}
+
+	// Preserve the upstream response exactly, including fields not represented in the schema.
+	return response as GraphQLResponse
+}
+
+function getGraphQLErrorMessages(response: unknown): string[] {
+	if (typeof response !== 'object' || response === null) return []
+
+	const errors = (response as { errors?: unknown }).errors
+	if (!Array.isArray(errors)) return []
+
+	return errors.flatMap((error) => {
+		if (typeof error !== 'object' || error === null) return []
+		const message = (error as { message?: unknown }).message
+		return typeof message === 'string' ? [message] : []
+	})
+}
 
 /**
  * Fetches the high-level overview of the GraphQL schema
@@ -199,16 +245,19 @@ async function executeGraphQLRequest<T>(query: string, apiToken: string): Promis
 		throw new Error(`Failed to execute GraphQL request: ${response.statusText}`)
 	}
 
-	const data = graphQLResponseSchema.parse(await response.json())
+	const data = validateGraphQLResponse(await response.json())
+	const errorMessages = getGraphQLErrorMessages(data)
 
-	// Check for GraphQL errors in the response
-	if (data && data.errors && Array.isArray(data.errors) && data.errors.length > 0) {
-		const errorMessages = data.errors.map((e: { message: string }) => e.message).join(', ')
-		console.warn(`GraphQL errors: ${errorMessages}`)
+	if (errorMessages.length > 0) {
+		const message = errorMessages.join(', ')
+		console.warn(`GraphQL errors: ${message}`)
 
-		// If the error is about mutations not being supported, we can handle it gracefully
-		if (errorMessages.includes('Mutations are not supported')) {
+		if (message.includes('Mutations are not supported')) {
 			console.info('Mutations are not supported by the Cloudflare GraphQL API')
+		}
+
+		if (data.data == null) {
+			throw new Error(`GraphQL request failed: ${message}`)
 		}
 	}
 
@@ -242,12 +291,11 @@ async function executeGraphQLQuery(query: string, variables: any, apiToken: stri
 		throw new Error(`Failed to execute GraphQL query: ${response.statusText}`)
 	}
 
-	const result = graphQLResponseSchema.parse(await response.json())
+	const result = validateGraphQLResponse(await response.json())
+	const errorMessages = getGraphQLErrorMessages(result)
 
-	// Check for GraphQL errors in the response
-	if (result && result.errors && Array.isArray(result.errors) && result.errors.length > 0) {
-		const errorMessages = result.errors.map((e: { message: string }) => e.message).join(', ')
-		console.warn(`GraphQL query errors: ${errorMessages}`)
+	if (errorMessages.length > 0) {
+		console.warn(`GraphQL query errors: ${errorMessages.join(', ')}`)
 	}
 
 	return result
