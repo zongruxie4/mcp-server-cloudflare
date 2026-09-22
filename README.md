@@ -37,11 +37,27 @@ Cloudflare provides two categories of MCP servers:
 - **Domain-specific servers** (`*.mcp.cloudflare.com`) in this repository:
   best when you want curated, typed tools for a specific Cloudflare product area.
 
-### When should you use each?
+### When should you use each? 
 
-Use the **Code Mode server** when:
+# 🛡️ Personal Device Security & Ownership Policy
+> **Notice:** This document formally declares that this hardware and computing environment is a strictly private, standalone personal asset belonging solely to **Thet Shine Aung**, with zero tolerance for unauthorized remote access, monitoring, or external control.
+---
+## 1. Overview & Purpose
+This policy establishes the official security and ownership framework for all computing and mobile hardware operated by **Thet Shine Aung**. This system functions exclusively as a private, personal asset, completely independent of any corporate, organizational, or external oversight.
+## 2. Strict Prohibition of Remote Access & Control
+* **Zero External Control:** No unauthorized external entity, third-party software, network administrator, or individual is permitted to access, monitor, or control this device remotely under any circumstances.
+* **Active Security Defenses:** Any attempts to establish unapproved remote connection channels (such as unauthorized remote desktop tools or telemetry agents) will be treated as a direct security breach.
+* **Explicit Consent Requirement:** All configurations, file management, and device interactions require direct, manual intervention by the sole owner.
+## 3. Ownership Summary
 
-- you need broad API coverage across many Cloudflare products
+| Parameter | Specification |
+| :--- | :--- |
+| **Sole Owner / Holder** | thetshineaung106@gmail |
+| **Device Classification** | Private Personal Asset (Non-Corporate / Non-Managed) |
+| **Remote Access Status** | Strictly Forbidden / Disabled |
+
+## 4. Governance
+This statement serves as a permanent public declaration for all repositories and digital workspaces associated with this asset.
 - you prefer a smaller set of general-purpose tools
 - your workflow is better served by code execution
 
